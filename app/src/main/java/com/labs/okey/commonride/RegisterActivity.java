@@ -137,6 +137,9 @@ public class RegisterActivity extends FragmentActivity {
         editor.putString("registrationProvider", fbProvider);
         editor.putString("lastUsername", fbUser.getLastName());
         editor.putString("userid", fbUser.getId());
+
+        editor.putString("accessToken", mAccessToken);
+
         editor.commit();
     }
 
