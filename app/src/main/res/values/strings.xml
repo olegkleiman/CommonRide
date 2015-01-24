@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">CommonRide</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_single_ride">SingleRideActivity</string>
+    <string name="ride_origin">Tel-Aviv</string>
+    <string name="title_activity_add_ride">AddRideActivity</string>
+    <string name="title_activity_register">RegisterActivity</string>
+    <string name="facebook_app_id">1556185537963080</string>
+</resources>

@@ -46,6 +46,8 @@ public class AddRideActivity extends ActionBarActivity {
             MobileServiceUser wamsUser = new MobileServiceUser(userID);
 
             String token = sharedPrefs.getString(WAMSTOKENPREF, "");
+            // According to this article (http://www.thejoyofcode.com/Setting_the_auth_token_in_the_Mobile_Services_client_and_caching_the_user_rsquo_s_identity_Day_10_.aspx)
+            // this should be JWT token, so use WAMS_TOKEM
             wamsUser.setAuthenticationToken(token);
 
             mClient.setCurrentUser(wamsUser);
