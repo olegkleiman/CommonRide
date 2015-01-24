@@ -1,5 +1,6 @@
 package com.labs.okey.commonride;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
@@ -25,6 +26,9 @@ public class RegisterActivity extends FragmentActivity {
     private static final String LOG_TAG = "CommonRide.RegisterActivity";
     private final String fbProvider = "fb";
     private final String PENDING_ACTION_BUNDLE_KEY = "com.labs.okey.commomride:PendingAction";
+
+    private static final String TOKENPREF = "accessToken";
+    private static final String USERIDPREF = "userid";
 
     String mAccessToken;
 
@@ -73,8 +77,8 @@ public class RegisterActivity extends FragmentActivity {
                     saveFBUser(user);
 
                     Intent returnIntent = new Intent();
-                    returnIntent.putExtra("accessToken", mAccessToken);
-                    returnIntent.putExtra("userid", user.getId());
+                    returnIntent.putExtra(TOKENPREF, mAccessToken);
+                    returnIntent.putExtra(USERIDPREF, user.getId());
                     setResult(RESULT_OK, returnIntent);
                     finish();
                 }
@@ -136,9 +140,8 @@ public class RegisterActivity extends FragmentActivity {
         editor.putString("username", fbUser.getFirstName());
         editor.putString("registrationProvider", fbProvider);
         editor.putString("lastUsername", fbUser.getLastName());
-        editor.putString("userid", fbUser.getId());
-
-        editor.putString("accessToken", mAccessToken);
+        editor.putString(USERIDPREF, fbUser.getId());
+        editor.putString(TOKENPREF, mAccessToken);
 
         editor.commit();
     }
