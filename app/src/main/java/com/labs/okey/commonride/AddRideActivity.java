@@ -85,7 +85,7 @@ public class AddRideActivity extends ActionBarActivity {
         Ride ride = new Ride();
         ride.whenPublished = new Date();
         ride.whenStarts = new Date();
-        ride.driver = "fb:555";
+        //ride.driver = "fb:555";
         ride.from = "Milano";
         ride.to = "Firenze";
         ride.freePlaces = 3;

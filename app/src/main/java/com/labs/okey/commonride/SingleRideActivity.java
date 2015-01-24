@@ -1,6 +1,8 @@
 package com.labs.okey.commonride;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -18,6 +20,9 @@ import java.util.List;
 public class SingleRideActivity extends ActionBarActivity {
 
     private static final String LOG_TAG = "CommonRide.SingleRide";
+
+    private static final String WAMSTOKENPREF = "wamsToken";
+    private static final String USERIDPREF = "userid";
 
     private MobileServiceClient mClient;
     private MobileServiceTable<Ride> mRidesTable;
@@ -38,8 +43,22 @@ public class SingleRideActivity extends ActionBarActivity {
                     "https://commonride.azure-mobile.net/",
                     "RuDCJTbpVcpeCQPvrcYeHzpnLyikPo70",
                     this);
+
+            SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+            String userID = sharedPrefs.getString(USERIDPREF, "");
+            MobileServiceUser wamsUser = new MobileServiceUser(userID);
+
+            String token = sharedPrefs.getString(WAMSTOKENPREF, "");
+            // According to this article (http://www.thejoyofcode.com/Setting_the_auth_token_in_the_Mobile_Services_client_and_caching_the_user_rsquo_s_identity_Day_10_.aspx)
+            // this should be JWT token, so use WAMS_TOKEM
+            wamsUser.setAuthenticationToken(token);
+
+            mClient.setCurrentUser(wamsUser);
+
             mRidesTable = mClient.getTable("commonrides", Ride.class);
             mJoinsTable = mClient.getTable("joins", Join.class);
+
+            btnJoinRideClick(null);
 
             mRidesTable.lookUp(mRideId, new TableOperationCallback<Ride>() {
 
@@ -64,6 +83,7 @@ public class SingleRideActivity extends ActionBarActivity {
 
         Join join = new Join();
         join.rideId = mRideId;
+        join.whenJoined = new Date();
 
         mJoinsTable.insert(join, new TableOperationCallback<Join>() {
                     public void onCompleted(Join entity,
@@ -71,6 +91,8 @@ public class SingleRideActivity extends ActionBarActivity {
                                             ServiceFilterResponse response) {
                         if (exception == null) {
                             Log.i(LOG_TAG, "Inserted to JOINS object with ID " + entity.Id);
+                        } else {
+                            Log.e(LOG_TAG, exception.getMessage());
                         }
                     }
                 }

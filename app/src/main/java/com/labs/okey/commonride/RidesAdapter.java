@@ -72,7 +72,7 @@ public class RidesAdapter extends ArrayAdapter<Ride> {
             holder = (RidesHolder)row.getTag();
         }
 
-        holder.txtView.setText(ride.driver);
+        holder.txtView.setText(ride.getDriver());
         holder.txtFreePlaces.setText(Integer.toString(ride.freePlaces));
 
         return row;

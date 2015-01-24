@@ -333,7 +333,9 @@ public class MainActivity extends ActionBarActivity {
                             if( statusCode == 401 ){
                                 // TODO:
                                 // see here: http://chrisrisner.com/Authentication-with-Android-and-Windows-Azure-Mobile-Services
-                                // and here: http://blogs.msdn.com/b/carlosfigueira/archive/2014/02/24/using-service-filters-with-the-mobile-services-javascript-sdk.aspx
+                                // here: http://blogs.msdn.com/b/carlosfigueira/archive/2014/02/24/using-service-filters-with-the-mobile-services-javascript-sdk.aspx
+                                // here: http://www.thejoyofcode.com/Handling_expired_tokens_in_your_application_Day_11_.aspx
+                                // and here: http://blogs.msdn.com/b/carlosfigueira/archive/2014/03/13/caching-and-handling-expired-tokens-in-azure-mobile-services-managed-sdk.aspx
 
                                 final CountDownLatch latch = new CountDownLatch(1);
 

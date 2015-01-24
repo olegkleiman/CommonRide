@@ -11,7 +11,10 @@ public class Ride {
     public String Id;
 
     @com.google.gson.annotations.SerializedName("user_driver")
-    public String driver;
+    private String driver;
+    public String getDriver(){
+        return driver;
+    }
 
     @com.google.gson.annotations.SerializedName("from")
     public String from;
