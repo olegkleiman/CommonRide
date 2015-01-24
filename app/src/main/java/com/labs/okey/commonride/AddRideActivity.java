@@ -1,5 +1,7 @@
 package com.labs.okey.commonride;
 
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -7,9 +9,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.google.gson.JsonObject;
 import com.labs.okey.commonride.model.Ride;
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 import com.microsoft.windowsazure.mobileservices.MobileServiceTable;
+import com.microsoft.windowsazure.mobileservices.MobileServiceUser;
 import com.microsoft.windowsazure.mobileservices.ServiceFilterResponse;
 import com.microsoft.windowsazure.mobileservices.TableOperationCallback;
 
@@ -23,6 +27,9 @@ public class AddRideActivity extends ActionBarActivity {
     private MobileServiceClient mClient;
     private MobileServiceTable<Ride> mRidesTable;
 
+    private static final String WAMSTOKENPREF = "wamsToken";
+    private static final String USERIDPREF = "userid";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,12 +40,21 @@ public class AddRideActivity extends ActionBarActivity {
                     "https://commonride.azure-mobile.net/",
                     "RuDCJTbpVcpeCQPvrcYeHzpnLyikPo70",
                     this);
+
+            SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+            String userID = sharedPrefs.getString(USERIDPREF, "");
+            MobileServiceUser wamsUser = new MobileServiceUser(userID);
+
+            String token = sharedPrefs.getString(WAMSTOKENPREF, "");
+            wamsUser.setAuthenticationToken(token);
+
+            mClient.setCurrentUser(wamsUser);
+
             mRidesTable = mClient.getTable("commonrides", Ride.class);
         } catch(Exception e) {
             Log.i(LOG_TAG, e.getMessage());
         }
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

@@ -28,8 +28,6 @@ public class RegisterActivity extends FragmentActivity {
     private final String PENDING_ACTION_BUNDLE_KEY = "com.labs.okey.commomride:PendingAction";
 
     private static final String TOKENPREF = "accessToken";
-    private static final String USERIDPREF = "userid";
-
     String mAccessToken;
 
     private UiLifecycleHelper uiHelper;
@@ -78,7 +76,6 @@ public class RegisterActivity extends FragmentActivity {
 
                     Intent returnIntent = new Intent();
                     returnIntent.putExtra(TOKENPREF, mAccessToken);
-                    returnIntent.putExtra(USERIDPREF, user.getId());
                     setResult(RESULT_OK, returnIntent);
                     finish();
                 }
@@ -140,7 +137,6 @@ public class RegisterActivity extends FragmentActivity {
         editor.putString("username", fbUser.getFirstName());
         editor.putString("registrationProvider", fbProvider);
         editor.putString("lastUsername", fbUser.getLastName());
-        editor.putString(USERIDPREF, fbUser.getId());
         editor.putString(TOKENPREF, mAccessToken);
 
         editor.commit();
