@@ -8,6 +8,10 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 
+import com.microsoft.windowsazure.mobileservices.MobileServicePush;
+import com.microsoft.windowsazure.mobileservices.Registration;
+import com.microsoft.windowsazure.mobileservices.RegistrationCallback;
+
 /**
  * Created by Oleg on 25-Jan-15.
  */
@@ -26,10 +30,21 @@ public class GCMHandler extends  com.microsoft.windowsazure.notifications.Notifi
 
             protected Void doInBackground(Void... params) {
                 try {
-                    //MainActivity.wamsClient.getPush().register(gcmRegistrationId, null);
+                    MobileServicePush push = MainActivity.wamsClient.getPush();
+                    if( push != null ) {
+                        push.register(gcmRegistrationId, null,
+                                new RegistrationCallback(){
+
+                                    @Override
+                                    public void onRegister(Registration registration, Exception e) {
+
+                                    }
+                                });
+                    }
                     return null;
                 }
                 catch(Exception e) {
+                    String msg = e.getMessage();
                     // handle error
                 }
                 return null;
@@ -55,7 +70,7 @@ public class GCMHandler extends  com.microsoft.windowsazure.notifications.Notifi
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(ctx)
                         .setSmallIcon(R.drawable.ic_launcher)
-                        .setContentTitle("Notification Hub Demo")
+                        .setContentTitle("Common Ride")
                         .setStyle(new NotificationCompat.BigTextStyle()
                                 .bigText(msg))
                         .setContentText(msg);

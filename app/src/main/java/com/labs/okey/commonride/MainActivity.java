@@ -50,7 +50,7 @@ public class MainActivity extends ActionBarActivity {
 
     public final Object mAuthenticationLock = new Object();
 
-    MobileServiceClient wamsClient;
+    static MobileServiceClient wamsClient;
 
     public static final String SENDER_ID = "574878603809";
 
