@@ -8,5 +8,7 @@
     <string name="ride_origin">Tel-Aviv</string>
     <string name="title_activity_add_ride">AddRideActivity</string>
     <string name="title_activity_register">RegisterActivity</string>
+    <string name="pick_date">Pick a date</string>
+    <string name="pick_time">Pick a time</string>
     <string name="facebook_app_id">1556185537963080</string>
 </resources>

@@ -2,6 +2,7 @@ package com.labs.okey.commonride;
 
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,6 +12,8 @@ import android.view.View;
 
 import com.google.gson.JsonObject;
 import com.labs.okey.commonride.model.Ride;
+import com.labs.okey.commonride.pickers.DatePickerFragment;
+import com.labs.okey.commonride.pickers.TimePickerFragment;
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 import com.microsoft.windowsazure.mobileservices.MobileServiceTable;
 import com.microsoft.windowsazure.mobileservices.MobileServiceUser;
@@ -80,12 +83,22 @@ public class AddRideActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    public void showDatePickerDialog(View v) {
+        DialogFragment newFragment = new DatePickerFragment();
+        newFragment.show(getSupportFragmentManager(), "datePicker");
+    }
+
+    public void showTimePickerDialog(View v) {
+        DialogFragment newFragment = new TimePickerFragment();
+        newFragment.show(getSupportFragmentManager(), "timePicker");
+    }
+
     public void btnAddRideClick(View v) {
 
         Ride ride = new Ride();
         ride.whenPublished = new Date();
         ride.whenStarts = new Date();
-        //ride.driver = "fb:555";
+
         ride.from = "Milano";
         ride.to = "Firenze";
         ride.freePlaces = 3;
