@@ -52,7 +52,7 @@ public class MainActivity extends ActionBarActivity {
 
     MobileServiceClient wamsClient;
 
-    public static final String SENDER_ID = "<PROJECT_NUMBER>";
+    public static final String SENDER_ID = "574878603809";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
