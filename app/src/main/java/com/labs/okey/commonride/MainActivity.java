@@ -25,6 +25,7 @@ import com.labs.okey.commonride.model.Ride;
 import com.microsoft.windowsazure.mobileservices.*;
 
 import com.facebook.*;
+import com.microsoft.windowsazure.notifications.NotificationsManager;
 
 import org.apache.http.StatusLine;
 
@@ -50,6 +51,8 @@ public class MainActivity extends ActionBarActivity {
     public final Object mAuthenticationLock = new Object();
 
     MobileServiceClient wamsClient;
+
+    public static final String SENDER_ID = "<PROJECT_NUMBER>";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,6 +107,8 @@ public class MainActivity extends ActionBarActivity {
                 String accessToken = sharedPrefs.getString(TOKENPREF, "");
                 wams_GetRides(accessToken);
         }
+
+        NotificationsManager.handleNotifications(this, SENDER_ID, GCMHandler.class);
     }
 
     private void wams_GetRides(String accessToken){

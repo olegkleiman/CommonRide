@@ -58,8 +58,6 @@ public class SingleRideActivity extends ActionBarActivity {
             mRidesTable = mClient.getTable("commonrides", Ride.class);
             mJoinsTable = mClient.getTable("joins", Join.class);
 
-            btnJoinRideClick(null);
-
             mRidesTable.lookUp(mRideId, new TableOperationCallback<Ride>() {
 
                         public void onCompleted(Ride ride,
