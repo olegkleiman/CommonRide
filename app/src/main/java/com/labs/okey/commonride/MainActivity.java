@@ -296,6 +296,32 @@ public class MainActivity extends ActionBarActivity {
         if( searchView != null ) {
             searchView.setSearchableInfo(
                     searchManager.getSearchableInfo(getComponentName()));
+            searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                @Override
+                public boolean onQueryTextSubmit(String s) {
+                    // returns true if the query has been handled by the listener,
+                    // false to let the SearchView perform the default action.
+                    return false;
+                }
+
+                @Override
+                public boolean onQueryTextChange(String s) {
+                    // returns false if the SearchView should perform the default action of showing any suggestions if available,
+                    // true if the action was handled by the listener.
+                    return false;
+                }
+            });
+            searchView.setOnSuggestionListener(new SearchView.OnSuggestionListener() {
+                @Override
+                public boolean onSuggestionSelect(int i) {
+                    return false;
+                }
+
+                @Override
+                public boolean onSuggestionClick(int i) {
+                    return false;
+                }
+            });
         }
 
         return super.onCreateOptionsMenu(menu);
