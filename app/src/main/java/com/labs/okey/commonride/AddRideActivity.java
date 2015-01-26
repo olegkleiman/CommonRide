@@ -1,16 +1,29 @@
 package com.labs.okey.commonride;
 
+import android.app.DatePickerDialog;
+import android.app.ProgressDialog;
+import android.app.TimePickerDialog;
 import android.content.SharedPreferences;
+import android.location.Location;
+import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.text.Editable;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AutoCompleteTextView;
+import android.widget.DatePicker;
+import android.widget.TextView;
+import android.widget.TimePicker;
 
 import com.google.gson.JsonObject;
+import com.labs.okey.commonride.model.*;
+import com.labs.okey.commonride.adapters.PlaceAutoCompleteAdapter;
 import com.labs.okey.commonride.model.Ride;
 import com.labs.okey.commonride.pickers.DatePickerFragment;
 import com.labs.okey.commonride.pickers.TimePickerFragment;
@@ -20,10 +33,18 @@ import com.microsoft.windowsazure.mobileservices.MobileServiceUser;
 import com.microsoft.windowsazure.mobileservices.ServiceFilterResponse;
 import com.microsoft.windowsazure.mobileservices.TableOperationCallback;
 
+import org.json.JSONObject;
+
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 
-public class AddRideActivity extends ActionBarActivity {
+public class AddRideActivity extends ActionBarActivity
+    implements AdapterView.OnItemClickListener {
 
     private static final String LOG_TAG = "CommonRide.AddRide";
 
@@ -33,10 +54,37 @@ public class AddRideActivity extends ActionBarActivity {
     private static final String WAMSTOKENPREF = "wamsToken";
     private static final String USERIDPREF = "userid";
 
+    private Calendar mWhenStarts;
+
+    private static final String PLACES_API_BASE = "https://maps.googleapis.com/maps/api/place/details";
+    private static final String OUT_JSON = "/json";
+    private static final String API_KEY = "AIzaSyBJryLCLoWeBUnSTabBxwDL4dWO4tExR1c";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_ride);
+
+        AutoCompleteTextView autoCompViewFrom =
+                (AutoCompleteTextView)findViewById(R.id.autocompleteFrom);
+        autoCompViewFrom.setAdapter(new PlaceAutoCompleteAdapter(this, R.layout.search_map_list_item));
+        autoCompViewFrom.setOnItemClickListener(this);
+
+        AutoCompleteTextView autoCompViewTo =
+                (AutoCompleteTextView)findViewById(R.id.autocompleteTo);
+        autoCompViewTo.setAdapter(new PlaceAutoCompleteAdapter(this, R.layout.search_map_list_item));
+        autoCompViewTo.setOnItemClickListener(this);
+
+        TextView txtView = (TextView)findViewById(R.id.txtWhenDate);
+        // See the samples of SimpleDateFormat here: http://developer.android.com/reference/java/text/SimpleDateFormat.html
+        SimpleDateFormat df = new SimpleDateFormat("EEEE MMM dd, yyyy");
+        txtView.setText(df.format(new Date()));
+
+        txtView = (TextView)findViewById(R.id.txtWhenTime);
+        SimpleDateFormat df2 = new SimpleDateFormat("HH:mm");
+        txtView.setText(df2.format(new Date()));
+
+        mWhenStarts = Calendar.getInstance();
 
         try {
             mClient = new MobileServiceClient(
@@ -84,24 +132,67 @@ public class AddRideActivity extends ActionBarActivity {
     }
 
     public void showDatePickerDialog(View v) {
-        DialogFragment newFragment = new DatePickerFragment();
+        DatePickerFragment newFragment = new DatePickerFragment(new DatePickerDialog.OnDateSetListener(){
+
+
+            @Override
+            public void onDateSet(DatePicker datePicker, int year, int month, int day) {
+                TextView txtViewDate = (TextView)findViewById(R.id.txtWhenDate);
+
+                Calendar c = Calendar.getInstance();
+                c.set(year, month, day);
+                Date dt = c.getTime();
+
+                SimpleDateFormat df = new SimpleDateFormat("EEEE MMM dd, yyyy");
+                txtViewDate.setText(df.format(dt));
+
+                mWhenStarts.set(year, month, day);
+            }
+        });
         newFragment.show(getSupportFragmentManager(), "datePicker");
+
     }
 
     public void showTimePickerDialog(View v) {
-        DialogFragment newFragment = new TimePickerFragment();
+        TimePickerFragment newFragment = new TimePickerFragment(new TimePickerDialog.OnTimeSetListener(){
+
+            @Override
+            public void onTimeSet(TimePicker timePicker, int hourOfDay, int minute) {
+                TextView txtView = (TextView)findViewById(R.id.txtWhenTime);
+
+                Calendar c= Calendar.getInstance();
+                c.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                c.set(Calendar.MINUTE, minute);
+                Date dt = c.getTime();
+
+                SimpleDateFormat df = new SimpleDateFormat("HH:mm");
+                txtView.setText(df.format(dt));
+
+                mWhenStarts.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                mWhenStarts.set(Calendar.MINUTE, minute);
+            }
+        });
         newFragment.show(getSupportFragmentManager(), "timePicker");
+
     }
 
     public void btnAddRideClick(View v) {
 
         Ride ride = new Ride();
         ride.whenPublished = new Date();
-        ride.whenStarts = new Date();
+        ride.whenStarts = this.mWhenStarts.getTime();
 
-        ride.from = "Milano";
-        ride.to = "Firenze";
+        AutoCompleteTextView autoText = (AutoCompleteTextView)findViewById(R.id.autocompleteFrom);
+        Editable text = autoText.getText();
+        ride.from = text.toString();
+
+        autoText = (AutoCompleteTextView)findViewById(R.id.autocompleteTo);
+        text = autoText.getText();
+        ride.to = text.toString();
+
         ride.freePlaces = 3;
+
+        final ProgressDialog progress = ProgressDialog.show(this, "Adding", "New ride");
 
         mRidesTable.insert(ride, new TableOperationCallback<Ride>() {
             public void onCompleted(Ride entity,
@@ -109,9 +200,101 @@ public class AddRideActivity extends ActionBarActivity {
                                     ServiceFilterResponse response) {
                 if (exception == null) {
                     Log.i(LOG_TAG, "Inserted object with ID " + entity.Id);
+                    progress.dismiss();
                 }
             }
         });
     }
 
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view,
+                            int position, long id) {
+        FoundPlace place = (FoundPlace)adapterView.getItemAtPosition(position);
+
+        StringBuilder sb = new StringBuilder(PLACES_API_BASE + OUT_JSON);
+        sb.append("?placeid=" + place.getPlaceID());
+        sb.append("&key=" + API_KEY);
+    }
+
+    private class CallPlaceDetails extends AsyncTask<String,Object,String> {
+        private String PlaceDescription;
+
+        public void setPlaceDescription(String desc) {
+            PlaceDescription = desc;
+        }
+
+        // This method is called on main thread UI
+        @Override
+        protected void onPostExecute(String result) {
+            try {
+                // Create a JSON object hierarchy from the results
+                JSONObject jsonObj = new JSONObject(result.toString());
+                JSONObject jsonObjResult = jsonObj.getJSONObject("result");
+                JSONObject jsonObjGeometry = jsonObjResult.getJSONObject("geometry");
+                JSONObject jsonObjLocation = jsonObjGeometry.getJSONObject("location");
+
+                String strLat = jsonObjLocation.getString("lat");
+                String strLon = jsonObjLocation.getString("lng");
+
+                Location location = new Location("");
+                location.setLatitude(Double.parseDouble(strLat));
+                location.setLongitude(Double.parseDouble(strLon));
+
+                String[] tokens = PlaceDescription.split(",");
+
+//                gMap.clear(); // only one ride destination is visible at time
+//                showMarker(location,
+//                        tokens[0],
+//                        "Tap to share ride to there",
+//                        BitmapDescriptorFactory.HUE_RED,
+//                        null);
+//
+//                LatLng myLatLng = new LatLng(myLocation.getLatitude(), myLocation.getLongitude());
+//                LatLng destination = new LatLng(location.getLatitude(), location.getLongitude());
+//                GMapV2Direction md = new GMapV2Direction();
+//
+//                md.drawDirectitions(gMap, myLatLng, destination,
+//                        GMapV2Direction.MODE_WALKING, // .MODE_DRIVING,
+//                        // TODO : detect used language
+//                        // List of supported languages : https://spreadsheets.google.com/pub?key=p9pdwsai2hDMsLkXsoM05KQ&gid=1);
+//                        "iw");
+
+            } catch (Exception ex) {
+
+                Log.e(LOG_TAG, ex.getMessage());
+                ex.printStackTrace();
+            }
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+
+            HttpURLConnection conn = null;
+
+            try {
+
+                String strURL = params[0];
+                URL url = new URL(strURL);
+                conn = (HttpURLConnection) url.openConnection();
+                InputStreamReader in = new InputStreamReader(conn.getInputStream());
+
+                StringBuilder jsonResults = new StringBuilder();
+
+                // Load the results into a StringBuilder
+                int read;
+                char[] buff = new char[1024];
+                while ((read = in.read(buff)) != -1) {
+                    jsonResults.append(buff, 0, read);
+                }
+
+                return jsonResults.toString();
+
+            } catch (Exception ex) {
+                Log.e(LOG_TAG, ex.getMessage());
+                ex.printStackTrace();
+
+                return "";
+            }
+        }
+    }
 }

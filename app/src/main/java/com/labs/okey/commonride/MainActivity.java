@@ -15,12 +15,11 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.webkit.CookieSyncManager;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import com.google.common.util.concurrent.ListenableFuture;
 import com.google.gson.JsonObject;
+import com.labs.okey.commonride.adapters.RidesAdapter;
 import com.labs.okey.commonride.model.Ride;
 import com.microsoft.windowsazure.mobileservices.*;
 
@@ -33,8 +32,6 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.security.Signature;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 

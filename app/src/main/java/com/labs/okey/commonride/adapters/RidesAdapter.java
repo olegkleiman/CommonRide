@@ -1,4 +1,4 @@
-package com.labs.okey.commonride;
+package com.labs.okey.commonride.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import com.labs.okey.commonride.R;
 import com.labs.okey.commonride.model.Ride;
 
 import java.util.ArrayList;
