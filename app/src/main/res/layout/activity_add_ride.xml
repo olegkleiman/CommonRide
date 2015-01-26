@@ -17,12 +17,12 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/location" />
+            android:src="@drawable/ic_action_place" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="From"/>
+            android:text="@string/fromText"/>
 
         <AutoCompleteTextView
             android:layout_width="match_parent"
@@ -40,12 +40,12 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/location" />
+            android:src="@drawable/ic_action_place" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="To"/>
+            android:text="@string/toText"/>
 
         <AutoCompleteTextView
             android:layout_width="match_parent"
@@ -68,13 +68,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/imageView2"
-                android:layout_gravity="right"
-                android:src="@android:drawable/ic_dialog_map" />
+                android:layout_gravity="center|right"
+                android:src="@drawable/ic_action_time" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="When"/>
+                android:text="@string/whenText"
+                android:layout_gravity="center" />
 
         </LinearLayout>
 
@@ -110,11 +111,11 @@
     <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Add"
         android:id="@+id/button"
         android:src="@drawable/ic_action_accept"
         android:onClick="btnAddRideClick"
-        android:layout_gravity="bottom" />
+        android:layout_gravity="center_horizontal|bottom"
+        android:contentDescription="@string/contentDescriptionAddRide" />
 
 
 </LinearLayout>

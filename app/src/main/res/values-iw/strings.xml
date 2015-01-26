@@ -10,4 +10,8 @@
     <string name="action_search">חפש</string>
     <string name="action_settings">הגדרות</string>
     <string name="search_hint">חפש</string>
+    <string name="toText">ל</string>
+    <string name="fromText">מ</string>
+    <string name="whenText">מתי</string>
+    <string name="title_activity_add_ride">נסיעה חדשה</string>
 </resources>
