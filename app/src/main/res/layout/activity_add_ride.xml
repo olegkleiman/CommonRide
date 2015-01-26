@@ -84,34 +84,35 @@
                 android:orientation="horizontal">
 
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Sunday, Jan 14, 2015"
-            android:id="@+id/txtWhenDate"
-            android:clickable="true"
-            android:onClick="showDatePickerDialog" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Sunday, Jan 14, 2015"
+                android:id="@+id/txtWhenDate"
+                android:clickable="true"
+                android:onClick="showDatePickerDialog" />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="02:30"
-            android:id="@+id/txtWhenTime"
-            android:clickable="true"
-            android:gravity="right"
-            android:onClick="showTimePickerDialog"
-            android:layout_marginRight="10dp" />
-
-    </LinearLayout>
-
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="02:30"
+                android:id="@+id/txtWhenTime"
+                android:clickable="true"
+                android:gravity="right"
+                android:onClick="showTimePickerDialog"
+                android:layout_marginRight="10dp" />
 
     </LinearLayout>
 
-    <Button
+
+    </LinearLayout>
+
+    <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Add"
         android:id="@+id/button"
+        android:src="@drawable/ic_action_accept"
         android:onClick="btnAddRideClick"
         android:layout_gravity="bottom" />
 

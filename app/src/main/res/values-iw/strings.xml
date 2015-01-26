@@ -2,9 +2,12 @@
 <resources>
     <string name="app_name">CommonRide</string>
     <string name="hello_world">Hello world!</string>
-    <string name="action_settings">Settings</string>
     <string name="title_activity_single_ride">SingleRideActivity</string>
     <string name="ride_origin">תל-אביב</string>
     <string name="pick_date">בחר תאריך</string>
     <string name="pick_time">בחר שעה</string>
+    <string name="action_add">הוסף</string>
+    <string name="action_search">חפש</string>
+    <string name="action_settings">הגדרות</string>
+    <string name="search_hint">חפש</string>
 </resources>
