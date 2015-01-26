@@ -43,7 +43,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 
-public class AddRideActivity extends ActionBarActivity
+public class AddRideActivity extends  ActionBarActivity
     implements AdapterView.OnItemClickListener {
 
     private static final String LOG_TAG = "CommonRide.AddRide";

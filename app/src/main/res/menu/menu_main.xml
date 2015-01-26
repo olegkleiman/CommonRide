@@ -8,7 +8,7 @@
         android:actionViewClass="android.widget.SearchView"
         android:title="@string/action_search"/>
 
-    <item android:id="@+id/action_compose"
+    <item android:id="@+id/action_add"
         android:icon="@drawable/ic_action_new"
         app:showAsAction="ifRoom|collapseActionView"
         android:title="@string/action_add" />
