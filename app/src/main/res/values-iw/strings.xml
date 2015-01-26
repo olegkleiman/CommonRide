@@ -14,4 +14,5 @@
     <string name="fromText">מ</string>
     <string name="whenText">מתי</string>
     <string name="title_activity_add_ride">נסיעה חדשה</string>
+    <string name="common_rides">נסיעות זמינות</string>
 </resources>

@@ -9,16 +9,11 @@
     tools:context=".MainActivity"
     android:orientation="vertical">
 
-    <ScrollView
+    <ListView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/listview"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="3">
-        <ListView xmlns:android="http://schemas.android.com/apk/res/android"
-            android:id="@+id/listview"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-    </ScrollView>
+        android:layout_height="match_parent"
+        android:layout_weight="3" />
 
     <ImageButton
         android:layout_width="match_parent"

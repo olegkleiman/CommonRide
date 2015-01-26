@@ -18,4 +18,5 @@
     <string name="toText">To</string>
     <string name="whenText">When</string>
     <string name="contentDescriptionAddRide">Add new ride</string>
+    <string name="common_rides">Available rides</string>
 </resources>
