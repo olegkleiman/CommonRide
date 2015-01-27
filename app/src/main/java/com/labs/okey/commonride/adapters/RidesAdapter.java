@@ -65,7 +65,9 @@ public class RidesAdapter extends ArrayAdapter<Ride> {
             holder = new RidesHolder();
 
             holder.txtView = (TextView)row.findViewById(R.id.txtTitle);
+            holder.txtDescription = (TextView)row.findViewById(R.id.txtRideDescription);
             holder.txtFreePlaces = (TextView)row.findViewById(R.id.txtFreePlaces);
+
 
             row.setTag(holder);
         }
@@ -73,7 +75,9 @@ public class RidesAdapter extends ArrayAdapter<Ride> {
             holder = (RidesHolder)row.getTag();
         }
 
-        holder.txtView.setText(ride.getDriver());
+        holder.txtView.setText(ride.getDriver() + " offers a ride from");
+        String desc =  String.format("%s to %s", ride.from, ride.to);
+        holder.txtDescription.setText(desc);
         holder.txtFreePlaces.setText(Integer.toString(ride.freePlaces));
 
         return row;
@@ -81,6 +85,7 @@ public class RidesAdapter extends ArrayAdapter<Ride> {
 
     static class RidesHolder {
         TextView txtView;
+        TextView txtDescription;
         TextView txtFreePlaces;
     }
 }

@@ -20,6 +20,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.DatePicker;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import com.google.gson.JsonObject;
 import com.labs.okey.commonride.model.*;
@@ -190,7 +191,8 @@ public class AddRideActivity extends  ActionBarActivity
         text = autoText.getText();
         ride.to = text.toString();
 
-        ride.freePlaces = 3;
+        TextView txtPassengers = (TextView)findViewById(R.id.txtNumberPassengers);
+        ride.freePlaces = Integer.parseInt(txtPassengers.getText().toString());
 
         final ProgressDialog progress = ProgressDialog.show(this, "Adding", "New ride");
 
@@ -199,9 +201,15 @@ public class AddRideActivity extends  ActionBarActivity
                                     Exception exception,
                                     ServiceFilterResponse response) {
                 if (exception == null) {
-                    Log.i(LOG_TAG, "Inserted object with ID " + entity.Id);
+                    Log.i(LOG_TAG, "Ride added with ID " + entity.Id);
                     progress.dismiss();
+                } else {
+                    Toast.makeText(AddRideActivity.this,
+                                   exception.getMessage(),
+                                   Toast.LENGTH_LONG).show();
                 }
+
+
             }
         });
     }

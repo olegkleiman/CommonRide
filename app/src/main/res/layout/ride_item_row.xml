@@ -5,22 +5,42 @@
 
     <LinearLayout
         android:orientation="horizontal"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent">
+        android:layout_width="match_parent"
+        android:layout_height="50dp">
 
-        <TextView
-            android:id="@+id/txtTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="50dp"
-            android:gravity="center_vertical"
-            android:textSize="26sp"
-            android:typeface="sans"/>
+        <LinearLayout
+            android:orientation="vertical"
+            android:textColor="@android:color/black"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center"
+            android:layout_weight="3">
+
+            <TextView
+                android:id="@+id/txtTitle"
+                android:textSize="20sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="User offers a ride from"
+                android:gravity="center_vertical"/>
+
+            <TextView
+                android:textSize="20sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Milano to Firenze"
+                android:id="@+id/txtRideDescription" />
+
+        </LinearLayout>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="3"
             android:textSize="26sp"
-            android:id="@+id/txtFreePlaces" />
+            android:id="@+id/txtFreePlaces"
+            android:layout_gravity="center|right"
+            android:layout_marginRight="10dp" />
     </LinearLayout>
 
 </LinearLayout>
