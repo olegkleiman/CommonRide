@@ -5,6 +5,9 @@ package com.labs.okey.commonride.model;
  */
 public class RideAnnotated extends Ride {
 
+    @com.google.gson.annotations.SerializedName("id")
+    public String Id;
+
     @com.google.gson.annotations.SerializedName("first_name")
     public String first_name;
 

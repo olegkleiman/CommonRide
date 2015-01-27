@@ -239,7 +239,7 @@ public class MainActivity extends ActionBarActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, final View view,
                                     int position, long id) {
-                final Ride ride = (Ride) parent.getItemAtPosition(position);
+                final RideAnnotated ride = (RideAnnotated) parent.getItemAtPosition(position);
 
                 Intent intent = new Intent(MainActivity.this,
                         SingleRideActivity.class);

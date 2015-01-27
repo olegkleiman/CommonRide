@@ -12,10 +12,13 @@ import android.widget.TextView;
 import com.labs.okey.commonride.R;
 import com.labs.okey.commonride.model.Ride;
 import com.labs.okey.commonride.model.RideAnnotated;
+import com.labs.okey.commonride.utils.DrawableManager;
 
 import java.io.InputStream;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -29,6 +32,8 @@ public class RidesAdapter extends ArrayAdapter<RideAnnotated> {
 
     LayoutInflater m_inflater = null;
 
+    DrawableManager mDrawableManager;
+
     public RidesAdapter(Context context,
                         int layoutResourceId,
                         List<RideAnnotated> data,
@@ -41,6 +46,8 @@ public class RidesAdapter extends ArrayAdapter<RideAnnotated> {
 
         m_inflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+        mDrawableManager = new DrawableManager();
     }
 
     @Override
@@ -73,6 +80,7 @@ public class RidesAdapter extends ArrayAdapter<RideAnnotated> {
             holder.txtDescription = (TextView)row.findViewById(R.id.txtRideDescription);
             holder.txtFreePlaces = (TextView)row.findViewById(R.id.txtFreePlaces);
             holder.imageView = (ImageView)row.findViewById(R.id.imgUserPic);
+            holder.txtRideTime = (TextView)row.findViewById(R.id.txtRideTime);
 
             row.setTag(holder);
         }
@@ -80,12 +88,15 @@ public class RidesAdapter extends ArrayAdapter<RideAnnotated> {
             holder = (RidesHolder)row.getTag();
         }
 
-        holder.txtView.setText(ride.getDriver() + " offers a ride from");
+        holder.txtView.setText(ride.first_name + " " + ride.last_name + " offers a ride from");
         String desc =  String.format("%s to %s", ride.from, ride.to);
         holder.txtDescription.setText(desc);
         holder.txtFreePlaces.setText(Integer.toString(ride.freePlaces));
-        Drawable d = LoadImageFromWebOperations(ride.picture_url);
-        holder.imageView.setImageDrawable(d);
+        mDrawableManager.fetchDrawableOnThread(ride.picture_url,
+                                               holder.imageView);
+        SimpleDateFormat df = new SimpleDateFormat("EEEE MMM dd, yyyy");
+        String whenStarts = df.format(ride.whenStarts);
+        holder.txtRideTime.setText("at " + whenStarts);
 
         return row;
     }
@@ -97,7 +108,7 @@ public class RidesAdapter extends ArrayAdapter<RideAnnotated> {
             Drawable d = Drawable.createFromStream(is, "src name");
             return d;
         }catch (Exception e) {
-            System.out.println("Exc="+e);
+            System.out.println("Exception="+e);
             return null;
         }
     }
@@ -107,5 +118,6 @@ public class RidesAdapter extends ArrayAdapter<RideAnnotated> {
         TextView txtDescription;
         TextView txtFreePlaces;
         ImageView imageView;
+        TextView txtRideTime;
     }
 }

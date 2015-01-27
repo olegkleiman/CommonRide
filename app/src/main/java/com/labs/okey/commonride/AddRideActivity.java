@@ -201,7 +201,7 @@ public class AddRideActivity extends  ActionBarActivity
                                     Exception exception,
                                     ServiceFilterResponse response) {
                 if (exception == null) {
-                    Log.i(LOG_TAG, "Ride added with ID " + entity.Id);
+                    //Log.i(LOG_TAG, "Ride added with ID " + entity.Id);
                     progress.dismiss();
                 } else {
                     Toast.makeText(AddRideActivity.this,

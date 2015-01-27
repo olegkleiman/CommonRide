@@ -6,7 +6,11 @@
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="50dp">
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"
+        android:layout_marginLeft="4dp"
+        android:layout_marginRight="4dp">
 
         <ImageView
             android:layout_width="32dp"
@@ -19,23 +23,31 @@
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:layout_gravity="center"
-            android:layout_weight="3">
+            android:layout_weight="3"
+            android:layout_marginLeft="6dp">
 
             <TextView
                 android:id="@+id/txtTitle"
-                android:textSize="20sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="@android:color/black"
                 android:text="User offers a ride from"
                 android:gravity="center_vertical"/>
 
 
             <TextView
-                android:textSize="20sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="@android:color/black"
                 android:text="Milano to Firenze"
                 android:id="@+id/txtRideDescription" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/black"
+                android:text="At"
+                android:id="@+id/txtRideTime" />
 
         </LinearLayout>
 
