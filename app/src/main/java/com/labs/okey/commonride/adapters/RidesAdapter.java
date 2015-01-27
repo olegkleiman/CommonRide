@@ -89,28 +89,17 @@ public class RidesAdapter extends ArrayAdapter<RideAnnotated> {
         }
 
         holder.txtView.setText(ride.first_name + " " + ride.last_name + " offers a ride from");
-        String desc =  String.format("%s to %s", ride.from, ride.to);
+        String desc = String.format("%s to %s", ride.from, ride.to);
         holder.txtDescription.setText(desc);
         holder.txtFreePlaces.setText(Integer.toString(ride.freePlaces));
-        mDrawableManager.fetchDrawableOnThread(ride.picture_url,
-                                               holder.imageView);
         SimpleDateFormat df = new SimpleDateFormat("EEEE MMM dd, yyyy");
         String whenStarts = df.format(ride.whenStarts);
         holder.txtRideTime.setText("at " + whenStarts);
 
-        return row;
-    }
+        mDrawableManager.fetchDrawableOnThread(ride.picture_url,
+                                               holder.imageView);
 
-    private Drawable LoadImageFromWebOperations(String url) {
-        try
-        {
-            InputStream is = (InputStream) new URL(url).getContent();
-            Drawable d = Drawable.createFromStream(is, "src name");
-            return d;
-        }catch (Exception e) {
-            System.out.println("Exception="+e);
-            return null;
-        }
+        return row;
     }
 
     static class RidesHolder {

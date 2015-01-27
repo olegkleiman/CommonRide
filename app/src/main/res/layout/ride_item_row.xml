@@ -21,7 +21,7 @@
             android:orientation="vertical"
             android:textColor="@android:color/black"
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_weight="3"
             android:layout_marginLeft="6dp">
@@ -33,7 +33,6 @@
                 android:textColor="@android:color/black"
                 android:text="User offers a ride from"
                 android:gravity="center_vertical"/>
-
 
             <TextView
                 android:layout_width="wrap_content"
