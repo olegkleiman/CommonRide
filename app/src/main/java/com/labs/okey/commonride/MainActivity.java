@@ -37,6 +37,8 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
@@ -56,10 +58,19 @@ public class MainActivity extends ActionBarActivity {
 
     public static final String SENDER_ID = "574878603809";
 
+    public void shuffle(Ride ride) {
+
+    }
+
+    public void shuffles(List<Ride> rides) {
+
+    }
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        try {
+         try {
             PackageInfo packageInfo = getPackageManager().getPackageInfo(getPackageName(),
                     PackageManager.GET_SIGNATURES);
             for (android.content.pm.Signature signature : packageInfo.signatures) {
@@ -160,44 +171,42 @@ public class MainActivity extends ActionBarActivity {
                                                         t = t.getCause();
                                                     }
                                                 } else {
-                                                    //setupRidesListView(rides);
+                                                    setupRidesListView(rides);
                                                 }
 
                                                 progress.dismiss();
                                             }
                                         });
 
-                                        MobileServiceTable<Ride> ridesTable = wamsClient.getTable("commonrides", Ride.class);
-                                        ridesTable//.where().field("when_starts").gt(new Date())
-                                                .execute(new TableQueryCallback<Ride>() {
-                                                             @Override
-                                                             public void onCompleted(List<Ride> rides,
-                                                                                     int count,
-                                                                                     Exception error,
-                                                                                     ServiceFilterResponse serviceFilterResponse) {
-
-                                                                 if (error != null) {
-                                                                     String err = error.toString();
-                                                                     Throwable t = error.getCause();
-
-                                                                     while (t != null) {
-                                                                         err = err + "\n Cause: " + t.toString();
-                                                                         t = t.getCause();
-                                                                     }
-                                                                 } else {
-                                                                     setupRidesListView(rides);
-                                                                 }
-                                                                 progress.dismiss();
-                                                             }
-                                                         }
-                                                );
+//                                        MobileServiceTable<Ride> ridesTable = wamsClient.getTable("commonrides", Ride.class);
+//                                        ridesTable//.where().field("when_starts").gt(new Date())
+//                                                .execute(new TableQueryCallback<Ride>() {
+//                                                             @Override
+//                                                             public void onCompleted(List<Ride> rides,
+//                                                                                     int count,
+//                                                                                     Exception error,
+//                                                                                     ServiceFilterResponse serviceFilterResponse) {
+//
+//                                                                 if (error != null) {
+//                                                                     String err = error.toString();
+//                                                                     Throwable t = error.getCause();
+//
+//                                                                     while (t != null) {
+//                                                                         err = err + "\n Cause: " + t.toString();
+//                                                                         t = t.getCause();
+//                                                                     }
+//                                                                 } else {
+//                                                                     setupRidesListView(rides);
+//                                                                 }
+//                                                                 progress.dismiss();
+//                                                             }
+//                                                         }
+//                                                );
 
                                     } else {
                                         progress.dismiss();
                                         Log.e(LOG_TAG, exception.getMessage());
                                     }
-
-
 
                                     mAuthenticationLock.notifyAll();
                                 }
@@ -218,7 +227,7 @@ public class MainActivity extends ActionBarActivity {
         editor.commit();
     }
 
-    private void setupRidesListView(List<Ride> rides){
+    private void setupRidesListView(List<RideAnnotated> rides){
         final ListView listview = (ListView) findViewById(R.id.listview);
 
         RidesAdapter ridesAdapter = new RidesAdapter(MainActivity.this,

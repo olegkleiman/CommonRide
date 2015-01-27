@@ -8,6 +8,11 @@
         android:layout_width="match_parent"
         android:layout_height="50dp">
 
+        <ImageView
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:id="@+id/imgUserPic" />
+
         <LinearLayout
             android:orientation="vertical"
             android:textColor="@android:color/black"
@@ -23,6 +28,7 @@
                 android:layout_height="wrap_content"
                 android:text="User offers a ride from"
                 android:gravity="center_vertical"/>
+
 
             <TextView
                 android:textSize="20sp"
