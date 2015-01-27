@@ -25,6 +25,7 @@ import android.widget.ListView;
 import com.google.gson.JsonObject;
 import com.labs.okey.commonride.adapters.RidesAdapter;
 import com.labs.okey.commonride.model.Ride;
+import com.labs.okey.commonride.model.RideAnnotated;
 import com.microsoft.windowsazure.mobileservices.*;
 
 import com.facebook.*;
@@ -141,6 +142,31 @@ public class MainActivity extends ActionBarActivity {
 
                                         saveUser(mobileServiceUser);
 
+                                        MobileServiceTable<RideAnnotated> annotatedRidesTable =
+                                                wamsClient.getTable("rides_annotated", RideAnnotated.class);
+                                        annotatedRidesTable.execute(new TableQueryCallback<RideAnnotated>(){
+
+                                            @Override
+                                            public void onCompleted(List<RideAnnotated> rides,
+                                                                    int count,
+                                                                    Exception error,
+                                                                    ServiceFilterResponse serviceFilterResponse) {
+                                                if( error != null) {
+                                                    String err = error.toString();
+                                                    Throwable t = error.getCause();
+
+                                                    while (t != null) {
+                                                        err = err + "\n Cause: " + t.toString();
+                                                        t = t.getCause();
+                                                    }
+                                                } else {
+                                                    //setupRidesListView(rides);
+                                                }
+
+                                                progress.dismiss();
+                                            }
+                                        });
+
                                         MobileServiceTable<Ride> ridesTable = wamsClient.getTable("commonrides", Ride.class);
                                         ridesTable//.where().field("when_starts").gt(new Date())
                                                 .execute(new TableQueryCallback<Ride>() {
@@ -162,7 +188,6 @@ public class MainActivity extends ActionBarActivity {
                                                                      setupRidesListView(rides);
                                                                  }
                                                                  progress.dismiss();
-
                                                              }
                                                          }
                                                 );
