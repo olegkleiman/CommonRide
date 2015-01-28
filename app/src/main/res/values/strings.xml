@@ -13,10 +13,19 @@
     <string name="facebook_app_id">1556185537963080</string>
     <string name="action_search">Search</string>
     <string name="action_add">Add</string>
+    <string name="action_refresh">Refresh</string>
     <string name="search_hint">Search</string>
     <string name="fromText">From</string>
     <string name="toText">To</string>
     <string name="whenText">When</string>
     <string name="contentDescriptionAddRide">Add new ride</string>
     <string name="common_rides">Available rides</string>
+    <string-array name="drawers_array">
+        <item>Settings</item>
+        <item>Rate</item>
+        <item>Logout</item>
+        <item>About</item>
+    </string-array>
+    <string name="drawer_open">Open navigation drawer</string>
+    <string name="drawer_close">Close navigation drawer</string>
 </resources>

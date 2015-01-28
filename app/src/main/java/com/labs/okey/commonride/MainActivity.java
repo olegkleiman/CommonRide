@@ -1,5 +1,8 @@
 package com.labs.okey.commonride;
 
+import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.Context;
@@ -11,15 +14,22 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.preference.PreferenceManager;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v7.widget.SearchView;
 import android.util.Base64;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.google.gson.JsonObject;
@@ -58,14 +68,13 @@ public class MainActivity extends ActionBarActivity {
 
     public static final String SENDER_ID = "574878603809";
 
-    public void shuffle(Ride ride) {
+    private DrawerLayout mDrawerLayout;
+    private ActionBarDrawerToggle mDrawerToggle;
+    private ListView mDrawerList;
+    private String[] mDrawerTitles;
 
-    }
-
-    public void shuffles(List<Ride> rides) {
-
-    }
-
+    private CharSequence mDrawerTitle;
+    private CharSequence mTitle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,6 +114,42 @@ public class MainActivity extends ActionBarActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mTitle = mDrawerTitle = getTitle();
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mDrawerList = (ListView) findViewById(R.id.left_drawer);
+        mDrawerTitles = getResources().getStringArray(R.array.drawers_array);
+
+        // set a custom shadow that overlays the main content when the drawer opens
+        mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
+        // set up the drawer's list view with items and click listener
+        mDrawerList.setAdapter(new ArrayAdapter<String>(this,
+                R.layout.drawer_list_item, mDrawerTitles));
+
+//        // enable ActionBar app icon to behave as action to toggle nav drawer
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//        getSupportActionBar().setHomeButtonEnabled(true);
+
+        // ActionBarDrawerToggle ties together the the proper interactions
+        // between the sliding drawer and the action bar app icon
+//        mDrawerToggle = new ActionBarDrawerToggle(
+//                this,                  /* host Activity */
+//                mDrawerLayout,         /* DrawerLayout object */
+//                R.drawable.ic_drawer,  /* nav drawer image to replace 'Up' caret */
+//                R.string.drawer_open,  /* "open drawer" description for accessibility */
+//                R.string.drawer_close  /* "close drawer" description for accessibility */
+//        ) {
+//            public void onDrawerClosed(View view) {
+//                getSupportActionBar().setTitle(mTitle);
+//                supportInvalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+//            }
+//
+//            public void onDrawerOpened(View drawerView) {
+//                getSupportActionBar().setTitle(mDrawerTitle);
+//                supportInvalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+//            }
+//        };
+//        mDrawerLayout.setDrawerListener(mDrawerToggle);
 
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         if( sharedPrefs.getString(USERIDPREF, "").isEmpty() ) {
@@ -177,32 +222,6 @@ public class MainActivity extends ActionBarActivity {
                                                 progress.dismiss();
                                             }
                                         });
-
-//                                        MobileServiceTable<Ride> ridesTable = wamsClient.getTable("commonrides", Ride.class);
-//                                        ridesTable//.where().field("when_starts").gt(new Date())
-//                                                .execute(new TableQueryCallback<Ride>() {
-//                                                             @Override
-//                                                             public void onCompleted(List<Ride> rides,
-//                                                                                     int count,
-//                                                                                     Exception error,
-//                                                                                     ServiceFilterResponse serviceFilterResponse) {
-//
-//                                                                 if (error != null) {
-//                                                                     String err = error.toString();
-//                                                                     Throwable t = error.getCause();
-//
-//                                                                     while (t != null) {
-//                                                                         err = err + "\n Cause: " + t.toString();
-//                                                                         t = t.getCause();
-//                                                                     }
-//                                                                 } else {
-//                                                                     setupRidesListView(rides);
-//                                                                 }
-//                                                                 progress.dismiss();
-//                                                             }
-//                                                         }
-//                                                );
-
                                     } else {
                                         progress.dismiss();
                                         Log.e(LOG_TAG, exception.getMessage());
@@ -319,6 +338,10 @@ public class MainActivity extends ActionBarActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
+
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setHomeButtonEnabled(true);
+        actionBar.setTitle("Rides to share");
 
         // Associate searchable configuration with the SearchView
         SearchManager searchManager =
@@ -512,5 +535,43 @@ public class MainActivity extends ActionBarActivity {
                 }
             });
         }
+    }
+
+    public static class PlanetFragment extends Fragment {
+        public static final String ARG_PLANET_NUMBER = "planet_number";
+
+        public PlanetFragment() {
+            // Empty constructor required for fragment subclasses
+        }
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                                 Bundle savedInstanceState) {
+            return null;
+        }
+    }
+
+    /* The click listner for ListView in the navigation drawer */
+    private class DrawerItemClickListener implements ListView.OnItemClickListener {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            selectItem(position);
+        }
+    }
+
+    private void selectItem(int position) {
+        // update the main content by replacing fragments
+        Fragment fragment = new PlanetFragment();
+        Bundle args = new Bundle();
+        args.putInt(PlanetFragment.ARG_PLANET_NUMBER, position);
+        fragment.setArguments(args);
+
+        FragmentManager fragmentManager = getFragmentManager();
+        fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
+
+        // update selected item and title, then close the drawer
+        mDrawerList.setItemChecked(position, true);
+        setTitle(mDrawerTitles[position]);
+        mDrawerLayout.closeDrawer(mDrawerList);
     }
 }
