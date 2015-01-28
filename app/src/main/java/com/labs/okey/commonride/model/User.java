@@ -22,4 +22,11 @@ public class User {
 
     @com.google.gson.annotations.SerializedName("email")
     public String email;
+
+    @com.google.gson.annotations.SerializedName("phone")
+    public String phone;
+
+    @com.google.gson.annotations.SerializedName("use_phone")
+    public Boolean usePhone;
+
 }

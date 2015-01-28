@@ -8,10 +8,16 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
+import com.labs.okey.commonride.adapters.PassengersAdapter;
 import com.labs.okey.commonride.model.Join;
+import com.labs.okey.commonride.model.JoinAnnotated;
 import com.labs.okey.commonride.model.Ride;
+import com.labs.okey.commonride.model.User;
+import com.labs.okey.commonride.utils.DrawableManager;
 import com.microsoft.windowsazure.mobileservices.*;
 
 import java.util.Date;
@@ -27,6 +33,7 @@ public class SingleRideActivity extends ActionBarActivity {
     private MobileServiceClient mClient;
     private MobileServiceTable<Ride> mRidesTable;
     private MobileServiceTable<Join> mJoinsTable;
+    private MobileServiceTable<JoinAnnotated> mJoinsAnnotatedTable;
 
     String mRideId;
 
@@ -56,8 +63,6 @@ public class SingleRideActivity extends ActionBarActivity {
             mClient.setCurrentUser(wamsUser);
 
             mRidesTable = mClient.getTable("commonrides", Ride.class);
-            mJoinsTable = mClient.getTable("joins", Join.class);
-
             mRidesTable.lookUp(mRideId, new TableOperationCallback<Ride>() {
 
                         public void onCompleted(Ride ride,
@@ -68,13 +73,81 @@ public class SingleRideActivity extends ActionBarActivity {
                                 if( ride != null ) {
                                    TextView v = (TextView) findViewById(R.id.ride_from);
                                    v.setText(ride.from);
+
+                                   v = (TextView)findViewById(R.id.ride_to);
+                                   v.setText(ride.to);
+
+                                   final TextView txtDriverName =
+                                           (TextView) findViewById(R.id.txtDriverName);
+                                   final TextView txtDriverEMail =
+                                            (TextView) findViewById(R.id.txtDriverEMail);
+                                    final TextView txtDriverPhone =
+                                            (TextView) findViewById(R.id.txtDriverPhone);
+                                    final ImageView imageDriver = (ImageView)findViewById(R.id.imgageViewDriver);
+
+                                   String driverID = ride.getDriver();
+                                   MobileServiceTable<User> usersTable =
+                                            mClient.getTable("users", User.class);
+                                   usersTable.where().field("registration_id").eq(driverID)
+                                           .execute( new TableQueryCallback<User>(){
+                                       @Override
+                                       public void onCompleted(List<User> users,
+                                                               int count,
+                                                               Exception error,
+                                                               ServiceFilterResponse serviceFilterResponse) {
+
+                                           if( error == null ) {
+
+                                               User user = users.get(0);
+                                               if( user != null ) {
+                                                   txtDriverName.setText(user.first_name);
+                                                   txtDriverEMail.setText(user.email);
+                                                   txtDriverPhone.setText(user.phone);
+
+                                                   DrawableManager drawableManager = new DrawableManager();
+                                                   drawableManager.fetchDrawableOnThread(user.picture_url,
+                                                                                        imageDriver);
+
+                                               }
+                                           }
+                                       }
+                                   });
                                 }
                             }
                         }
                     });
+            mJoinsAnnotatedTable = mClient.getTable("joins_annotated", JoinAnnotated.class);
+            mJoinsAnnotatedTable.execute(new TableQueryCallback<JoinAnnotated>() {
+                @Override
+                public void onCompleted(List<JoinAnnotated> joins,
+                                        int count,
+                                        Exception error,
+                                        ServiceFilterResponse serviceFilterResponse) {
+                    if( error != null) {
+                        String err = error.toString();
+                        Throwable t = error.getCause();
+
+                        while (t != null) {
+                            err = err + "\n Cause: " + t.toString();
+                            t = t.getCause();
+                        }
+                    }
+                    else{
+                        setupJoinsListView(joins);
+                    }
+                }
+            });
         } catch(Exception e) {
             Log.i(LOG_TAG, e.getMessage());
         }
+    }
+
+    private void setupJoinsListView(List<JoinAnnotated> joins){
+        final ListView listview = (ListView) findViewById(R.id.listViewPassengers);
+
+        PassengersAdapter ridesAdapter = new PassengersAdapter(SingleRideActivity.this,
+                R.layout.passenger_item_row, joins);
+        listview.setAdapter(ridesAdapter);
     }
 
     public void btnJoinRideClick(View v) {
@@ -82,6 +155,8 @@ public class SingleRideActivity extends ActionBarActivity {
         Join join = new Join();
         join.rideId = mRideId;
         join.whenJoined = new Date();
+
+        mJoinsTable = mClient.getTable("joins", Join.class);
 
         mJoinsTable.insert(join, new TableOperationCallback<Join>() {
                     public void onCompleted(Join entity,

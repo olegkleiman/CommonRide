@@ -7,8 +7,8 @@ import java.util.Date;
  */
 public class Ride {
 
-//    @com.google.gson.annotations.SerializedName("id")
-//    public String Id;
+    @com.google.gson.annotations.SerializedName("id")
+    public String Id;
 
     @com.google.gson.annotations.SerializedName("user_driver")
     private String driver;
