@@ -1,6 +1,9 @@
 package com.labs.okey.commonride;
 
+import android.app.ProgressDialog;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
@@ -11,6 +14,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.labs.okey.commonride.adapters.PassengersAdapter;
 import com.labs.okey.commonride.model.Join;
@@ -20,6 +24,7 @@ import com.labs.okey.commonride.model.User;
 import com.labs.okey.commonride.utils.DrawableManager;
 import com.microsoft.windowsazure.mobileservices.*;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -36,6 +41,8 @@ public class SingleRideActivity extends ActionBarActivity {
     private MobileServiceTable<JoinAnnotated> mJoinsAnnotatedTable;
 
     String mRideId;
+    String mDriverPhone;
+    String mDriverEMail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +69,9 @@ public class SingleRideActivity extends ActionBarActivity {
 
             mClient.setCurrentUser(wamsUser);
 
+            final ProgressDialog progress = ProgressDialog.show(this,
+                    "Downloading", "Ride");
+
             mRidesTable = mClient.getTable("commonrides", Ride.class);
             mRidesTable.lookUp(mRideId, new TableOperationCallback<Ride>() {
 
@@ -77,41 +87,51 @@ public class SingleRideActivity extends ActionBarActivity {
                                    v = (TextView)findViewById(R.id.ride_to);
                                    v.setText(ride.to);
 
+                                   v = (TextView)findViewById(R.id.ride_when);
+                                   SimpleDateFormat df = new SimpleDateFormat("EEEE MMM dd, yyyy HH:mm");
+                                   v.setText(df.format(ride.whenStarts));
+
                                    final TextView txtDriverName =
                                            (TextView) findViewById(R.id.txtDriverName);
                                    final TextView txtDriverEMail =
                                             (TextView) findViewById(R.id.txtDriverEMail);
-                                    final TextView txtDriverPhone =
+                                   final TextView txtDriverPhone =
                                             (TextView) findViewById(R.id.txtDriverPhone);
-                                    final ImageView imageDriver = (ImageView)findViewById(R.id.imgageViewDriver);
+                                   final ImageView imageDriver = (ImageView)findViewById(R.id.imgageViewDriver);
 
                                    String driverID = ride.getDriver();
                                    MobileServiceTable<User> usersTable =
                                             mClient.getTable("users", User.class);
                                    usersTable.where().field("registration_id").eq(driverID)
-                                           .execute( new TableQueryCallback<User>(){
-                                       @Override
-                                       public void onCompleted(List<User> users,
-                                                               int count,
-                                                               Exception error,
-                                                               ServiceFilterResponse serviceFilterResponse) {
+                                           .execute(new TableQueryCallback<User>() {
+                                               @Override
+                                               public void onCompleted(List<User> users,
+                                                                       int count,
+                                                                       Exception error,
+                                                                       ServiceFilterResponse serviceFilterResponse) {
 
-                                           if( error == null ) {
+                                                   if (error == null) {
 
-                                               User user = users.get(0);
-                                               if( user != null ) {
-                                                   txtDriverName.setText(user.first_name);
-                                                   txtDriverEMail.setText(user.email);
-                                                   txtDriverPhone.setText(user.phone);
+                                                       User user = users.get(0);
+                                                       if (user != null) {
+                                                           txtDriverName.setText(user.first_name +
+                                                                   " " + user.last_name);
+                                                           mDriverEMail = user.email;
+                                                           txtDriverEMail.setText(mDriverEMail);
+                                                           mDriverPhone = user.phone;
+                                                           txtDriverPhone.setText(user.phone);
 
-                                                   DrawableManager drawableManager = new DrawableManager();
-                                                   drawableManager.fetchDrawableOnThread(user.picture_url,
-                                                                                        imageDriver);
+                                                           DrawableManager drawableManager = new DrawableManager();
+                                                           drawableManager.fetchDrawableOnThread(user.picture_url,
+                                                                   imageDriver);
 
+
+                                                       }
+                                                   }
+
+                                                   progress.dismiss();
                                                }
-                                           }
-                                       }
-                                   });
+                                           });
                                 }
                             }
                         }
@@ -148,6 +168,34 @@ public class SingleRideActivity extends ActionBarActivity {
         PassengersAdapter ridesAdapter = new PassengersAdapter(SingleRideActivity.this,
                 R.layout.passenger_item_row, joins);
         listview.setAdapter(ridesAdapter);
+    }
+
+    public void callDriver(View v){
+        Intent phoneIntent = new Intent(Intent.ACTION_CALL);
+        phoneIntent.setData(Uri.parse("tel:" + mDriverPhone));
+
+        try {
+            startActivity(phoneIntent);
+        } catch(android.content.ActivityNotFoundException ex) {
+            Toast.makeText(this,
+                    "Call failed: " + ex.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+    public void emailDriver(View v) {
+        Intent i = new Intent(Intent.ACTION_SEND);
+        i.setType("message/rfc822");
+        i.putExtra(Intent.EXTRA_EMAIL  , new String[]{mDriverEMail});
+        i.putExtra(Intent.EXTRA_SUBJECT, "subject of email");
+        i.putExtra(Intent.EXTRA_TEXT   , "body of email");
+
+        try {
+            startActivity(Intent.createChooser(i, "Send mail..."));
+        } catch (android.content.ActivityNotFoundException ex) {
+            Toast.makeText(this, "There are no email clients installed.",
+                    Toast.LENGTH_SHORT).show();
+        }
     }
 
     public void btnJoinRideClick(View v) {

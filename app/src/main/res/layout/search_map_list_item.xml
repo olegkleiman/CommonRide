@@ -3,4 +3,6 @@
     android:id="@+id/txtPlaceDesc"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    android:textSize="22dp"
+    android:textColor="@android:color/black"
     />

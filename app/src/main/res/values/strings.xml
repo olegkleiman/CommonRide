@@ -20,12 +20,17 @@
     <string name="whenText">When</string>
     <string name="contentDescriptionAddRide">Add new ride</string>
     <string name="common_rides">Available rides</string>
+
     <string-array name="drawers_array">
         <item>Settings</item>
+        <item>My rides</item>
         <item>Rate</item>
         <item>Logout</item>
         <item>About</item>
     </string-array>
+
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
+    <string name="title_activity_ride_map">RideMapActivity</string>
+
 </resources>

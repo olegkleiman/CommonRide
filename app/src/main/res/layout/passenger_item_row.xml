@@ -21,18 +21,21 @@
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:layout_marginLeft="4dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Passenger name"
-                android:id="@+id/txtPassengerName" />
+                android:id="@+id/txtPassengerName"
+                android:textColor="@android:color/black" />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="When joined"
-                android:id="@+id/txtPassengerWhenJoined" />
+                android:id="@+id/txtPassengerWhenJoined"
+                android:textColor="@android:color/black" />
 
         </LinearLayout>
     </LinearLayout>

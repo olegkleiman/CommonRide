@@ -420,6 +420,12 @@ public class MainActivity extends ActionBarActivity {
             }
             return true;
 
+            case R.id.action_refresh: {
+                SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                String accessToken = sharedPrefs.getString(TOKENPREF, "");
+                wams_GetRides(accessToken);
+            }
+
             case R.id.action_search:
             case R.id.action_settings:
                 return true;
