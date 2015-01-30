@@ -31,7 +31,7 @@ public class Ride {
     @com.google.gson.annotations.SerializedName("to_lat")
     public String to_lat;
 
-    @com.google.gson.annotations.SerializedName("from_lon")
+    @com.google.gson.annotations.SerializedName("to_lon")
     public String to_lon;
 
     @com.google.gson.annotations.SerializedName("free_places")

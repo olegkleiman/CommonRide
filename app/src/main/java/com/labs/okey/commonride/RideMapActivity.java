@@ -11,7 +11,9 @@ import android.widget.Toast;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.LatLng;
 import com.labs.okey.commonride.model.Ride;
+import com.labs.okey.commonride.utils.GMapV2Direction;
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 import com.microsoft.windowsazure.mobileservices.MobileServiceTable;
 import com.microsoft.windowsazure.mobileservices.ServiceFilterResponse;
@@ -44,11 +46,24 @@ public class RideMapActivity extends FragmentActivity {
             final ProgressDialog progress = ProgressDialog.show(this,
                     "Preparing", "Ride's map");
 
-            mRidesTable.lookUp(mRideId, new TableOperationCallback() {
+            mRidesTable.lookUp(mRideId, new TableOperationCallback<Ride>() {
                 @Override
-                public void onCompleted(Object o, Exception e, ServiceFilterResponse serviceFilterResponse) {
+                public void onCompleted(Ride ride,
+                                        Exception e,
+                                        ServiceFilterResponse serviceFilterResponse) {
                     if( e == null ){
 
+                        LatLng start = new LatLng(Double.parseDouble(ride.from_lat),
+                                                  Double.parseDouble(ride.from_lon));
+                        LatLng end = new LatLng(Double.parseDouble(ride.to_lat),
+                                                Double.parseDouble(ride.to_lon));
+
+                        GMapV2Direction md = new GMapV2Direction();
+                        md.drawDirectitions(gMap, start, end,
+                                GMapV2Direction.MODE_DRIVING,
+                        // TODO : detect used language
+                        // List of supported languages : https://spreadsheets.google.com/pub?key=p9pdwsai2hDMsLkXsoM05KQ&gid=1);
+                        "iw");
                     }
 
                     progress.dismiss();

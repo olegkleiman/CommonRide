@@ -47,8 +47,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 
-public class AddRideActivity extends  ActionBarActivity
-    implements AdapterView.OnItemClickListener {
+public class AddRideActivity extends  ActionBarActivity {
 
     private static final String LOG_TAG = "CommonRide.AddRide";
 
@@ -64,6 +63,11 @@ public class AddRideActivity extends  ActionBarActivity
     private static final String OUT_JSON = "/json";
     private static final String API_KEY = "AIzaSyBJryLCLoWeBUnSTabBxwDL4dWO4tExR1c";
 
+    private String from_lat;
+    private String from_lon;
+    private String to_lat;
+    private String to_lon;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,12 +76,42 @@ public class AddRideActivity extends  ActionBarActivity
         AutoCompleteTextView autoCompViewFrom =
                 (AutoCompleteTextView)findViewById(R.id.autocompleteFrom);
         autoCompViewFrom.setAdapter(new PlaceAutoCompleteAdapter(this, R.layout.search_map_list_item));
-        autoCompViewFrom.setOnItemClickListener(this);
+        autoCompViewFrom.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view,
+                                    int position,
+                                    long id) {
+                FoundPlace place = (FoundPlace)adapterView.getItemAtPosition(position);
+
+                StringBuilder sb = new StringBuilder(PLACES_API_BASE + OUT_JSON);
+                sb.append("?placeid=" + place.getPlaceID());
+                sb.append("&key=" + API_KEY);
+
+                CallPlaceDetails task = new CallPlaceDetails();
+                task.setPlaceDescription(place.getDescription(), "from");
+                task.execute(sb.toString());
+            }
+        });
 
         AutoCompleteTextView autoCompViewTo =
                 (AutoCompleteTextView)findViewById(R.id.autocompleteTo);
         autoCompViewTo.setAdapter(new PlaceAutoCompleteAdapter(this, R.layout.search_map_list_item));
-        autoCompViewTo.setOnItemClickListener(this);
+        autoCompViewTo.setOnItemClickListener( new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view,
+                                    int position,
+                                    long id) {
+                FoundPlace place = (FoundPlace)adapterView.getItemAtPosition(position);
+
+                StringBuilder sb = new StringBuilder(PLACES_API_BASE + OUT_JSON);
+                sb.append("?placeid=" + place.getPlaceID());
+                sb.append("&key=" + API_KEY);
+
+                CallPlaceDetails task = new CallPlaceDetails();
+                task.setPlaceDescription(place.getDescription(), "to");
+                task.execute(sb.toString());
+            }
+        });
 
         TextView txtView = (TextView)findViewById(R.id.txtWhenDate);
         // See the samples of SimpleDateFormat here: http://developer.android.com/reference/java/text/SimpleDateFormat.html
@@ -189,10 +223,14 @@ public class AddRideActivity extends  ActionBarActivity
         AutoCompleteTextView autoText = (AutoCompleteTextView)findViewById(R.id.autocompleteFrom);
         Editable text = autoText.getText();
         ride.from = text.toString();
+        ride.from_lat = from_lat;
+        ride.from_lon = from_lon;
 
         autoText = (AutoCompleteTextView)findViewById(R.id.autocompleteTo);
         text = autoText.getText();
         ride.to = text.toString();
+        ride.to_lat = to_lat;
+        ride.to_lon = to_lon;
 
         TextView txtPassengers = (TextView)findViewById(R.id.txtNumberPassengers);
         ride.freePlaces = Integer.parseInt(txtPassengers.getText().toString());
@@ -205,39 +243,24 @@ public class AddRideActivity extends  ActionBarActivity
                                     ServiceFilterResponse response) {
                 if (exception == null) {
                     //Log.i(LOG_TAG, "Ride added with ID " + entity.Id);
-                    progress.dismiss();
+
                 } else {
                     Toast.makeText(AddRideActivity.this,
                                    exception.getMessage(),
                                    Toast.LENGTH_LONG).show();
                 }
-
-
+                progress.dismiss();
             }
         });
     }
 
-    @Override
-    public void onItemClick(AdapterView<?> adapterView, View view,
-                            int position, long id) {
-        FoundPlace place = (FoundPlace)adapterView.getItemAtPosition(position);
-
-        StringBuilder sb = new StringBuilder(PLACES_API_BASE + OUT_JSON);
-        sb.append("?placeid=" + place.getPlaceID());
-        sb.append("&key=" + API_KEY);
-
-        CallPlaceDetails task = new CallPlaceDetails();
-        task.setPlaceDescription(place.getDescription());
-        task.execute(sb.toString());
-
-        Toast.makeText(this, place.getDescription(), Toast.LENGTH_SHORT).show();
-    }
-
     private class CallPlaceDetails extends AsyncTask<String,Object,String> {
         private String PlaceDescription;
+        private String Tag;
 
-        public void setPlaceDescription(String desc) {
+        public void setPlaceDescription(String desc, String tag) {
             PlaceDescription = desc;
+            Tag = tag;
         }
 
         // This method is called on main thread UI
@@ -252,6 +275,14 @@ public class AddRideActivity extends  ActionBarActivity
 
                 String strLat = jsonObjLocation.getString("lat");
                 String strLon = jsonObjLocation.getString("lng");
+
+                if( Tag == "from") {
+                    from_lat = strLat;
+                    from_lon = strLon;
+                } else if( Tag == "to" ) {
+                    to_lat = strLat;
+                    to_lon = strLon;
+                }
 
                 Location location = new Location("");
                 location.setLatitude(Double.parseDouble(strLat));
