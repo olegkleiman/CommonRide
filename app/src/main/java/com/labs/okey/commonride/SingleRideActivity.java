@@ -49,8 +49,7 @@ public class SingleRideActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_single_ride);
 
-        Bundle b = getIntent().getExtras();
-        mRideId = b.getString("rideId");
+        mRideId = getIntent().getStringExtra("rideId");
 
         try {
             mClient = new MobileServiceClient(
@@ -202,6 +201,12 @@ public class SingleRideActivity extends ActionBarActivity {
             Toast.makeText(this, "There are no email clients installed.",
                     Toast.LENGTH_SHORT).show();
         }
+    }
+
+    public void showRideMap(View v){
+        Intent intent = new Intent(this, RideMapActivity.class);
+        intent.putExtra("rideId", mRideId);
+        startActivity(intent);
     }
 
     public void btnJoinRideClick(View v) {
