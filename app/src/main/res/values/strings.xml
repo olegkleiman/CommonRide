@@ -13,7 +13,10 @@
     <string name="facebook_app_id">1556185537963080</string>
     <string name="action_search">Search</string>
     <string name="action_add">Add</string>
+    <string name="action_join_delete">Delete</string>
     <string name="action_refresh">Refresh</string>
+    <string name="dialog_confirm">Confirm</string>
+    <string name="dilalog_confirm_join_delete">Are you sure to delete this ride?</string>
     <string name="search_hint">Search</string>
     <string name="fromText">From</string>
     <string name="toText">To</string>
@@ -33,5 +36,6 @@
     <string name="drawer_close">Close navigation drawer</string>
     <string name="title_activity_ride_map">RideMapActivity</string>
     <string name="action_join_ride">Join</string>
-
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 </resources>

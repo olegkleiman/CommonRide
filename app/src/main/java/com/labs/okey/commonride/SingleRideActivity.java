@@ -1,6 +1,8 @@
 package com.labs.okey.commonride;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -40,6 +42,9 @@ public class SingleRideActivity extends ActionBarActivity {
     private MobileServiceTable<Join> mJoinsTable;
     private MobileServiceTable<JoinAnnotated> mJoinsAnnotatedTable;
 
+    String myUserID;
+    String mDriverID;
+
     String mRideId;
     String mDriverPhone;
     String mDriverEMail;
@@ -58,8 +63,8 @@ public class SingleRideActivity extends ActionBarActivity {
                     this);
 
             SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-            String userID = sharedPrefs.getString(USERIDPREF, "");
-            MobileServiceUser wamsUser = new MobileServiceUser(userID);
+            myUserID = sharedPrefs.getString(USERIDPREF, "");
+            MobileServiceUser wamsUser = new MobileServiceUser(myUserID);
 
             String token = sharedPrefs.getString(WAMSTOKENPREF, "");
             // According to this article (http://www.thejoyofcode.com/Setting_the_auth_token_in_the_Mobile_Services_client_and_caching_the_user_rsquo_s_identity_Day_10_.aspx)
@@ -80,6 +85,11 @@ public class SingleRideActivity extends ActionBarActivity {
                             if( e == null ){
 
                                 if( ride != null ) {
+
+                                   mDriverID = ride.getDriver();
+                                   if( !myUserID.equals(mDriverID) )
+                                        invalidateOptionsMenu();
+
                                    TextView v = (TextView) findViewById(R.id.ride_from);
                                    v.setText(ride.from);
 
@@ -123,16 +133,14 @@ public class SingleRideActivity extends ActionBarActivity {
                                                            DrawableManager drawableManager = new DrawableManager();
                                                            drawableManager.fetchDrawableOnThread(user.picture_url,
                                                                    imageDriver);
-
-
                                                        }
                                                    }
 
-                                                   progress.dismiss();
                                                }
                                            });
                                 }
                             }
+                            progress.dismiss();
                         }
                     });
 
@@ -143,25 +151,24 @@ public class SingleRideActivity extends ActionBarActivity {
             mJoinsAnnotatedTable
                     .parameter("rideid", mRideId)
                     .execute(new TableQueryCallback<JoinAnnotated>() {
-                @Override
-                public void onCompleted(List<JoinAnnotated> joins,
-                                        int count,
-                                        Exception error,
-                                        ServiceFilterResponse serviceFilterResponse) {
-                    if( error != null) {
-                        String err = error.toString();
-                        Throwable t = error.getCause();
+                        @Override
+                        public void onCompleted(List<JoinAnnotated> joins,
+                                                int count,
+                                                Exception error,
+                                                ServiceFilterResponse serviceFilterResponse) {
+                            if (error != null) {
+                                String err = error.toString();
+                                Throwable t = error.getCause();
 
-                        while (t != null) {
-                            err = err + "\n Cause: " + t.toString();
-                            t = t.getCause();
+                                while (t != null) {
+                                    err = err + "\n Cause: " + t.toString();
+                                    t = t.getCause();
+                                }
+                            } else {
+                                setupJoinsListView(joins);
+                            }
                         }
-                    }
-                    else{
-                        setupJoinsListView(joins);
-                    }
-                }
-            });
+                    });
         } catch(Exception e) {
             Log.i(LOG_TAG, e.getMessage());
         }
@@ -209,7 +216,7 @@ public class SingleRideActivity extends ActionBarActivity {
         startActivity(intent);
     }
 
-    public void btnJoinRideClick(View v) {
+    public void joinRide() {
 
         Join join = new Join();
         join.rideId = mRideId;
@@ -231,6 +238,19 @@ public class SingleRideActivity extends ActionBarActivity {
         );
     }
 
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+
+        if( (myUserID != null && !myUserID.isEmpty() )
+                &&
+                (mDriverID != null && !mDriverID.isEmpty()) ) {
+            if( myUserID != mDriverID ) {
+                menu.getItem(1).setEnabled(false);
+            }
+        }
+
+        return true;
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -247,9 +267,46 @@ public class SingleRideActivity extends ActionBarActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        switch ( id ) {
+            case R.id.action_join_delete: {
+                new AlertDialog.Builder(this)
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setTitle(R.string.dialog_confirm)
+                        .setMessage(R.string.dilalog_confirm_join_delete)
+                        .setCancelable(true)
+                        .setNegativeButton(R.string.no, null)
+                        .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Ride ride = new Ride();
+                                ride.Id = mRideId;
+                                mRidesTable.delete(ride, new TableDeleteCallback() {
+
+                                    @Override
+                                    public void onCompleted(Exception e,
+                                                            ServiceFilterResponse serviceFilterResponse) {
+                                        if (e != null) {
+                                            Toast.makeText(SingleRideActivity.this,
+                                                           e.getMessage(),
+                                                           Toast.LENGTH_LONG).show();
+                                        }
+                                        else
+                                            finish();
+                                    }
+                                });
+                            }
+                        })
+                        .show();
+
+            }
             return true;
+
+            case R.id.action_join_ride: {
+                joinRide();
+            }
+            break;
         }
+
 
         return super.onOptionsItemSelected(item);
     }

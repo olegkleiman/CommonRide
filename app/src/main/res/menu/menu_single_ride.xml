@@ -4,6 +4,11 @@
     tools:context="com.labs.okey.commonride.SingleRideActivity">
     <item android:id="@+id/action_join_ride"
         android:title="@string/action_join_ride"
+        android:icon="@android:drawable/ic_menu_add"
+        app:showAsAction="always" />
+    <item android:id="@+id/action_join_delete"
+        android:title="@string/action_join_delete"
+        android:icon="@android:drawable/ic_menu_delete"
         android:orderInCategory="100"
         app:showAsAction="never" />
 </menu>

@@ -185,11 +185,4 @@
         android:layout_height="wrap_content"
         android:id="@+id/listViewPassengers" />
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Join"
-        android:id="@+id/btnJoinRide"
-        android:onClick="btnJoinRideClick" />
-
 </LinearLayout>

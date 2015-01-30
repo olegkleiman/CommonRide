@@ -17,4 +17,9 @@
     <string name="common_rides">נסיעות זמינות</string>
     <string name="action_refresh">רענן</string>
     <string name="action_join_ride">השתתף</string>
+    <string name="action_join_delete">מחק</string>
+    <string name="dilalog_confirm_join_delete">למחוק נסיעה זו?</string>
+    <string name="dialog_confirm">אישור</string>
+    <string name="yes">כן</string>
+    <string name="no">לא</string>
 </resources>

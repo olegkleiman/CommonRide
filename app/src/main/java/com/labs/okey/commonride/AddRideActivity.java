@@ -216,6 +216,8 @@ public class AddRideActivity extends  ActionBarActivity {
 
     public void btnAddRideClick(View v) {
 
+        final ProgressDialog progress = ProgressDialog.show(this, "Adding", "New ride");
+
         Ride ride = new Ride();
         ride.whenPublished = new Date();
         ride.whenStarts = this.mWhenStarts.getTime();
@@ -235,13 +237,12 @@ public class AddRideActivity extends  ActionBarActivity {
         TextView txtPassengers = (TextView)findViewById(R.id.txtNumberPassengers);
         ride.freePlaces = Integer.parseInt(txtPassengers.getText().toString());
 
-        final ProgressDialog progress = ProgressDialog.show(this, "Adding", "New ride");
-
         mRidesTable.insert(ride, new TableOperationCallback<Ride>() {
             public void onCompleted(Ride entity,
                                     Exception exception,
                                     ServiceFilterResponse response) {
                 if (exception == null) {
+                    finish();
                     //Log.i(LOG_TAG, "Ride added with ID " + entity.Id);
 
                 } else {
@@ -283,29 +284,6 @@ public class AddRideActivity extends  ActionBarActivity {
                     to_lat = strLat;
                     to_lon = strLon;
                 }
-
-                Location location = new Location("");
-                location.setLatitude(Double.parseDouble(strLat));
-                location.setLongitude(Double.parseDouble(strLon));
-
-                String[] tokens = PlaceDescription.split(",");
-
-//                gMap.clear(); // only one ride destination is visible at time
-//                showMarker(location,
-//                        tokens[0],
-//                        "Tap to share ride to there",
-//                        BitmapDescriptorFactory.HUE_RED,
-//                        null);
-//
-//                LatLng myLatLng = new LatLng(myLocation.getLatitude(), myLocation.getLongitude());
-//                LatLng destination = new LatLng(location.getLatitude(), location.getLongitude());
-//                GMapV2Direction md = new GMapV2Direction();
-//
-//                md.drawDirectitions(gMap, myLatLng, destination,
-//                        GMapV2Direction.MODE_WALKING, // .MODE_DRIVING,
-//                        // TODO : detect used language
-//                        // List of supported languages : https://spreadsheets.google.com/pub?key=p9pdwsai2hDMsLkXsoM05KQ&gid=1);
-//                        "iw");
 
             } catch (Exception ex) {
 
