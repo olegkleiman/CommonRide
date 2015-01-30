@@ -19,6 +19,9 @@ public class JoinAnnotated {
     @com.google.gson.annotations.SerializedName("picture_url")
     public String picture_url;
 
+    //@com.google.gson.annotations.SerializedName("ride_id")
+    public String ride_id;
+
     @com.google.gson.annotations.SerializedName("when_joined")
     public Date whenJoined;
 

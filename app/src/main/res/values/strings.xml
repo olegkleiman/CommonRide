@@ -32,5 +32,6 @@
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
     <string name="title_activity_ride_map">RideMapActivity</string>
+    <string name="action_join_ride">Join</string>
 
 </resources>

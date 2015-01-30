@@ -136,8 +136,14 @@ public class SingleRideActivity extends ActionBarActivity {
                             }
                         }
                     });
+
+            //
+            // Passengers
+            //
             mJoinsAnnotatedTable = mClient.getTable("joins_annotated", JoinAnnotated.class);
-            mJoinsAnnotatedTable.execute(new TableQueryCallback<JoinAnnotated>() {
+            mJoinsAnnotatedTable
+                    .parameter("rideid", mRideId)
+                    .execute(new TableQueryCallback<JoinAnnotated>() {
                 @Override
                 public void onCompleted(List<JoinAnnotated> joins,
                                         int count,

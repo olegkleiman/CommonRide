@@ -16,4 +16,5 @@
     <string name="title_activity_add_ride">נסיעה חדשה</string>
     <string name="common_rides">נסיעות זמינות</string>
     <string name="action_refresh">רענן</string>
+    <string name="action_join_ride">השתתף</string>
 </resources>

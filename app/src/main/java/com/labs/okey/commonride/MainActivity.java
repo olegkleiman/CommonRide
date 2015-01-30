@@ -201,7 +201,8 @@ public class MainActivity extends ActionBarActivity {
 
                                         MobileServiceTable<RideAnnotated> annotatedRidesTable =
                                                 wamsClient.getTable("rides_annotated", RideAnnotated.class);
-                                        annotatedRidesTable.execute(new TableQueryCallback<RideAnnotated>(){
+                                        annotatedRidesTable//.where().field("when_starts").le(new Date())
+                                                .execute(new TableQueryCallback<RideAnnotated>(){
 
                                             @Override
                                             public void onCompleted(List<RideAnnotated> rides,
