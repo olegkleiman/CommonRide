@@ -1,6 +1,10 @@
 package com.labs.okey.commonride;
 
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationManager;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -9,6 +13,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.LatLng;
@@ -79,6 +85,14 @@ public class RideMapActivity extends FragmentActivity {
         gMap.getUiSettings().setMyLocationButtonEnabled(true);
         gMap.getUiSettings().setZoomControlsEnabled(false);
         gMap.setBuildingsEnabled(true);
+
+        LocationManager locationManager = (LocationManager)this.getSystemService(Context.LOCATION_SERVICE);
+        Criteria criteria = new Criteria();
+        criteria.setAccuracy(Criteria.ACCURACY_FINE);
+        String bestProvider = locationManager.getBestProvider(criteria, true);
+        Location lastKnownLocation = locationManager.getLastKnownLocation(bestProvider);
+
+        PositionMap(lastKnownLocation);
     }
 
     private void ensureMap() {
@@ -91,6 +105,21 @@ public class RideMapActivity extends FragmentActivity {
             Toast.makeText(this, ex.getMessage(), Toast.LENGTH_LONG)
                     .show();
         }
+    }
+
+    private void PositionMap(Location location){
+
+        final LatLng ME = new LatLng(location.getLatitude(),
+                location.getLongitude());
+
+        final int zoomLevel = 12;
+        // Move the camera instantly to the current location with a zoom.
+        gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(ME, zoomLevel));
+
+        // Zoom in, animating the camera.
+        gMap.animateCamera(CameraUpdateFactory.zoomIn());
+        // Zoom out to specified zoom level, animating with a duration of 2 seconds.
+        gMap.animateCamera(CameraUpdateFactory.zoomTo(zoomLevel), 2000, null);
     }
 
     @Override
