@@ -36,9 +36,12 @@ import com.microsoft.windowsazure.mobileservices.TableOperationCallback;
 
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -222,6 +225,12 @@ public class AddRideActivity extends  ActionBarActivity
         StringBuilder sb = new StringBuilder(PLACES_API_BASE + OUT_JSON);
         sb.append("?placeid=" + place.getPlaceID());
         sb.append("&key=" + API_KEY);
+
+        CallPlaceDetails task = new CallPlaceDetails();
+        task.setPlaceDescription(place.getDescription());
+        task.execute(sb.toString());
+
+        Toast.makeText(this, place.getDescription(), Toast.LENGTH_SHORT).show();
     }
 
     private class CallPlaceDetails extends AsyncTask<String,Object,String> {
