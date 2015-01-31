@@ -151,31 +151,40 @@ public class SingleRideActivity extends ActionBarActivity {
             //
             // Passengers
             //
-            mJoinsAnnotatedTable = mClient.getTable("joins_annotated", JoinAnnotated.class);
-            mJoinsAnnotatedTable
-                    .parameter("rideid", mRideId)
-                    .execute(new TableQueryCallback<JoinAnnotated>() {
-                        @Override
-                        public void onCompleted(List<JoinAnnotated> joins,
-                                                int count,
-                                                Exception error,
-                                                ServiceFilterResponse serviceFilterResponse) {
-                            if (error != null) {
-                                String err = error.toString();
-                                Throwable t = error.getCause();
+            refreshPassengers();
 
-                                while (t != null) {
-                                    err = err + "\n Cause: " + t.toString();
-                                    t = t.getCause();
-                                 }
-                            } else {
-                                setupJoinsListView(joins);
-                            }
-                        }
-                    });
         } catch(Exception e) {
             Log.i(LOG_TAG, e.getMessage());
         }
+    }
+
+    private void refreshPassengers() {
+        if( mJoinsAnnotatedTable == null ) {
+            mJoinsAnnotatedTable = mClient.getTable("joins_annotated", JoinAnnotated.class);
+        }
+
+        mJoinsAnnotatedTable
+                .parameter("rideid", mRideId)
+                .execute(new TableQueryCallback<JoinAnnotated>() {
+                    @Override
+                    public void onCompleted(List<JoinAnnotated> joins,
+                                            int count,
+                                            Exception error,
+                                            ServiceFilterResponse serviceFilterResponse) {
+                        if (error != null) {
+                            String err = error.toString();
+                            Throwable t = error.getCause();
+
+                            while (t != null) {
+                                err = err + "\n Cause: " + t.toString();
+                                t = t.getCause();
+                            }
+                        } else {
+                            setupJoinsListView(joins);
+                        }
+                    }
+                });
+
     }
 
     private void setupJoinsListView(List<JoinAnnotated> joins){
@@ -193,30 +202,38 @@ public class SingleRideActivity extends ActionBarActivity {
         final Join join = new Join();
         join.Id = joinId;
 
+        final ProgressDialog progress = ProgressDialog.show(this,
+                "Uploading", "Unjoining a ride");
+
         mJoinsTable = mClient.getTable("joins", Join.class);
         mJoinsTable.delete(join, new TableDeleteCallback() {
             @Override
             public void onCompleted(Exception e,
                                     ServiceFilterResponse serviceFilterResponse) {
+
+                progress.dismiss();
+
                 if( e != null ) {
                     Toast.makeText(SingleRideActivity.this,
                             "Unable unjoin. Exception: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 } else {
 
-                    final ListView lw = (ListView)v.getParent().getParent().getParent();
-                    if( lw != null ) {
-                        final PassengersAdapter adapter = (PassengersAdapter)lw.getAdapter();
+                    final ListView listView = (ListView)v.getParent().getParent().getParent();
+                    if( listView != null ) {
+                        final PassengersAdapter adapter = (PassengersAdapter)listView.getAdapter();
                         if( adapter != null ) {
                             final List<JoinAnnotated> joins = adapter.getJoins();
                             if( joins != null ) {
 
-                                lw.animate().setDuration(2000).alpha(0)
+                                View animView = (View)v.getParent();
+
+                                animView.animate().setDuration(2000).alpha(0)
                                         .withEndAction(new Runnable() {
                                             @Override
                                             public void run() {
                                                 joins.remove(join);
                                                 adapter.notifyDataSetChanged();
-                                                lw.setAlpha(1);
+                                                listView.setAlpha(1);
                                             }
                                         } );
                             }
@@ -269,6 +286,9 @@ public class SingleRideActivity extends ActionBarActivity {
         join.rideId = mRideId;
         join.whenJoined = new Date();
 
+        final ProgressDialog progress = ProgressDialog.show(this,
+                "Uploading", "Adding a ride");
+
         mJoinsTable = mClient.getTable("joins", Join.class);
 
         mJoinsTable.insert(join, new TableOperationCallback<Join>() {
@@ -276,10 +296,12 @@ public class SingleRideActivity extends ActionBarActivity {
                                             Exception exception,
                                             ServiceFilterResponse response) {
                         if (exception == null) {
-                            Log.i(LOG_TAG, "Inserted to JOINS object with ID " + entity.Id);
+                            refreshPassengers();
                         } else {
                             Log.e(LOG_TAG, exception.getMessage());
                         }
+
+                        progress.dismiss();
                     }
                 }
         );
@@ -313,7 +335,6 @@ public class SingleRideActivity extends ActionBarActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         switch ( id ) {
             case R.id.action_join_delete: {
                 new AlertDialog.Builder(this)

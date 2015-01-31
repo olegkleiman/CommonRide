@@ -4,7 +4,7 @@
     <string name="app_name">CommonRide</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
-    <string name="title_activity_single_ride">SingleRideActivity</string>
+    <string name="title_activity_single_ride">Ride details</string>
     <string name="ride_origin">Tel-Aviv</string>
     <string name="title_activity_add_ride">Add New Ride</string>
     <string name="title_activity_register">RegisterActivity</string>
