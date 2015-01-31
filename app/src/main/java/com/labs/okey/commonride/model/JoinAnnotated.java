@@ -10,6 +10,9 @@ public class JoinAnnotated {
     @com.google.gson.annotations.SerializedName("id")
     public String Id;
 
+    @com.google.gson.annotations.SerializedName("passenger_id")
+    public String passengerId;
+
     @com.google.gson.annotations.SerializedName("first_name")
     public String first_name;
 

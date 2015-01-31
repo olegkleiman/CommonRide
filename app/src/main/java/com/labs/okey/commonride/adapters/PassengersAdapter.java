@@ -25,7 +25,10 @@ public class PassengersAdapter extends ArrayAdapter<JoinAnnotated>{
     Context context;
     int layoutResourceId;
 
-    List<JoinAnnotated> joins = new ArrayList<JoinAnnotated>();
+    private List<JoinAnnotated> joins = new ArrayList<JoinAnnotated>();
+    public List<JoinAnnotated> getJoins() {
+        return joins;
+    }
 
     LayoutInflater m_inflater = null;
 
@@ -70,6 +73,7 @@ public class PassengersAdapter extends ArrayAdapter<JoinAnnotated>{
             holder.txtPassengerName = (TextView)row.findViewById(R.id.txtPassengerName);
             holder.txtJoined = (TextView)row.findViewById(R.id.txtPassengerWhenJoined);
             holder.imageView = (ImageView)row.findViewById(R.id.imgPassengerPic);
+            holder.imgDeleteJoin = (ImageView)row.findViewById(R.id.passenger_delete);
 
             row.setTag(holder);
         }
@@ -85,6 +89,10 @@ public class PassengersAdapter extends ArrayAdapter<JoinAnnotated>{
         mDrawableManager.fetchDrawableOnThread(join.picture_url,
                                                 holder.imageView);
 
+        if( !join.passengerId.equals("Facebook:10203598626427376")) {
+              holder.imgDeleteJoin.setVisibility(View.INVISIBLE);
+        }
+        holder.imgDeleteJoin.setTag(join.Id);
 
         return row;
     }
@@ -93,5 +101,6 @@ public class PassengersAdapter extends ArrayAdapter<JoinAnnotated>{
         TextView txtPassengerName;
         TextView txtJoined;
         ImageView imageView;
+        ImageView imgDeleteJoin;
     }
 }

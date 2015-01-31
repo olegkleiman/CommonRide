@@ -87,6 +87,10 @@ public class SingleRideActivity extends ActionBarActivity {
                                 if( ride != null ) {
 
                                    mDriverID = ride.getDriver();
+                                    // 'Delete' menu item should be disabled for
+                                    // any rides that published by not myUser.
+                                    // Actual disabling is done in onPrepareOptionsMenu() method,
+                                    // that is implied by invalidateOptionMenu() invocation.
                                    if( !myUserID.equals(mDriverID) )
                                         invalidateOptionsMenu();
 
@@ -163,7 +167,7 @@ public class SingleRideActivity extends ActionBarActivity {
                                 while (t != null) {
                                     err = err + "\n Cause: " + t.toString();
                                     t = t.getCause();
-                                }
+                                 }
                             } else {
                                 setupJoinsListView(joins);
                             }
@@ -180,6 +184,49 @@ public class SingleRideActivity extends ActionBarActivity {
         PassengersAdapter ridesAdapter = new PassengersAdapter(SingleRideActivity.this,
                 R.layout.passenger_item_row, joins);
         listview.setAdapter(ridesAdapter);
+    }
+
+    public void deletePassenger(final View v){
+
+        String joinId = (String)v.getTag();
+
+        final Join join = new Join();
+        join.Id = joinId;
+
+        mJoinsTable = mClient.getTable("joins", Join.class);
+        mJoinsTable.delete(join, new TableDeleteCallback() {
+            @Override
+            public void onCompleted(Exception e,
+                                    ServiceFilterResponse serviceFilterResponse) {
+                if( e != null ) {
+                    Toast.makeText(SingleRideActivity.this,
+                            "Unable unjoin. Exception: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                } else {
+
+                    final ListView lw = (ListView)v.getParent().getParent().getParent();
+                    if( lw != null ) {
+                        final PassengersAdapter adapter = (PassengersAdapter)lw.getAdapter();
+                        if( adapter != null ) {
+                            final List<JoinAnnotated> joins = adapter.getJoins();
+                            if( joins != null ) {
+
+                                lw.animate().setDuration(2000).alpha(0)
+                                        .withEndAction(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                joins.remove(join);
+                                                adapter.notifyDataSetChanged();
+                                                lw.setAlpha(1);
+                                            }
+                                        } );
+                            }
+                        }
+                    }
+
+
+                }
+            }
+        });
     }
 
     public void callDriver(View v){
@@ -244,7 +291,7 @@ public class SingleRideActivity extends ActionBarActivity {
         if( (myUserID != null && !myUserID.isEmpty() )
                 &&
                 (mDriverID != null && !mDriverID.isEmpty()) ) {
-            if( myUserID != mDriverID ) {
+            if( !myUserID.equals( mDriverID) ) {
                 menu.getItem(1).setEnabled(false);
             }
         }

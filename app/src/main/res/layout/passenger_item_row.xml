@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
-    android:layout_width="match_parent"
+    android:layout_width="fill_parent"
     android:layout_height="match_parent">
 
     <LinearLayout
         android:orientation="horizontal"
-        android:layout_width="match_parent"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
         android:layout_marginBottom="4dp">
@@ -22,7 +22,8 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_marginLeft="4dp">
+            android:layout_marginLeft="4dp"
+            android:layout_weight="4">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -38,6 +39,16 @@
                 android:textColor="@android:color/black" />
 
         </LinearLayout>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:onClick="deletePassenger"
+            android:id="@+id/passenger_delete"
+            android:src="@android:drawable/ic_delete"
+            android:scaleType="fitXY"
+            android:layout_gravity="right" />
     </LinearLayout>
 
     </LinearLayout>
