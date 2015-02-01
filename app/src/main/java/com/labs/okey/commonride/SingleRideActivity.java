@@ -5,6 +5,8 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -26,6 +28,8 @@ import com.labs.okey.commonride.model.User;
 import com.labs.okey.commonride.utils.DrawableManager;
 import com.microsoft.windowsazure.mobileservices.*;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -111,6 +115,7 @@ public class SingleRideActivity extends ActionBarActivity {
                                    final TextView txtDriverPhone =
                                             (TextView) findViewById(R.id.txtDriverPhone);
                                    final ImageView imageDriver = (ImageView)findViewById(R.id.imgageViewDriver);
+                                   final ImageView imageCallDriver = (ImageView)findViewById(R.id.imgCallDriver);
 
                                    String driverID = ride.getDriver();
                                    MobileServiceTable<User> usersTable =
@@ -127,16 +132,30 @@ public class SingleRideActivity extends ActionBarActivity {
 
                                                        User user = users.get(0);
                                                        if (user != null) {
-                                                           txtDriverName.setText(user.first_name +
-                                                                   " " + user.last_name);
+                                                           txtDriverName.setText(user.getFirstName() +
+                                                                   " " + user.getLastName());
                                                            mDriverEMail = user.email;
                                                            txtDriverEMail.setText(mDriverEMail);
-                                                           mDriverPhone = user.phone;
-                                                           txtDriverPhone.setText(user.phone);
+                                                           if( user.usePhone ) {
+                                                               mDriverPhone = user.phone;
+                                                               txtDriverPhone.setText(user.phone);
+                                                           } else {
+                                                               imageCallDriver.setVisibility(View.INVISIBLE);
+                                                           }
 
-                                                           DrawableManager drawableManager = new DrawableManager();
-                                                           drawableManager.fetchDrawableOnThread(user.picture_url,
-                                                                   imageDriver);
+
+                                                           try {
+//                                                               URL pictureURL = new URL(user.picture_url);
+//                                                               Bitmap img = BitmapFactory.decodeStream(pictureURL.openConnection().getInputStream());
+//                                                               imageDriver.setImageBitmap(img);
+
+                                                               DrawableManager drawableManager = new DrawableManager();
+                                                               drawableManager.fetchDrawableOnThread(user.picture_url,
+                                                                       imageDriver);
+
+                                                           } catch (Exception ex) {
+                                                               ex.printStackTrace();
+                                                           }
                                                        }
                                                    }
 
@@ -179,6 +198,8 @@ public class SingleRideActivity extends ActionBarActivity {
                                 err = err + "\n Cause: " + t.toString();
                                 t = t.getCause();
                             }
+                            Toast.makeText(SingleRideActivity.this,
+                                        t.getMessage(), Toast.LENGTH_LONG).show();
                         } else {
                             setupJoinsListView(joins);
                         }
@@ -227,7 +248,7 @@ public class SingleRideActivity extends ActionBarActivity {
 
                                 View animView = (View)v.getParent();
 
-                                animView.animate().setDuration(2000).alpha(0)
+                                animView.animate().setDuration(1000).alpha(0)
                                         .withEndAction(new Runnable() {
                                             @Override
                                             public void run() {
@@ -314,7 +335,10 @@ public class SingleRideActivity extends ActionBarActivity {
                 &&
                 (mDriverID != null && !mDriverID.isEmpty()) ) {
             if( !myUserID.equals( mDriverID) ) {
-                menu.getItem(1).setEnabled(false);
+                MenuItem menuItem = menu.findItem(R.id.action_join_delete);
+                if( menuItem != null )
+                    menuItem.setEnabled(false);
+                //menu.getItem(2).setEnabled(false);
             }
         }
 
@@ -339,8 +363,8 @@ public class SingleRideActivity extends ActionBarActivity {
             case R.id.action_join_delete: {
                 new AlertDialog.Builder(this)
                         .setIcon(android.R.drawable.ic_dialog_alert)
-                        .setTitle(R.string.dialog_confirm)
-                        .setMessage(R.string.dilalog_confirm_join_delete)
+                        .setTitle(R.string.dialog_title_confirm_join_delete)
+                        .setMessage(R.string.dialog_message_confirm_join_delete)
                         .setCancelable(true)
                         .setNegativeButton(R.string.no, null)
                         .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
@@ -371,6 +395,11 @@ public class SingleRideActivity extends ActionBarActivity {
 
             case R.id.action_join_ride: {
                 joinRide();
+            }
+            break;
+
+            case R.id.action_single_ride_refresh: {
+                refreshPassengers();
             }
             break;
         }

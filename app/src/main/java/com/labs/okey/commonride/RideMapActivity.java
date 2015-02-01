@@ -59,17 +59,31 @@ public class RideMapActivity extends FragmentActivity {
                                         ServiceFilterResponse serviceFilterResponse) {
                     if( e == null ){
 
-                        LatLng start = new LatLng(Double.parseDouble(ride.from_lat),
-                                                  Double.parseDouble(ride.from_lon));
-                        LatLng end = new LatLng(Double.parseDouble(ride.to_lat),
-                                                Double.parseDouble(ride.to_lon));
+                        if( ride == null
+                                || ride.from_lat == null || ride.from_lat.isEmpty()
+                                || ride.from_lon == null || ride.from_lon.isEmpty()
+                                || ride.to_lat == null || ride.to_lat.isEmpty()
+                                || ride.to_lon == null || ride.to_lon.isEmpty() ) {
 
-                        GMapV2Direction md = new GMapV2Direction();
-                        md.drawDirectitions(gMap, start, end,
-                                GMapV2Direction.MODE_DRIVING,
-                        // TODO : detect used language
-                        // List of supported languages : https://spreadsheets.google.com/pub?key=p9pdwsai2hDMsLkXsoM05KQ&gid=1);
-                        "iw");
+                            progress.dismiss();
+
+                            Toast.makeText(RideMapActivity.this,
+                                    "The ride is not well-defined",
+                                    Toast.LENGTH_LONG).show();
+                        } else {
+
+                            LatLng start = new LatLng(Double.parseDouble(ride.from_lat),
+                                    Double.parseDouble(ride.from_lon));
+                            LatLng end = new LatLng(Double.parseDouble(ride.to_lat),
+                                    Double.parseDouble(ride.to_lon));
+
+                            GMapV2Direction md = new GMapV2Direction();
+                            md.drawDirectitions(gMap, start, end,
+                                    GMapV2Direction.MODE_DRIVING,
+                                    // TODO : detect used language
+                                    // List of supported languages : https://spreadsheets.google.com/pub?key=p9pdwsai2hDMsLkXsoM05KQ&gid=1);
+                                    "iw");
+                        }
                     }
 
                     progress.dismiss();

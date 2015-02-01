@@ -9,10 +9,22 @@ public class User {
     public String Id;
 
     @com.google.gson.annotations.SerializedName("first_name")
-    public String first_name;
+    private String first_name;
+    public String getFirstName() {
+        return first_name;
+    }
+    public void setFirstName(String value) {
+        first_name = value;
+    }
 
     @com.google.gson.annotations.SerializedName("last_name")
-    public String last_name;
+    private String last_name;
+    public String getLastName() {
+        return last_name;
+    }
+    public void setLastName(String value){
+        last_name = value;
+    }
 
     @com.google.gson.annotations.SerializedName("registration_id")
     public String registration_id;

@@ -32,15 +32,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@android:color/black"
-                android:text="User offers a ride from"
+                android:text="User offers a ride"
                 android:gravity="center_vertical"/>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@android:color/black"
-                android:text="Milano to Firenze"
-                android:id="@+id/txtRideDescription" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -59,6 +53,53 @@
             android:id="@+id/txtFreePlaces"
             android:layout_gravity="center|right"
             android:layout_marginRight="10dp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/black"
+            android:text="From:"
+            android:id="@+id/textView"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/black"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:id="@+id/txtRideFrom"
+            android:layout_marginLeft="4dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/black"
+            android:text="To:"
+            android:id="@+id/textView3"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/black"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:id="@+id/txtRideTo"
+            android:layout_marginLeft="4dp" />
     </LinearLayout>
 
 </LinearLayout>

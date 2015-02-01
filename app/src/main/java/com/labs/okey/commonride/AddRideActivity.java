@@ -18,6 +18,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -147,28 +148,6 @@ public class AddRideActivity extends  ActionBarActivity {
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_add_ride, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
     public void showDatePickerDialog(View v) {
         DatePickerFragment newFragment = new DatePickerFragment(new DatePickerDialog.OnDateSetListener(){
 
@@ -216,26 +195,53 @@ public class AddRideActivity extends  ActionBarActivity {
 
     public void btnAddRideClick(View v) {
 
+        AutoCompleteTextView autoText = (AutoCompleteTextView)findViewById(R.id.autocompleteFrom);
+        String from = autoText.getText().toString();
+        if( from.isEmpty() ) {
+            String error = getResources().getString(R.string.no_from_location);
+            autoText.setError(error);
+            return;
+        }
+
+        autoText = (AutoCompleteTextView)findViewById(R.id.autocompleteTo);
+        String to = autoText.getText().toString();
+        if( to.isEmpty() ) {
+            String error = getResources().getString(R.string.no_to_location);
+            autoText.setError(error);
+            return;
+        }
+
+        EditText txtPassengers = (EditText)findViewById(R.id.txtNumberPassengers);
+        int freePlaces = 0;
+        String errorNoFreePlaces = getResources().getString(R.string.no_free_places);
+        try {
+
+            freePlaces = Integer.parseInt(txtPassengers.getText().toString());
+            if( freePlaces == 0 ) {
+                txtPassengers.setError(errorNoFreePlaces);
+                return;
+            }
+        }
+        catch(Exception ex) {
+            txtPassengers.setError(errorNoFreePlaces);
+            return;
+        }
+
         final ProgressDialog progress = ProgressDialog.show(this, "Adding", "New ride");
 
         Ride ride = new Ride();
         ride.whenPublished = new Date();
         ride.whenStarts = this.mWhenStarts.getTime();
 
-        AutoCompleteTextView autoText = (AutoCompleteTextView)findViewById(R.id.autocompleteFrom);
-        Editable text = autoText.getText();
-        ride.from = text.toString();
+        ride.from = from;
         ride.from_lat = from_lat;
         ride.from_lon = from_lon;
 
-        autoText = (AutoCompleteTextView)findViewById(R.id.autocompleteTo);
-        text = autoText.getText();
-        ride.to = text.toString();
+        ride.to = to;
         ride.to_lat = to_lat;
         ride.to_lon = to_lon;
 
-        TextView txtPassengers = (TextView)findViewById(R.id.txtNumberPassengers);
-        ride.freePlaces = Integer.parseInt(txtPassengers.getText().toString());
+        ride.freePlaces = freePlaces;
 
         mRidesTable.insert(ride, new TableOperationCallback<Ride>() {
             public void onCompleted(Ride entity,
@@ -243,11 +249,17 @@ public class AddRideActivity extends  ActionBarActivity {
                                     ServiceFilterResponse response) {
                 if (exception == null) {
                     finish();
-                    //Log.i(LOG_TAG, "Ride added with ID " + entity.Id);
-
                 } else {
+                    String err = exception.toString();
+                    Throwable t = exception.getCause();
+
+                    while (t != null) {
+                        err = err + "\n Cause: " + t.toString();
+                        t = t.getCause();
+                    }
+
                     Toast.makeText(AddRideActivity.this,
-                                   exception.getMessage(),
+                                   t.getMessage(),
                                    Toast.LENGTH_LONG).show();
                 }
                 progress.dismiss();

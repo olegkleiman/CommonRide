@@ -62,11 +62,13 @@
         <activity
             android:name=".SingleRideActivity"
             android:screenOrientation="portrait"
-            android:label="@string/title_activity_single_ride" >
+            android:label="@string/title_activity_single_ride"
+            android:theme="@style/Theme.AppCompat.Light" >
         </activity>
         <activity
             android:name=".AddRideActivity"
-            android:label="@string/title_activity_add_ride" >
+            android:label="@string/title_activity_add_ride"
+            android:theme="@style/Theme.AppCompat.Light">
         </activity>
         <activity
             android:name="com.facebook.LoginActivity"

@@ -38,7 +38,7 @@
                 android:id="@+id/txtDriverName"
                 android:layout_width="wrap_content"
                 android:layout_height="fill_parent"
-                android:text="Driver Name"
+                android:text="&lt;Driver Name>"
                 android:textColor="@android:color/black" />
             <LinearLayout
                 android:layout_width="fill_parent"
@@ -54,7 +54,6 @@
                     android:id="@+id/txtDriverEMail"
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
-                    android:text="Driver EMail"
                     android:textColor="@android:color/black"
                     android:layout_marginLeft="4dp"
                     android:gravity="left|center"
@@ -74,13 +73,13 @@
                     android:layout_height="wrap_content"
                     android:clickable="true"
                     android:src="@android:drawable/stat_sys_phone_call"
-                    android:onClick="showRideMap" />
+                    android:onClick="showRideMap"
+                    android:id="@+id/imgCallDriver" />
 
                 <TextView
                     android:id="@+id/txtDriverPhone"
                     android:layout_width="wrap_content"
                     android:layout_height="fill_parent"
-                    android:text="Driver Phone"
                     android:textColor="@android:color/black"
                     android:layout_marginLeft="4dp"
                     android:gravity="left|center"

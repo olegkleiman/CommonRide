@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">CommonRide</string>
-    <string name="hello_world">Hello world!</string>
     <string name="title_activity_single_ride">פרטי הנסיעה</string>
     <string name="ride_origin">תל-אביב</string>
     <string name="pick_date">בחר תאריך</string>
@@ -22,4 +21,9 @@
     <string name="dialog_confirm">אישור</string>
     <string name="yes">כן</string>
     <string name="no">לא</string>
+    <string name="no_phone_number">חובה להזין מספר טלפון, אך אפשר לבחור לא לשתף אותו עם משתמשים אחרים במתג הבא</string>
+    <string name="no_from_location">חובה להזין כתובת</string>
+    <string name="no_to_location">חובה להזין כתובת</string>
+    <string name="ride_desc"> מציע נסיעה</string>
+    <string name="no_free_places">לפחות נוסע אחד</string>
 </resources>

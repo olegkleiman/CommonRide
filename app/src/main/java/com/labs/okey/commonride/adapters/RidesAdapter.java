@@ -31,7 +31,7 @@ public class RidesAdapter extends ArrayAdapter<RideAnnotated> {
     List<RideAnnotated> rides = new ArrayList<RideAnnotated>();
 
     LayoutInflater m_inflater = null;
-
+    String mDesc;
     DrawableManager mDrawableManager;
 
     public RidesAdapter(Context context,
@@ -46,6 +46,7 @@ public class RidesAdapter extends ArrayAdapter<RideAnnotated> {
 
         m_inflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        mDesc = context.getResources().getString(R.string.ride_desc);
 
         mDrawableManager = new DrawableManager();
     }
@@ -77,10 +78,13 @@ public class RidesAdapter extends ArrayAdapter<RideAnnotated> {
             holder = new RidesHolder();
 
             holder.txtView = (TextView)row.findViewById(R.id.txtTitle);
-            holder.txtDescription = (TextView)row.findViewById(R.id.txtRideDescription);
+            //holder.txtDescription = (TextView)row.findViewById(R.id.txtRideDescription);
             holder.txtFreePlaces = (TextView)row.findViewById(R.id.txtFreePlaces);
             holder.imageView = (ImageView)row.findViewById(R.id.imgUserPic);
             holder.txtRideTime = (TextView)row.findViewById(R.id.txtRideTime);
+
+            holder.txtRideFrom = (TextView)row.findViewById(R.id.txtRideFrom);
+            holder.txtRideTo = (TextView)row.findViewById(R.id.txtRideTo);
 
             row.setTag(holder);
         }
@@ -88,11 +92,13 @@ public class RidesAdapter extends ArrayAdapter<RideAnnotated> {
             holder = (RidesHolder)row.getTag();
         }
 
-        holder.txtView.setText(ride.first_name + " " + ride.last_name + " offers a ride from");
-        String desc = String.format("%s to %s", ride.from, ride.to);
-        holder.txtDescription.setText(desc);
+        String desc = String.format("%s to %s %s",
+                        ride.first_name, ride.last_name, mDesc);
+        holder.txtView.setText(desc);
+        holder.txtRideFrom.setText(ride.from);
+        holder.txtRideTo.setText(ride.to);
         holder.txtFreePlaces.setText(Integer.toString(ride.freePlaces));
-        SimpleDateFormat df = new SimpleDateFormat("EEEE MMM dd, yyyy");
+        SimpleDateFormat df = new SimpleDateFormat("EEEE MMM dd, yyyy HH:mm");
         String whenStarts = df.format(ride.whenStarts);
         holder.txtRideTime.setText("at " + whenStarts);
 
@@ -104,9 +110,10 @@ public class RidesAdapter extends ArrayAdapter<RideAnnotated> {
 
     static class RidesHolder {
         TextView txtView;
-        TextView txtDescription;
         TextView txtFreePlaces;
         ImageView imageView;
         TextView txtRideTime;
+        TextView txtRideFrom;
+        TextView txtRideTo;
     }
 }

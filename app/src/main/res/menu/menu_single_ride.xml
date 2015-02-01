@@ -1,14 +1,20 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.labs.okey.commonride.SingleRideActivity">
+    tools:context=".SingleRideActivity">
     <item android:id="@+id/action_join_ride"
         android:title="@string/action_join_ride"
-        android:icon="@android:drawable/ic_menu_add"
+        android:icon="@drawable/ic_action_new"
+        android:orderInCategory="100"
         app:showAsAction="always" />
+    <item android:id="@+id/action_single_ride_refresh"
+        android:title="@string/action_refresh"
+        android:icon="@drawable/ic_action_refresh"
+        android:orderInCategory="101"
+        app:showAsAction="ifRoom" />
     <item android:id="@+id/action_join_delete"
         android:title="@string/action_join_delete"
         android:icon="@android:drawable/ic_menu_delete"
-        android:orderInCategory="100"
+        android:orderInCategory="102"
         app:showAsAction="never" />
 </menu>
