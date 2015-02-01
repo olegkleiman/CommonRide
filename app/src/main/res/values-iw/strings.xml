@@ -27,4 +27,5 @@
     <string name="ride_desc"> מציע נסיעה</string>
     <string name="no_free_places">לפחות נוסע אחד</string>
     <string name="notes">הערות</string>
+    <string name="title_activity_my_rides">הנסיעות שלי</string>
 </resources>

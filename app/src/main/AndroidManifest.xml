@@ -13,11 +13,11 @@
     <uses-permission android:name="android.permission.CALL_PHONE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <!-- Location -->
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <!--
      To retrieve OAuth 2.0 tokens or invalidate tokens to disconnect a user. This disconnect
@@ -61,28 +61,41 @@
         </activity>
         <activity
             android:name=".SingleRideActivity"
-            android:screenOrientation="portrait"
             android:label="@string/title_activity_single_ride"
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light" >
         </activity>
         <activity
             android:name=".AddRideActivity"
             android:label="@string/title_activity_add_ride"
-            android:theme="@style/Theme.AppCompat.Light">
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/Theme.AppCompat.Light" >
         </activity>
         <activity
             android:name="com.facebook.LoginActivity"
             android:label="@string/app_name"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
-
         <activity
             android:name=".RegisterActivity"
             android:label="@string/title_activity_register" >
         </activity>
         <activity
             android:name=".RideMapActivity"
-            android:screenOrientation="portrait"
-            android:label="@string/title_activity_ride_map" >
+            android:label="@string/title_activity_ride_map"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name=".MyRidesActivity"
+            android:label="@string/title_activity_my_rides"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/Theme.AppCompat.Light">
+        </activity>
+        <activity
+            android:name=".AboutActivity"
+            android:label="@string/title_activity_about"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/Theme.AppCompat.Light">
         </activity>
 
         <meta-data
@@ -95,6 +108,12 @@
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyBJryLCLoWeBUnSTabBxwDL4dWO4tExR1c" />
 
+        <activity
+            android:name=".TabsActivity"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/Theme.AppCompat.Light"
+            android:label="@string/title_activity_tabs" >
+        </activity>
     </application>
 
 </manifest>

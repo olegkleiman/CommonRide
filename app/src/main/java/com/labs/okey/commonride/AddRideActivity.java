@@ -74,6 +74,10 @@ public class AddRideActivity extends  ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_ride);
 
+        // enable ActionBar app icon to behave as action to toggle nav drawer
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+
         AutoCompleteTextView autoCompViewFrom =
                 (AutoCompleteTextView)findViewById(R.id.autocompleteFrom);
         autoCompViewFrom.setAdapter(new PlaceAutoCompleteAdapter(this, R.layout.search_map_list_item));

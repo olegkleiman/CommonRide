@@ -1,9 +1,11 @@
 package com.labs.okey.commonride;
 
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.media.RingtoneManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
@@ -56,21 +58,30 @@ public class GCMHandler extends  com.microsoft.windowsazure.notifications.Notifi
     public void onReceive(Context context, Bundle bundle) {
         ctx = context;
         String nhMessage = bundle.getString("message");
+        String rideId =  bundle.getString("extras");
 
-        sendNotification(nhMessage);
+        sendNotification(nhMessage, rideId);
     }
 
-    private void sendNotification(String msg) {
+    private void sendNotification(String msg, String rideId) {
         mNotificationManager = (NotificationManager)
                 ctx.getSystemService(Context.NOTIFICATION_SERVICE);
 
-        PendingIntent contentIntent = PendingIntent.getActivity(ctx, 0,
-                new Intent(ctx, MainActivity.class), 0);
+        Intent launchIntent = new Intent(ctx, SingleRideActivity.class);
+        Bundle b = new Bundle();
+        b.putString("rideId", rideId);
+        launchIntent.putExtras(b);
+
+        PendingIntent contentIntent =
+                PendingIntent.getActivity(ctx, 0,
+                                          launchIntent, PendingIntent.FLAG_CANCEL_CURRENT);
 
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(ctx)
                         .setSmallIcon(R.drawable.ic_launcher)
+                        .setVibrate(new long[]{500, 500})
                         .setContentTitle("Common Ride")
+                        .setAutoCancel(true)
                         .setStyle(new NotificationCompat.BigTextStyle()
                                 .bigText(msg))
                         .setContentText(msg);

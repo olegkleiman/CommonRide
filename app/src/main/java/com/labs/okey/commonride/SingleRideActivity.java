@@ -68,6 +68,10 @@ public class SingleRideActivity extends ActionBarActivity {
 
         mRideId = getIntent().getStringExtra("rideId");
 
+//        // enable ActionBar app icon to behave as action to toggle nav drawer
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+
         try {
             mClient = new MobileServiceClient(
                     "https://commonride.azure-mobile.net/",
