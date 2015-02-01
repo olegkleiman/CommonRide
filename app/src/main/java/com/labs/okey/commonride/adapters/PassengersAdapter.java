@@ -84,7 +84,7 @@ public class PassengersAdapter extends ArrayAdapter<JoinAnnotated>{
         holder.txtPassengerName.setText(join.first_name + " " + join.last_name);
 
         SimpleDateFormat df = new SimpleDateFormat("EEEE MMM dd, yyyy");
-        holder.txtJoined.setText(df.format(join.whenJoined));
+        holder.txtJoined.setText("Joined at " + df.format(join.whenJoined));
 
         mDrawableManager.fetchDrawableOnThread(join.picture_url,
                                                 holder.imageView);

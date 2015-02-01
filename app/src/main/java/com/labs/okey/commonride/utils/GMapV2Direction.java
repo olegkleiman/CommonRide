@@ -114,6 +114,7 @@ public class GMapV2Direction {
                     rectLine.add(directionPoint.get(i));
                 }
 
+                // TODO: remove comments after 'null reference' check
                 gMap.addPolyline(rectLine);
 
             } catch (ParserConfigurationException e) {
@@ -121,6 +122,8 @@ public class GMapV2Direction {
             } catch (SAXException e) {
                 e.printStackTrace();
             } catch (IOException e) {
+                e.printStackTrace();
+            } catch(Exception e) {
                 e.printStackTrace();
             }
 

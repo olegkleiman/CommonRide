@@ -43,4 +43,6 @@ public class Ride {
     @com.google.gson.annotations.SerializedName("when_starts")
     public Date whenStarts;
 
+    @com.google.gson.annotations.SerializedName("notes")
+    public String notes;
 }

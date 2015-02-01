@@ -97,21 +97,21 @@ public class MainActivity extends ActionBarActivity {
             Log.e("No such an algorithm", e.toString());
         }
 
-        if (DEVELOPER_MODE) {
-            StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
-                    .detectDiskReads()
-                    .detectDiskWrites()
-                    .detectNetwork()
-                    .penaltyLog()
-                    .build());
-
-            StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
-                    .detectActivityLeaks()
-                    .detectLeakedSqlLiteObjects()
-                    .detectLeakedClosableObjects()
-                    .penaltyLog()
-                    .build());
-        }
+//        if (DEVELOPER_MODE) {
+//            StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
+//                    .detectDiskReads()
+//                    .detectDiskWrites()
+//                    .detectNetwork()
+//                    .penaltyLog()
+//                    .build());
+//
+//            StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
+//                    .detectActivityLeaks()
+//                    .detectLeakedSqlLiteObjects()
+//                    .detectLeakedClosableObjects()
+//                    .penaltyLog()
+//                    .build());
+//        }
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -469,7 +469,7 @@ public class MainActivity extends ActionBarActivity {
                             StatusLine status = response.getStatus();
                             int statusCode = status.getStatusCode();
                             if( statusCode == 401 ){
-                                // TODO:
+                                // TODO: Refresh authorization token
                                 // see here: http://chrisrisner.com/Authentication-with-Android-and-Windows-Azure-Mobile-Services
                                 // here: http://blogs.msdn.com/b/carlosfigueira/archive/2014/02/24/using-service-filters-with-the-mobile-services-javascript-sdk.aspx
                                 // here: http://www.thejoyofcode.com/Handling_expired_tokens_in_your_application_Day_11_.aspx

@@ -17,7 +17,8 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_action_place" />
+            android:src="@drawable/ic_action_place"
+            android:layout_gravity="center" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -41,13 +42,15 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_action_place" />
+            android:src="@drawable/ic_action_place"
+            android:layout_gravity="center" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@android:color/black"
-            android:text="@string/toText"/>
+            android:text="@string/toText"
+            style="@style/RideScheduleStyle" />
 
         <AutoCompleteTextView
             android:layout_width="match_parent"
@@ -86,7 +89,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginLeft="32dp"
+                android:layout_marginLeft="4dp"
              android:layout_marginTop="4dp">
 
              <TextView
@@ -94,7 +97,8 @@
                  android:id="@+id/txtWhenDate"
                  android:clickable="true"
                  android:onClick="showDatePickerDialog"
-                 android:text="Sunday, Jan 14, 2015" />
+                 android:text="Sunday, Jan 14, 2015"
+                 android:layout_width="wrap_content" />
 
             <TextView
                 style="@style/RideScheduleStyle"
@@ -110,6 +114,11 @@
 
 
     </LinearLayout>
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:id="@+id/textViewDivider2"
+        style="@style/Divider" />
 
     <LinearLayout
         android:orientation="horizontal"
@@ -139,8 +148,43 @@
             android:elegantTextHeight="true"
             android:numeric="integer"
             android:layout_marginTop="10dp"
-            android:gravity="fill_vertical" />
+            android:gravity="fill_vertical"
+            android:text="3" />
     </LinearLayout>
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:id="@+id/textViewDivider3"
+        style="@style/Divider" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/imageView"
+            android:src="@android:drawable/ic_input_get"
+            android:layout_gravity="center" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/notes"
+            android:id="@+id/textView2"
+            style="@style/RideScheduleStyle"
+            android:layout_gravity="center"
+            android:layout_marginLeft="2dp" />
+    </LinearLayout>
+
+    <EditText
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textMultiLine"
+        android:ems="10"
+        android:id="@+id/txtRideNotes" />
 
     <ImageButton
         android:layout_width="wrap_content"

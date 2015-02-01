@@ -68,6 +68,9 @@ public class DrawableManager {
         } catch (IOException e) {
             Log.e(this.getClass().getSimpleName(), "fetchDrawable failed", e);
             return null;
+        } catch(Exception e) {
+            e.printStackTrace();
+            return null;
         }
     }
 

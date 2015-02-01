@@ -26,4 +26,5 @@
     <string name="no_to_location">חובה להזין כתובת</string>
     <string name="ride_desc"> מציע נסיעה</string>
     <string name="no_free_places">לפחות נוסע אחד</string>
+    <string name="notes">הערות</string>
 </resources>

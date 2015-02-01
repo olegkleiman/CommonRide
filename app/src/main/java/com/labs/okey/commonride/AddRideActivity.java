@@ -243,6 +243,9 @@ public class AddRideActivity extends  ActionBarActivity {
 
         ride.freePlaces = freePlaces;
 
+        EditText txtNotes = (EditText)findViewById(R.id.txtRideNotes);
+        ride.notes = txtNotes.getText().toString();
+
         mRidesTable.insert(ride, new TableOperationCallback<Ride>() {
             public void onCompleted(Ride entity,
                                     Exception exception,

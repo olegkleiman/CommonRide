@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -20,12 +21,17 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.LatLng;
 import com.labs.okey.commonride.adapters.PassengersAdapter;
 import com.labs.okey.commonride.model.Join;
 import com.labs.okey.commonride.model.JoinAnnotated;
 import com.labs.okey.commonride.model.Ride;
 import com.labs.okey.commonride.model.User;
 import com.labs.okey.commonride.utils.DrawableManager;
+import com.labs.okey.commonride.utils.GMapV2Direction;
 import com.microsoft.windowsazure.mobileservices.*;
 
 import java.net.MalformedURLException;
@@ -52,6 +58,8 @@ public class SingleRideActivity extends ActionBarActivity {
     String mRideId;
     String mDriverPhone;
     String mDriverEMail;
+
+    private GoogleMap gMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,37 +98,79 @@ public class SingleRideActivity extends ActionBarActivity {
 
                                 if( ride != null ) {
 
-                                   mDriverID = ride.getDriver();
+                                    mDriverID = ride.getDriver();
                                     // 'Delete' menu item should be disabled for
                                     // any rides that published by not myUser.
                                     // Actual disabling is done in onPrepareOptionsMenu() method,
                                     // that is implied by invalidateOptionMenu() invocation.
-                                   if( !myUserID.equals(mDriverID) )
+                                    if( !myUserID.equals(mDriverID) )
                                         invalidateOptionsMenu();
 
-                                   TextView v = (TextView) findViewById(R.id.ride_from);
-                                   v.setText(ride.from);
+                                    TextView v = (TextView) findViewById(R.id.ride_from);
+                                    v.setText(ride.from);
 
-                                   v = (TextView)findViewById(R.id.ride_to);
-                                   v.setText(ride.to);
+                                    v = (TextView)findViewById(R.id.ride_to);
+                                    v.setText(ride.to);
 
-                                   v = (TextView)findViewById(R.id.ride_when);
-                                   SimpleDateFormat df = new SimpleDateFormat("EEEE MMM dd, yyyy HH:mm");
-                                   v.setText(df.format(ride.whenStarts));
+                                    v = (TextView)findViewById(R.id.ride_when);
+                                    SimpleDateFormat df = new SimpleDateFormat("EEEE MMM dd, yyyy HH:mm");
+                                    v.setText(df.format(ride.whenStarts));
 
-                                   final TextView txtDriverName =
+                                    final TextView txtDriverName =
                                            (TextView) findViewById(R.id.txtDriverName);
-                                   final TextView txtDriverEMail =
+                                    final TextView txtDriverEMail =
                                             (TextView) findViewById(R.id.txtDriverEMail);
-                                   final TextView txtDriverPhone =
+                                    final TextView txtDriverPhone =
                                             (TextView) findViewById(R.id.txtDriverPhone);
-                                   final ImageView imageDriver = (ImageView)findViewById(R.id.imgageViewDriver);
-                                   final ImageView imageCallDriver = (ImageView)findViewById(R.id.imgCallDriver);
+                                    final ImageView imageDriver = (ImageView)findViewById(R.id.imgageViewDriver);
+                                    final ImageView imageCallDriver = (ImageView)findViewById(R.id.imgCallDriver);
 
-                                   String driverID = ride.getDriver();
-                                   MobileServiceTable<User> usersTable =
+                                    if( ensureRideLocation(ride) ) {
+                                        ensureMap();
+
+                                        gMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+                                        gMap.getUiSettings().setMyLocationButtonEnabled(true);
+                                        gMap.getUiSettings().setZoomControlsEnabled(false);
+
+                                        gMap.getUiSettings().setZoomGesturesEnabled(false);
+                                        gMap.getUiSettings().setScrollGesturesEnabled(false);
+                                        gMap.getUiSettings().setTiltGesturesEnabled(false);
+                                        gMap.getUiSettings().setRotateGesturesEnabled(false);
+
+                                        gMap.setBuildingsEnabled(false);
+                                        gMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+                                            @Override
+                                            public void onMapClick(LatLng latLng) {
+                                                showRideMap(null);
+                                            }
+                                        });
+
+                                        Double _latCenter = (Double.parseDouble(ride.from_lat) +
+                                                Double.parseDouble(ride.to_lat)) / 2;
+                                        Double _lonCenter = (Double.parseDouble(ride.from_lon) +
+                                                Double.parseDouble(ride.to_lon)) / 2;
+                                        LatLng _rideCenter = new LatLng(_latCenter, _lonCenter);
+                                        PositionMap(_rideCenter);
+
+                                        LatLng start = new LatLng(Double.parseDouble(ride.from_lat),
+                                                Double.parseDouble(ride.from_lon));
+                                        LatLng end = new LatLng(Double.parseDouble(ride.to_lat),
+                                                Double.parseDouble(ride.to_lon));
+
+                                        GMapV2Direction md = new GMapV2Direction();
+                                        md.drawDirectitions(gMap, start, end,
+                                                GMapV2Direction.MODE_DRIVING,
+                                                // TODO : detect used language
+                                                // List of supported languages : https://spreadsheets.google.com/pub?key=p9pdwsai2hDMsLkXsoM05KQ&gid=1);
+                                                "iw");
+
+
+                                    }
+
+                                    String driverID = ride.getDriver();
+                                    MobileServiceTable<User> usersTable =
                                             mClient.getTable("users", User.class);
-                                   usersTable.where().field("registration_id").eq(driverID)
+                                    usersTable.where().field("registration_id").eq(driverID)
                                            .execute(new TableQueryCallback<User>() {
                                                @Override
                                                public void onCompleted(List<User> users,
@@ -175,6 +225,17 @@ public class SingleRideActivity extends ActionBarActivity {
         } catch(Exception e) {
             Log.i(LOG_TAG, e.getMessage());
         }
+
+    }
+
+    private boolean ensureRideLocation(Ride ride) {
+        if( ride.from_lat == null || ride.from_lat.isEmpty()
+                || ride.from_lon == null || ride.from_lon.isEmpty()
+                || ride.to_lat == null || ride.to_lat.isEmpty()
+                || ride.to_lon == null || ride.to_lon.isEmpty() ) {
+            return false;
+        } else
+            return true;
     }
 
     private void refreshPassengers() {
@@ -293,6 +354,30 @@ public class SingleRideActivity extends ActionBarActivity {
             Toast.makeText(this, "There are no email clients installed.",
                     Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void ensureMap() {
+        try{
+            if( gMap == null ) {
+                gMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.ride_map))
+                        .getMap();
+            }
+        } catch(Exception ex) {
+            Toast.makeText(this, ex.getMessage(), Toast.LENGTH_LONG)
+                    .show();
+        }
+    }
+
+    private void PositionMap(LatLng location){
+
+        final int zoomLevel = 12;
+        // Move the camera instantly to the current location with a zoom.
+        gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, zoomLevel));
+
+        // Zoom in, animating the camera.
+        gMap.animateCamera(CameraUpdateFactory.zoomIn());
+        // Zoom out to specified zoom level, animating with a duration of 2 seconds.
+        gMap.animateCamera(CameraUpdateFactory.zoomTo(zoomLevel), 2000, null);
     }
 
     public void showRideMap(View v){

@@ -28,6 +28,7 @@
     <string name="no_from_location">Type the address</string>
     <string name="ride_desc"> offers a ride</string>
     <string name="no_free_places">Allow for at least 1 passenger</string>
+    <string name="notes">Notes</string>
 
     <string-array name="drawers_array">
         <item>Settings</item>
