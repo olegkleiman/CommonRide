@@ -32,6 +32,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
@@ -155,6 +156,8 @@ public class MainActivity extends ActionBarActivity {
         };
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
+
+
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         if( sharedPrefs.getString(USERIDPREF, "").isEmpty() ) {
 
@@ -167,10 +170,60 @@ public class MainActivity extends ActionBarActivity {
             }
         } else {
                 String accessToken = sharedPrefs.getString(TOKENPREF, "");
-                wams_GetRides(accessToken);
+                Intent intent = getIntent();
+                if( Intent.ACTION_SEARCH.equals(intent.getAction())) {
+                    String query = intent.getStringExtra(SearchManager.QUERY);
+                    wams_GetSearch(accessToken, query);
+                } else {
+                    wams_GetRides(accessToken);
+                }
+
         }
 
         NotificationsManager.handleNotifications(this, SENDER_ID, GCMHandler.class);
+    }
+
+    private void wams_GetSearch(String accessToken, String query) {
+
+        final ProgressDialog progress = ProgressDialog.show(this, "Downloading", "Search results");
+
+        if( wamsClient == null ) {
+
+        } else {
+            MobileServiceTable<RideAnnotated> annotatedRidesTable =
+                    wamsClient.getTable("rides_annotated", RideAnnotated.class);
+            annotatedRidesTable
+                    .parameter("searchquery", query)
+                    .execute(new TableQueryCallback<RideAnnotated>() {
+
+                        @Override
+                        public void onCompleted(List<RideAnnotated> rides,
+                                                int count,
+                                                Exception error,
+                                                ServiceFilterResponse serviceFilterResponse) {
+                            progress.dismiss();
+
+                            if( error != null) {
+//                                String err = error.toString();
+//                                Throwable t = error.getCause();
+//
+//                                while (t != null) {
+//                                    err = err + "\n Cause: " + t.toString();
+//                                    t = t.getCause();
+//                                }
+
+                                Toast.makeText(MainActivity.this,
+                                                error.getMessage(),
+                                                Toast.LENGTH_LONG).show();
+
+                            } else {
+                                setupRidesListView(rides);
+                            }
+
+                        }
+                    });
+        }
+
     }
 
     private void wams_GetRides(String accessToken){
@@ -212,19 +265,26 @@ public class MainActivity extends ActionBarActivity {
                                                                     int count,
                                                                     Exception error,
                                                                     ServiceFilterResponse serviceFilterResponse) {
-                                                if( error != null) {
-                                                    String err = error.toString();
-                                                    Throwable t = error.getCause();
+                                                progress.dismiss();
 
-                                                    while (t != null) {
-                                                        err = err + "\n Cause: " + t.toString();
-                                                        t = t.getCause();
-                                                    }
+                                                if( error != null) {
+//                                                    String err = error.toString();
+//                                                    Throwable t = error.getCause();
+//
+//                                                    while (t != null) {
+//                                                        err = err + "\n Cause: " + t.toString();
+//                                                        t = t.getCause();
+//                                                    }
+
+                                                    Toast.makeText(MainActivity.this,
+                                                            error.getMessage(),
+                                                            Toast.LENGTH_LONG).show();
+
                                                 } else {
                                                     setupRidesListView(rides);
                                                 }
 
-                                                progress.dismiss();
+
                                             }
                                         });
                                     } else {

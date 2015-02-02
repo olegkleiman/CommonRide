@@ -17,7 +17,7 @@
     <string name="dialog_confirm">Confirm</string>
     <string name="dialog_message_confirm_join_delete">Passengers will be informed about removal</string>
     <string name="dialog_title_confirm_join_delete">Delete this ride?</string>
-    <string name="search_hint">Search</string>
+    <string name="search_hint">Search CommonRide</string>
     <string name="fromText">From</string>
     <string name="toText">To</string>
     <string name="whenText">When</string>
