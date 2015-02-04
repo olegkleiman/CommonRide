@@ -483,9 +483,14 @@ public class MainActivity extends ActionBarActivity {
             return true;
 
             case R.id.action_refresh: {
+
+                item.setActionView(R.layout.action_progress);
+
                 SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                 String accessToken = sharedPrefs.getString(TOKENPREF, "");
                 wams_GetRides(accessToken);
+
+                invalidateOptionsMenu();
             }
 
             case R.id.action_search:
