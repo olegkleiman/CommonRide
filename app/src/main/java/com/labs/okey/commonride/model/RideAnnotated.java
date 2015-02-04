@@ -10,11 +10,14 @@ public class RideAnnotated { //extends Ride {
     @com.google.gson.annotations.SerializedName("id")
     public String Id;
 
-    @com.google.gson.annotations.SerializedName("from")
-    public String from;
+    @com.google.gson.annotations.SerializedName("__version")
+    public String version;
 
-    @com.google.gson.annotations.SerializedName("to")
-    public String to;
+    @com.google.gson.annotations.SerializedName("ride_from")
+    public String ride_from;
+
+    @com.google.gson.annotations.SerializedName("ride_to")
+    public String ride_to;
 
     @com.google.gson.annotations.SerializedName("free_places")
     public int freePlaces;

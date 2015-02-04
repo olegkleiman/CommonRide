@@ -16,8 +16,8 @@ public class Ride {
         return driver;
     }
 
-    @com.google.gson.annotations.SerializedName("from")
-    public String from;
+    @com.google.gson.annotations.SerializedName("ride_from")
+    public String ride_from;
 
     @com.google.gson.annotations.SerializedName("from_lat")
     public String from_lat;
@@ -25,8 +25,8 @@ public class Ride {
     @com.google.gson.annotations.SerializedName("from_lon")
     public String from_lon;
 
-    @com.google.gson.annotations.SerializedName("to")
-    public String to;
+    @com.google.gson.annotations.SerializedName("ride_to")
+    public String ride_to;
 
     @com.google.gson.annotations.SerializedName("to_lat")
     public String to_lat;

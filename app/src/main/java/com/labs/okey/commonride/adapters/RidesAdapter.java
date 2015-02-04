@@ -35,6 +35,24 @@ public class RidesAdapter extends ArrayAdapter<RideAnnotated> {
     DrawableManager mDrawableManager;
 
     public RidesAdapter(Context context,
+                        int layoutResourceId) {
+        super(context, layoutResourceId);
+
+        this.context = context;
+        this.layoutResourceId = layoutResourceId;
+
+        m_inflater = (LayoutInflater) context
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+        mDesc = context.getResources().getString(R.string.ride_desc);
+
+        mDrawableManager = new DrawableManager();
+    }
+
+    // This c'tor is used only in online scenario
+    // where the list of rides is ready to binding.
+    // For offline scenario it is never used.
+    public RidesAdapter(Context context,
                         int layoutResourceId,
                         List<RideAnnotated> data,
                         String userID) {
@@ -51,18 +69,18 @@ public class RidesAdapter extends ArrayAdapter<RideAnnotated> {
         mDrawableManager = new DrawableManager();
     }
 
-    @Override
-    public void add(RideAnnotated ride){
-        super.add(ride);
-    }
-
-    public int getCount() {
-        return this.rides.size();
-    }
-
-    public RideAnnotated getItem(int index){
-        return this.rides.get(index);
-    }
+//    @Override
+//    public void add(RideAnnotated ride){
+//        super.add(ride);
+//    }
+//
+//    public int getCount() {
+//        return this.rides.size();
+//    }
+//
+//    public RideAnnotated getItem(int index){
+//        return this.rides.get(index);
+//    }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -95,8 +113,8 @@ public class RidesAdapter extends ArrayAdapter<RideAnnotated> {
         String desc = String.format("%s to %s %s",
                         ride.first_name, ride.last_name, mDesc);
         holder.txtView.setText(desc);
-        holder.txtRideFrom.setText(ride.from);
-        holder.txtRideTo.setText(ride.to);
+        holder.txtRideFrom.setText(ride.ride_from);
+        holder.txtRideTo.setText(ride.ride_to);
         holder.txtFreePlaces.setText(Integer.toString(ride.freePlaces));
         SimpleDateFormat df = new SimpleDateFormat("EEEE MMM dd, yyyy HH:mm");
         String whenStarts = df.format(ride.whenStarts);

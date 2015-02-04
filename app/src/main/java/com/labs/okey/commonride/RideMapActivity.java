@@ -21,9 +21,9 @@ import com.google.android.gms.maps.model.LatLng;
 import com.labs.okey.commonride.model.Ride;
 import com.labs.okey.commonride.utils.GMapV2Direction;
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
-import com.microsoft.windowsazure.mobileservices.MobileServiceTable;
-import com.microsoft.windowsazure.mobileservices.ServiceFilterResponse;
-import com.microsoft.windowsazure.mobileservices.TableOperationCallback;
+import com.microsoft.windowsazure.mobileservices.table.MobileServiceTable;
+import com.microsoft.windowsazure.mobileservices.http.ServiceFilterResponse;
+import com.microsoft.windowsazure.mobileservices.table.TableOperationCallback;
 
 
 public class RideMapActivity extends FragmentActivity {

@@ -1,6 +1,8 @@
 package com.labs.okey.commonride.adapters;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,6 +35,9 @@ public class PassengersAdapter extends ArrayAdapter<JoinAnnotated>{
     LayoutInflater m_inflater = null;
 
     DrawableManager mDrawableManager;
+    String mMyUserID;
+
+    private static final String USERIDPREF = "userid";
 
     public PassengersAdapter(Context context,
                         int layoutResourceId,
@@ -47,7 +52,8 @@ public class PassengersAdapter extends ArrayAdapter<JoinAnnotated>{
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         mDrawableManager = new DrawableManager();
-
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
+        mMyUserID = sharedPrefs.getString(USERIDPREF, "");
     }
 
     public int getCount() {
@@ -89,7 +95,7 @@ public class PassengersAdapter extends ArrayAdapter<JoinAnnotated>{
         mDrawableManager.fetchDrawableOnThread(join.picture_url,
                                                 holder.imageView);
 
-        if( !join.passengerId.equals("Facebook:10203598626427376")) {
+        if( !join.passengerId.equals(mMyUserID)) {
               holder.imgDeleteJoin.setVisibility(View.INVISIBLE);
         }
         holder.imgDeleteJoin.setTag(join.Id);

@@ -10,9 +10,9 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 
-import com.microsoft.windowsazure.mobileservices.MobileServicePush;
-import com.microsoft.windowsazure.mobileservices.Registration;
-import com.microsoft.windowsazure.mobileservices.RegistrationCallback;
+import com.microsoft.windowsazure.mobileservices.notifications.MobileServicePush;
+import com.microsoft.windowsazure.mobileservices.notifications.Registration;
+import com.microsoft.windowsazure.mobileservices.notifications.RegistrationCallback;
 
 /**
  * Created by Oleg on 25-Jan-15.

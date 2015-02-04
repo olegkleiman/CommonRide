@@ -33,6 +33,12 @@ import com.labs.okey.commonride.model.User;
 import com.labs.okey.commonride.utils.DrawableManager;
 import com.labs.okey.commonride.utils.GMapV2Direction;
 import com.microsoft.windowsazure.mobileservices.*;
+import com.microsoft.windowsazure.mobileservices.authentication.MobileServiceUser;
+import com.microsoft.windowsazure.mobileservices.http.ServiceFilterResponse;
+import com.microsoft.windowsazure.mobileservices.table.MobileServiceTable;
+import com.microsoft.windowsazure.mobileservices.table.TableDeleteCallback;
+import com.microsoft.windowsazure.mobileservices.table.TableOperationCallback;
+import com.microsoft.windowsazure.mobileservices.table.TableQueryCallback;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -111,10 +117,10 @@ public class SingleRideActivity extends ActionBarActivity {
                                         invalidateOptionsMenu();
 
                                     TextView v = (TextView) findViewById(R.id.ride_from);
-                                    v.setText(ride.from);
+                                    v.setText(ride.ride_from);
 
                                     v = (TextView)findViewById(R.id.ride_to);
-                                    v.setText(ride.to);
+                                    v.setText(ride.ride_to);
 
                                     v = (TextView)findViewById(R.id.ride_when);
                                     SimpleDateFormat df = new SimpleDateFormat("EEEE MMM dd, yyyy HH:mm");
@@ -255,6 +261,9 @@ public class SingleRideActivity extends ActionBarActivity {
                                             int count,
                                             Exception error,
                                             ServiceFilterResponse serviceFilterResponse) {
+                        // Ensure ProgressBar becomes original 'Refresh' menu item
+                        invalidateOptionsMenu();
+
                         if (error != null) {
                             String err = error.toString();
                             Throwable t = error.getCause();
@@ -488,7 +497,9 @@ public class SingleRideActivity extends ActionBarActivity {
             break;
 
             case R.id.action_single_ride_refresh: {
+                item.setActionView(R.layout.action_progress);
                 refreshPassengers();
+
             }
             break;
         }

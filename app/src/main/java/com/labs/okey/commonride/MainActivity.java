@@ -12,6 +12,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.preference.PreferenceManager;
@@ -32,20 +33,42 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.google.gson.JsonObject;
 import com.labs.okey.commonride.adapters.RidesAdapter;
 import com.labs.okey.commonride.model.Ride;
 import com.labs.okey.commonride.model.RideAnnotated;
+import com.labs.okey.commonride.utils.ConflictResolvingSyncHandler;
 import com.microsoft.windowsazure.mobileservices.*;
 
 import com.facebook.*;
+import com.microsoft.windowsazure.mobileservices.authentication.MobileServiceAuthenticationProvider;
+import com.microsoft.windowsazure.mobileservices.authentication.MobileServiceUser;
+import com.microsoft.windowsazure.mobileservices.http.NextServiceFilterCallback;
+import com.microsoft.windowsazure.mobileservices.http.ServiceFilter;
+import com.microsoft.windowsazure.mobileservices.http.ServiceFilterRequest;
+import com.microsoft.windowsazure.mobileservices.http.ServiceFilterResponse;
+import com.microsoft.windowsazure.mobileservices.table.MobileServiceTable;
+import com.microsoft.windowsazure.mobileservices.table.TableQueryCallback;
+import com.microsoft.windowsazure.mobileservices.table.query.Query;
+import com.microsoft.windowsazure.mobileservices.table.query.QueryOrder;
+import com.microsoft.windowsazure.mobileservices.table.sync.MobileServiceSyncContext;
+import com.microsoft.windowsazure.mobileservices.table.sync.MobileServiceSyncTable;
+import com.microsoft.windowsazure.mobileservices.table.sync.localstore.ColumnDataType;
+import com.microsoft.windowsazure.mobileservices.table.sync.localstore.MobileServiceLocalStore;
+import com.microsoft.windowsazure.mobileservices.table.sync.localstore.MobileServiceLocalStoreException;
+import com.microsoft.windowsazure.mobileservices.table.sync.localstore.SQLiteLocalStore;
+import com.microsoft.windowsazure.mobileservices.table.sync.synchandler.MobileServiceSyncHandler;
 import com.microsoft.windowsazure.notifications.NotificationsManager;
 
+
 import org.apache.http.StatusLine;
+import org.apache.http.util.ExceptionUtils;
 
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
@@ -53,8 +76,11 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends ActionBarActivity {
 
@@ -66,9 +92,9 @@ public class MainActivity extends ActionBarActivity {
     private static final String WAMSTOKENPREF = "wamsToken";
     private static final String USERIDPREF = "userid";
 
-    public final Object mAuthenticationLock = new Object();
-
     static MobileServiceClient wamsClient;
+    private MobileServiceSyncTable<RideAnnotated> mRidesTable;
+    private Query mPullQuery;
 
     public static final String SENDER_ID = "574878603809";
 
@@ -76,6 +102,8 @@ public class MainActivity extends ActionBarActivity {
     private ActionBarDrawerToggle mDrawerToggle;
     private ListView mDrawerList;
     private String[] mDrawerTitles;
+
+    private RidesAdapter mRidesAdapter;
 
     private CharSequence mDrawerTitle;
     private CharSequence mTitle;
@@ -156,168 +184,9 @@ public class MainActivity extends ActionBarActivity {
         };
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
-
-
-        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        if( sharedPrefs.getString(USERIDPREF, "").isEmpty() ) {
-
-            try {
-                Intent intent = new Intent(MainActivity.this, RegisterActivity.class);
-                startActivityForResult(intent, REGISTER_USER_REQUEST);
-            }
-            catch(Exception ex) {
-                ex.printStackTrace();
-            }
-        } else {
-                String accessToken = sharedPrefs.getString(TOKENPREF, "");
-                Intent intent = getIntent();
-                if( Intent.ACTION_SEARCH.equals(intent.getAction())) {
-                    String query = intent.getStringExtra(SearchManager.QUERY);
-                    wams_GetSearch(accessToken, query);
-                } else {
-                    wams_GetRides(accessToken);
-                }
-
-        }
-
-        NotificationsManager.handleNotifications(this, SENDER_ID, GCMHandler.class);
-    }
-
-    private void wams_GetSearch(String accessToken, String query) {
-
-        final ProgressDialog progress = ProgressDialog.show(this, "Downloading", "Search results");
-
-        if( wamsClient == null ) {
-
-        } else {
-            MobileServiceTable<RideAnnotated> annotatedRidesTable =
-                    wamsClient.getTable("rides_annotated", RideAnnotated.class);
-            annotatedRidesTable
-                    .parameter("searchquery", query)
-                    .execute(new TableQueryCallback<RideAnnotated>() {
-
-                        @Override
-                        public void onCompleted(List<RideAnnotated> rides,
-                                                int count,
-                                                Exception error,
-                                                ServiceFilterResponse serviceFilterResponse) {
-                            progress.dismiss();
-
-                            if( error != null) {
-//                                String err = error.toString();
-//                                Throwable t = error.getCause();
-//
-//                                while (t != null) {
-//                                    err = err + "\n Cause: " + t.toString();
-//                                    t = t.getCause();
-//                                }
-
-                                Toast.makeText(MainActivity.this,
-                                                error.getMessage(),
-                                                Toast.LENGTH_LONG).show();
-
-                            } else {
-                                setupRidesListView(rides);
-                            }
-
-                        }
-                    });
-        }
-
-    }
-
-    private void wams_GetRides(String accessToken){
-
-        final ProgressDialog progress = ProgressDialog.show(this, "Downloading", "List of rides");
-
-        try {
-            wamsClient = new MobileServiceClient(
-                    "https://commonride.azure-mobile.net/",
-                    "RuDCJTbpVcpeCQPvrcYeHzpnLyikPo70",
-                    this)
-                    //.withFilter(new ProgressFilter());
-                    .withFilter(new RefreshTokenCacheFilter());
-
-            JsonObject body = new JsonObject();
-            body.addProperty("access_token", accessToken);
-
-            wamsClient.login(MobileServiceAuthenticationProvider.Facebook,
-                        body,
-                        new UserAuthenticationCallback() {
-                            @Override
-                            public void onCompleted(MobileServiceUser mobileServiceUser,
-                                                    Exception exception,
-                                                    ServiceFilterResponse serviceFilterResponse) {
-
-                                synchronized(mAuthenticationLock) {
-
-                                    if (exception == null) {
-
-                                        saveUser(mobileServiceUser);
-
-                                        MobileServiceTable<RideAnnotated> annotatedRidesTable =
-                                                wamsClient.getTable("rides_annotated", RideAnnotated.class);
-                                        annotatedRidesTable//.where().field("when_starts").le(new Date())
-                                                .execute(new TableQueryCallback<RideAnnotated>(){
-
-                                            @Override
-                                            public void onCompleted(List<RideAnnotated> rides,
-                                                                    int count,
-                                                                    Exception error,
-                                                                    ServiceFilterResponse serviceFilterResponse) {
-                                                progress.dismiss();
-
-                                                if( error != null) {
-//                                                    String err = error.toString();
-//                                                    Throwable t = error.getCause();
-//
-//                                                    while (t != null) {
-//                                                        err = err + "\n Cause: " + t.toString();
-//                                                        t = t.getCause();
-//                                                    }
-
-                                                    Toast.makeText(MainActivity.this,
-                                                            error.getMessage(),
-                                                            Toast.LENGTH_LONG).show();
-
-                                                } else {
-                                                    setupRidesListView(rides);
-                                                }
-
-
-                                            }
-                                        });
-                                    } else {
-                                        progress.dismiss();
-                                        Log.e(LOG_TAG, exception.getMessage());
-                                    }
-
-                                    mAuthenticationLock.notifyAll();
-                                }
-                            }
-                        });
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    private void saveUser(MobileServiceUser mobileServiceUser) {
-        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-
-        SharedPreferences.Editor editor = sharedPrefs.edit();
-        editor.putString(WAMSTOKENPREF, mobileServiceUser.getAuthenticationToken());
-        editor.putString(USERIDPREF, mobileServiceUser.getUserId());
-        editor.commit();
-    }
-
-    private void setupRidesListView(List<RideAnnotated> rides){
+        mRidesAdapter = new RidesAdapter(MainActivity.this,
+                                         R.layout.ride_item_row);
         final ListView listview = (ListView) findViewById(R.id.listview);
-
-        RidesAdapter ridesAdapter = new RidesAdapter(MainActivity.this,
-                R.layout.ride_item_row, rides, null);
-        listview.setAdapter(ridesAdapter);
-
         listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
@@ -333,6 +202,218 @@ public class MainActivity extends ActionBarActivity {
                 startActivity(intent);
             }
         });
+
+        listview.setAdapter(mRidesAdapter);
+
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        if( sharedPrefs.getString(USERIDPREF, "").isEmpty() ) {
+
+            try {
+                Intent intent = new Intent(MainActivity.this, RegisterActivity.class);
+                startActivityForResult(intent, REGISTER_USER_REQUEST);
+            }
+            catch(Exception ex) {
+                ex.printStackTrace();
+            }
+        } else {
+                String accessToken = sharedPrefs.getString(TOKENPREF, "");
+                Intent intent = getIntent();
+                wamsInit(accessToken);
+
+                if( Intent.ACTION_SEARCH.equals(intent.getAction())) {
+                    String query = intent.getStringExtra(SearchManager.QUERY);
+                    wams_GetSearch(accessToken, query);
+                } else {
+                    refreshRides();
+                }
+
+        }
+
+        NotificationsManager.handleNotifications(this, SENDER_ID, GCMHandler.class);
+    }
+
+    private void wams_GetSearch(String accessToken,
+                                final String query)  {
+
+        final Query searchQuery = wamsClient.getTable(RideAnnotated.class).where();
+        try {
+            MobileServiceList<RideAnnotated> rides = mRidesTable.read(searchQuery).get();
+            mRidesAdapter.clear();
+
+            for (RideAnnotated _ride : rides) {
+                if( _ride.ride_from.contains(query)
+                        || _ride.ride_to.contains(query))
+                    mRidesAdapter.add(_ride);
+            }
+        } catch (InterruptedException ex) {
+            Toast.makeText(this, ex.getMessage(), Toast.LENGTH_LONG).show();
+        } catch (ExecutionException ex) {
+            Toast.makeText(this, ex.getMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void pullRides() {
+
+        final ProgressDialog progress =
+                ProgressDialog.show(this, "Synchronizing...", "Rides to share");
+
+        new AsyncTask<Void, Void, Void>() {
+
+            @Override
+            protected void onPostExecute(Void result) {
+                progress.dismiss();
+            }
+
+            @Override
+            protected Void doInBackground(Void... params) {
+
+                try{
+                    wamsClient.getSyncContext().push().get();
+
+                    // WAMS SDK automatically queries for deleted records and
+                    // removes them from the local database. Even 'soft delete' is
+                    // enabled on 'rides_annotated' table, these queries remains
+                    // unsatisfied because actually 'read' script for this table
+                    // is replaced to perform SQL JOIN between 'rides' and 'users' tables.
+                    // In resume, PURGE is required for this scenario!
+                    mRidesTable.purge(mPullQuery);
+                    mRidesTable.pull(mPullQuery).get();
+
+                    refreshRides();
+
+                } catch(ExecutionException ex) {
+                    String cause = ex.getCause().toString();
+                    Log.e(LOG_TAG, ex.getMessage() + " Cause: " + cause);
+                } catch(InterruptedException ex) {
+                    String cause = ex.getCause().toString();
+                    Log.e(LOG_TAG, ex.getMessage() + " Cause: " + cause);
+                }
+
+                return null;
+            }
+        }.execute();
+
+    }
+
+
+    private void refreshRides() {
+
+        new AsyncTask<Object, Void, Void>() {
+            @Override
+            protected Void doInBackground(Object... params) {
+
+                try {
+                    final MobileServiceList<RideAnnotated> rides =
+                            mRidesTable.read(mPullQuery).get();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mRidesAdapter.clear();
+
+                            for(RideAnnotated _ride : rides) {
+                                mRidesAdapter.add(_ride);
+                            }
+                        }
+                    });
+                } catch(InterruptedException ex) {
+                    Log.e(LOG_TAG, ex.getMessage() + " Cause: " + ex.getCause());
+                } catch(ExecutionException ex) {
+                    Log.e(LOG_TAG, ex.getMessage() + " Cause: " + ex.getCause());
+                }
+
+                return null;
+            }
+        }.execute();
+    }
+
+    private void wamsInit(String accessToken){
+
+        //final ProgressDialog progress = ProgressDialog.show(this, "Downloading", "List of rides");
+
+        try {
+            wamsClient = new MobileServiceClient(
+                    "https://commonride.azure-mobile.net/",
+                    "RuDCJTbpVcpeCQPvrcYeHzpnLyikPo70",
+                    this);
+                    //.withFilter(new RefreshTokenCacheFilter());
+
+            mPullQuery = wamsClient.getTable(RideAnnotated.class).orderBy("when_started", QueryOrder.Ascending);
+
+            SQLiteLocalStore localStore = new SQLiteLocalStore(wamsClient.getContext(),
+                        "user", null, 1);
+            MobileServiceSyncHandler handler = new ConflictResolvingSyncHandler();
+            MobileServiceSyncContext syncContext = wamsClient.getSyncContext();
+            if (!syncContext.isInitialized()) {
+                    Map<String, ColumnDataType> tableDefinition = new HashMap<String, ColumnDataType>();
+                    tableDefinition.put("id", ColumnDataType.String);
+                    tableDefinition.put("ride_from", ColumnDataType.String);
+                    tableDefinition.put("ride_to", ColumnDataType.String);
+                    tableDefinition.put("when_published", ColumnDataType.Date);
+                    tableDefinition.put("user_driver", ColumnDataType.String);
+                    tableDefinition.put("free_places", ColumnDataType.Number);
+                    tableDefinition.put("when_starts", ColumnDataType.Date);
+                    tableDefinition.put("from_lat", ColumnDataType.String);
+                    tableDefinition.put("from_lon", ColumnDataType.String);
+                    tableDefinition.put("to_lat", ColumnDataType.String);
+                    tableDefinition.put("to_lon", ColumnDataType.String);
+                    tableDefinition.put("notes", ColumnDataType.String);
+                    tableDefinition.put("first_name", ColumnDataType.String);
+                    tableDefinition.put("last_name", ColumnDataType.String);
+                    tableDefinition.put("picture_url", ColumnDataType.String);
+                    tableDefinition.put("email", ColumnDataType.String);
+                    tableDefinition.put("__deleted", ColumnDataType.Boolean);
+                    tableDefinition.put("__version", ColumnDataType.String);
+
+                    localStore.defineTable("rides_annotated", tableDefinition);
+                    syncContext.initialize(localStore, handler).get();
+            }
+
+            final JsonObject body = new JsonObject();
+            body.addProperty("access_token", accessToken);
+
+            new AsyncTask<Void, Void, Void>() {
+
+                @Override
+                protected Void doInBackground(Void... voids) {
+
+                    try {
+                        MobileServiceUser mobileServiceUser =
+                                wamsClient.login(MobileServiceAuthenticationProvider.Facebook,
+                                        body).get();
+                        saveUser(mobileServiceUser);
+                    } catch(ExecutionException ex ) {
+                        Log.e(LOG_TAG, ex.getMessage());
+                    }
+                    catch(InterruptedException ex) {
+                        Log.e(LOG_TAG, ex.getMessage());
+                    }
+
+                    return null;
+                }
+            }.execute();
+
+
+            mRidesTable = wamsClient.getSyncTable("rides_annotated",
+                        RideAnnotated.class);
+
+            } catch(MalformedURLException ex ) {
+                Log.e(LOG_TAG, ex.getMessage() + " Cause: " + ex.getCause());
+            } catch(InterruptedException ex) {
+                Log.e(LOG_TAG, ex.getMessage() + " Cause: " + ex.getCause());
+            } catch(ExecutionException ex) {
+                Log.e(LOG_TAG, ex.getMessage() + " Cause: " + ex.getCause());
+            } catch (MobileServiceLocalStoreException ex) {
+                Log.e(LOG_TAG, ex.getMessage() + " Cause: " + ex.getCause());
+            }
+    }
+
+    private void saveUser(MobileServiceUser mobileServiceUser) {
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+
+        SharedPreferences.Editor editor = sharedPrefs.edit();
+        editor.putString(WAMSTOKENPREF, mobileServiceUser.getAuthenticationToken());
+        editor.putString(USERIDPREF, mobileServiceUser.getUserId());
+        editor.commit();
     }
 
     @Override
@@ -345,7 +426,8 @@ public class MainActivity extends ActionBarActivity {
             Bundle bundle = data.getExtras();
             String accessToken = bundle.getString("accessToken");
 
-            wams_GetRides(accessToken);
+            wamsInit(accessToken);
+            refreshRides();
         }
     }
 
@@ -484,13 +566,14 @@ public class MainActivity extends ActionBarActivity {
 
             case R.id.action_refresh: {
 
-                item.setActionView(R.layout.action_progress);
+                //item.setActionView(R.layout.action_progress);
 
                 SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                 String accessToken = sharedPrefs.getString(TOKENPREF, "");
-                wams_GetRides(accessToken);
 
-                invalidateOptionsMenu();
+                pullRides();
+
+                //invalidateOptionsMenu();
             }
 
             case R.id.action_search:
@@ -516,7 +599,7 @@ public class MainActivity extends ActionBarActivity {
      */
     public class RefreshTokenCacheFilter implements ServiceFilter {
 
-        @Override
+
         public void handleRequest(final ServiceFilterRequest request,
                                   NextServiceFilterCallback nextServiceFilterCallback,
                                   final ServiceFilterResponseCallback responseCallback) {
@@ -527,69 +610,98 @@ public class MainActivity extends ActionBarActivity {
                 Log.i(LOG_TAG, logStr);
 
             //nextServiceFilterCallback.onNext(request, responseCallback);
-            nextServiceFilterCallback.onNext(request,
-                    new ServiceFilterResponseCallback() {
+//            nextServiceFilterCallback.onNext(request,
+//                    new ServiceFilterResponseCallback() {
+//
+//                        @Override
+//                        public void onResponse(ServiceFilterResponse response, Exception e) {
+//                            StatusLine status = response.getStatus();
+//                            int statusCode = status.getStatusCode();
+//                            if( statusCode == 401 ){
+//                                // TODO: Refresh authorization token
+//                                // see here: http://chrisrisner.com/Authentication-with-Android-and-Windows-Azure-Mobile-Services
+//                                // here: http://blogs.msdn.com/b/carlosfigueira/archive/2014/02/24/using-service-filters-with-the-mobile-services-javascript-sdk.aspx
+//                                // here: http://www.thejoyofcode.com/Handling_expired_tokens_in_your_application_Day_11_.aspx
+//                                // and here: http://blogs.msdn.com/b/carlosfigueira/archive/2014/03/13/caching-and-handling-expired-tokens-in-azure-mobile-services-managed-sdk.aspx
+//
+//                                final CountDownLatch latch = new CountDownLatch(1);
+//
+//                                logout(true);
+//
+//                                MainActivity.this.runOnUiThread( new Runnable() {
+//                                    @Override
+//                                    public void run() {
+//                                        wamsClient.login(MobileServiceAuthenticationProvider.Facebook,
+//                                                new UserAuthenticationCallback() {
+//                                                    @Override
+//                                                    public void onCompleted(MobileServiceUser mobileServiceUser,
+//                                                                            Exception exception,
+//                                                                            ServiceFilterResponse serviceFilterResponse) {
+//                                                        if( exception == null ) {
+//                                                            //Update the requests X-ZUMO-AUTH header
+//                                                            request.removeHeader("X-ZUMO-AUTH");
+//                                                            //request.addHeader("X-ZUMO-AUTH", mClient.getCurrentUser().getAuthenticationToken());
+//
+//                                                            //Add our BYPASS querystring parameter to the URL
+//                                                            Uri.Builder uriBuilder = Uri.parse(request.getUrl()).buildUpon();
+//                                                            uriBuilder.appendQueryParameter("bypass", "true");
+//                                                            try {
+//                                                                request.setUrl(uriBuilder.build().toString());
+//                                                            } catch (URISyntaxException e) {
+//                                                                Log.e(LOG_TAG, "Couldn't set request's new url: " + e.getMessage());
+//                                                                e.printStackTrace();
+//                                                            }
+//
+//                                                            latch.countDown();
+//                                                        }
+//                                                    }
+//                                                });
+//                                    }
+//                                });
+//
+//                                try {
+//                                    latch.await();
+//                                } catch (InterruptedException ex) {
+//                                    Log.e(LOG_TAG, "Interrupted exception: " + ex.getMessage());
+//                                    return;
+//                                }
+//                            }
+//
+//                            //Return a response to the caller (otherwise returning from this method to
+//                            // RequestAsyncTask will cause a crash).
+//                            responseCallback.onResponse(response, e);
+//                        }
+//                    });
 
-                        @Override
-                        public void onResponse(ServiceFilterResponse response, Exception e) {
-                            StatusLine status = response.getStatus();
-                            int statusCode = status.getStatusCode();
-                            if( statusCode == 401 ){
-                                // TODO: Refresh authorization token
-                                // see here: http://chrisrisner.com/Authentication-with-Android-and-Windows-Azure-Mobile-Services
-                                // here: http://blogs.msdn.com/b/carlosfigueira/archive/2014/02/24/using-service-filters-with-the-mobile-services-javascript-sdk.aspx
-                                // here: http://www.thejoyofcode.com/Handling_expired_tokens_in_your_application_Day_11_.aspx
-                                // and here: http://blogs.msdn.com/b/carlosfigueira/archive/2014/03/13/caching-and-handling-expired-tokens-in-azure-mobile-services-managed-sdk.aspx
+        }
 
-                                final CountDownLatch latch = new CountDownLatch(1);
+        @Override
+        public ListenableFuture<ServiceFilterResponse> handleRequest(ServiceFilterRequest request,
+                                                                     NextServiceFilterCallback next) {
+            runOnUiThread(new Runnable() {
 
-                                logout(true);
+                @Override
+                public void run() {
 
-                                MainActivity.this.runOnUiThread( new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        wamsClient.login(MobileServiceAuthenticationProvider.Facebook,
-                                                new UserAuthenticationCallback() {
-                                                    @Override
-                                                    public void onCompleted(MobileServiceUser mobileServiceUser,
-                                                                            Exception exception,
-                                                                            ServiceFilterResponse serviceFilterResponse) {
-                                                        if( exception == null ) {
-                                                            //Update the requests X-ZUMO-AUTH header
-                                                            request.removeHeader("X-ZUMO-AUTH");
-                                                            //request.addHeader("X-ZUMO-AUTH", mClient.getCurrentUser().getAuthenticationToken());
+                }
 
-                                                            //Add our BYPASS querystring parameter to the URL
-                                                            Uri.Builder uriBuilder = Uri.parse(request.getUrl()).buildUpon();
-                                                            uriBuilder.appendQueryParameter("bypass", "true");
-                                                            try {
-                                                                request.setUrl(uriBuilder.build().toString());
-                                                            } catch (URISyntaxException e) {
-                                                                Log.e(LOG_TAG, "Couldn't set request's new url: " + e.getMessage());
-                                                                e.printStackTrace();
-                                                            }
+            });
 
-                                                            latch.countDown();
-                                                        }
-                                                    }
-                                                });
-                                    }
-                                });
+            ListenableFuture<ServiceFilterResponse> response = next.onNext(request);
 
-                                try {
-                                    latch.await();
-                                } catch (InterruptedException ex) {
-                                    Log.e(LOG_TAG, "Interrupted exception: " + ex.getMessage());
-                                    return;
-                                }
-                            }
+            try {
+                StatusLine status = response.get().getStatus();
+                int statusCode = status.getStatusCode();
+                if (statusCode == 401) {
 
-                            //Return a response to the caller (otherwise returning from this method to
-                            // RequestAsyncTask will cause a crash).
-                            responseCallback.onResponse(response, e);
-                        }
-                    });
+                }
+            } catch(ExecutionException ex) {
 
+            } catch(InterruptedException ex) {
+
+            }
+
+            return response;
         }
     }
 
@@ -603,34 +715,39 @@ public class MainActivity extends ActionBarActivity {
      */
     private class RefreshTokenCacheFilter_ implements ServiceFilter {
 
-        @Override
-        public void handleRequest(final ServiceFilterRequest request,
-                                  final NextServiceFilterCallback nextServiceFilterCallback,
-                                  final ServiceFilterResponseCallback responseCallback) {
+//        @Override
+//        public void handleRequest(final ServiceFilterRequest request,
+//                                  final NextServiceFilterCallback nextServiceFilterCallback,
+//                                  final ServiceFilterResponseCallback responseCallback) {
+//
+//            nextServiceFilterCallback.onNext(request, new ServiceFilterResponseCallback() {
+//                @Override
+//                public void onResponse(ServiceFilterResponse response, Exception exception) {
+////                    if( exception != null ){
+////                        Log.e(LOG_TAG, "RefreshTokenFilter onResponse exception: " + exception.getMessage());
+////                    }
+////                    StatusLine status = response.getStatus();
+////                    int statusCode = status.getStatusCode();
+////                    if( statusCode == 401 ) {
+////
+////                        //Return a response to the caller (otherwise returning from this method to
+////                        //RequestAsyncTask will cause a crash).
+////                        responseCallback.onResponse(response, exception);
+////
+////                        MainActivity.this.runOnUiThread( new Runnable() {
+////                            @Override
+////                            public void run() {
+////
+////                            }
+////                        });
+////                    }
+//                }
+//            });
+//        }
 
-            nextServiceFilterCallback.onNext(request, new ServiceFilterResponseCallback() {
-                @Override
-                public void onResponse(ServiceFilterResponse response, Exception exception) {
-//                    if( exception != null ){
-//                        Log.e(LOG_TAG, "RefreshTokenFilter onResponse exception: " + exception.getMessage());
-//                    }
-//                    StatusLine status = response.getStatus();
-//                    int statusCode = status.getStatusCode();
-//                    if( statusCode == 401 ) {
-//
-//                        //Return a response to the caller (otherwise returning from this method to
-//                        //RequestAsyncTask will cause a crash).
-//                        responseCallback.onResponse(response, exception);
-//
-//                        MainActivity.this.runOnUiThread( new Runnable() {
-//                            @Override
-//                            public void run() {
-//
-//                            }
-//                        });
-//                    }
-                }
-            });
+        @Override
+        public ListenableFuture<ServiceFilterResponse> handleRequest(ServiceFilterRequest serviceFilterRequest, NextServiceFilterCallback nextServiceFilterCallback) {
+            return null;
         }
     }
 

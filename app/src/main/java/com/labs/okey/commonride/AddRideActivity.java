@@ -29,11 +29,13 @@ import com.labs.okey.commonride.adapters.PlaceAutoCompleteAdapter;
 import com.labs.okey.commonride.model.Ride;
 import com.labs.okey.commonride.pickers.DatePickerFragment;
 import com.labs.okey.commonride.pickers.TimePickerFragment;
+import com.microsoft.windowsazure.mobileservices.authentication.MobileServiceUser;
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
-import com.microsoft.windowsazure.mobileservices.MobileServiceTable;
-import com.microsoft.windowsazure.mobileservices.MobileServiceUser;
-import com.microsoft.windowsazure.mobileservices.ServiceFilterResponse;
-import com.microsoft.windowsazure.mobileservices.TableOperationCallback;
+import com.microsoft.windowsazure.mobileservices.http.ServiceFilterResponse;
+import com.microsoft.windowsazure.mobileservices.table.MobileServiceTable;
+import com.microsoft.windowsazure.mobileservices.table.TableOperationCallback;
+import com.microsoft.windowsazure.mobileservices.table.sync.MobileServiceSyncTable;
+
 
 import org.json.JSONObject;
 
@@ -46,13 +48,14 @@ import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.concurrent.ExecutionException;
 
 
 public class AddRideActivity extends  ActionBarActivity {
 
     private static final String LOG_TAG = "CommonRide.AddRide";
 
-    private MobileServiceClient mClient;
+    private MobileServiceClient wamsClient;
     private MobileServiceTable<Ride> mRidesTable;
 
     private static final String WAMSTOKENPREF = "wamsToken";
@@ -130,7 +133,7 @@ public class AddRideActivity extends  ActionBarActivity {
         mWhenStarts = Calendar.getInstance();
 
         try {
-            mClient = new MobileServiceClient(
+            wamsClient = new MobileServiceClient(
                     "https://commonride.azure-mobile.net/",
                     "RuDCJTbpVcpeCQPvrcYeHzpnLyikPo70",
                     this);
@@ -144,9 +147,9 @@ public class AddRideActivity extends  ActionBarActivity {
             // this should be JWT token, so use WAMS_TOKEM
             wamsUser.setAuthenticationToken(token);
 
-            mClient.setCurrentUser(wamsUser);
+            wamsClient.setCurrentUser(wamsUser);
 
-            mRidesTable = mClient.getTable("commonrides", Ride.class);
+            mRidesTable = wamsClient.getTable("commonrides", Ride.class);
         } catch(Exception e) {
             Log.i(LOG_TAG, e.getMessage());
         }
@@ -237,11 +240,11 @@ public class AddRideActivity extends  ActionBarActivity {
         ride.whenPublished = new Date();
         ride.whenStarts = this.mWhenStarts.getTime();
 
-        ride.from = from;
+        ride.ride_from = from;
         ride.from_lat = from_lat;
         ride.from_lon = from_lon;
 
-        ride.to = to;
+        ride.ride_to = to;
         ride.to_lat = to_lat;
         ride.to_lon = to_lon;
 
@@ -249,6 +252,21 @@ public class AddRideActivity extends  ActionBarActivity {
 
         EditText txtNotes = (EditText)findViewById(R.id.txtRideNotes);
         ride.notes = txtNotes.getText().toString();
+
+        //
+        // Prepare sync context before use offline operation
+        //
+//        MobileServiceSyncTable<Ride> ridesTable =
+//                wamsClient.getSyncTable("commonrides", Ride.class);
+//        try {
+//            ridesTable.insert(ride).get();
+//            progress.dismiss();
+//            finish();
+//        } catch(InterruptedException ex) {
+//            Log.e(LOG_TAG, ex.getMessage());
+//        } catch(ExecutionException ex) {
+//            Log.e(LOG_TAG, ex.getMessage());
+//        }
 
         mRidesTable.insert(ride, new TableOperationCallback<Ride>() {
             public void onCompleted(Ride entity,
