@@ -33,8 +33,10 @@
         android:id="@+id/register_form"
         android:visibility="invisible">
 
-        <AutoCompleteTextView android:id="@+id/phone" android:layout_width="match_parent"
-            android:layout_height="wrap_content" android:hint="@string/prompt_phone"
+        <AutoCompleteTextView android:id="@+id/phone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/prompt_phone"
             android:inputType="phone" android:maxLines="1"
             android:singleLine="true" />
 
@@ -44,6 +46,12 @@
             android:text="@string/prompt_use_phone"
             android:id="@+id/switchUsePhone"
             android:checked="true" />
+
+         <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/registration_code"
+                android:id="@+id/txtRegCode" />
 
         <Button
             android:layout_width="wrap_content"

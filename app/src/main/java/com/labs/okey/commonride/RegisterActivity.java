@@ -12,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.Toast;
@@ -119,6 +120,13 @@ public class RegisterActivity extends FragmentActivity {
             return;
         }
 
+        EditText txtRegCode = (EditText)findViewById(R.id.txtRegCode);
+        if( txtRegCode.getText().toString().isEmpty() ) {
+            String error = getResources().getString(R.string.no_registration_code);
+            txtRegCode.setError(error);
+            return;
+        }
+
         final ProgressDialog progress = ProgressDialog.show(this, "Adding", "New user");
 
         try {
@@ -144,6 +152,7 @@ public class RegisterActivity extends FragmentActivity {
             newUser.email = (String)fbUser.getProperty("email");
             newUser.phone = txtUser.getText().toString();
             newUser.usePhone = switchView.isChecked();
+            newUser.group = "test_drive"; // EditText - registration code
 
             usersTable.insert(newUser, new TableOperationCallback<User>(){
 

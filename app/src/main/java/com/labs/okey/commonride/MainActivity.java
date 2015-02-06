@@ -6,6 +6,7 @@ import android.app.FragmentManager;
 import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
@@ -38,6 +39,10 @@ import android.widget.Toast;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.plus.Plus;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.gson.JsonObject;
 import com.labs.okey.commonride.adapters.RidesAdapter;
@@ -82,7 +87,7 @@ import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity{
 
     private static final String LOG_TAG = "CommonRide.Main";
     static final int REGISTER_USER_REQUEST = 1;
@@ -208,28 +213,41 @@ public class MainActivity extends ActionBarActivity {
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         if( sharedPrefs.getString(USERIDPREF, "").isEmpty() ) {
 
-            try {
-                Intent intent = new Intent(MainActivity.this, RegisterActivity.class);
-                startActivityForResult(intent, REGISTER_USER_REQUEST);
-            }
-            catch(Exception ex) {
-                ex.printStackTrace();
-            }
-        } else {
-                String accessToken = sharedPrefs.getString(TOKENPREF, "");
-                Intent intent = getIntent();
-                wamsInit(accessToken);
+            Intent intent = new Intent(MainActivity.this, RegisterActivity.class);
+            startActivityForResult(intent, REGISTER_USER_REQUEST);
 
-                if( Intent.ACTION_SEARCH.equals(intent.getAction())) {
-                    String query = intent.getStringExtra(SearchManager.QUERY);
-                    wams_GetSearch(accessToken, query);
-                } else {
-                    refreshRides();
-                }
+        } else {
+
+            String accessToken = sharedPrefs.getString(TOKENPREF, "");
+            Intent intent = getIntent();
+            wamsInit(accessToken);
+            NotificationsManager.handleNotifications(this, SENDER_ID, GCMHandler.class);
+
+            if( Intent.ACTION_SEARCH.equals(intent.getAction())) {
+                 String query = intent.getStringExtra(SearchManager.QUERY);
+                 wams_GetSearch(accessToken, query);
+            } else {
+                refreshRides();
+            }
 
         }
 
-        NotificationsManager.handleNotifications(this, SENDER_ID, GCMHandler.class);
+    }
+
+    @Override
+    protected void onDestroy(){
+        super.onDestroy();
+        NotificationsManager.stopHandlingNotifications(this);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    protected void onStop() {
+         super.onStop();
     }
 
     private void wams_GetSearch(String accessToken,
@@ -268,6 +286,7 @@ public class MainActivity extends ActionBarActivity {
             protected Void doInBackground(Void... params) {
 
                 try{
+                    // PUSH is executed on SyncContext, i.e. works on the server tables.
                     wamsClient.getSyncContext().push().get();
 
                     // WAMS SDK automatically queries for deleted records and
@@ -295,7 +314,6 @@ public class MainActivity extends ActionBarActivity {
 
     }
 
-
     private void refreshRides() {
 
         new AsyncTask<Object, Void, Void>() {
@@ -316,9 +334,27 @@ public class MainActivity extends ActionBarActivity {
                         }
                     });
                 } catch(InterruptedException ex) {
-                    Log.e(LOG_TAG, ex.getMessage() + " Cause: " + ex.getCause());
+                    final String msg = ex.getCause().getMessage();
+                    Log.e(LOG_TAG, msg);
+                    runOnUiThread(new Runnable() {
+                                      @Override
+                                      public void run() {
+                                          Toast.makeText(MainActivity.this, msg, Toast.LENGTH_LONG).show();
+                                      }
+                                  }
+                    );
+
                 } catch(ExecutionException ex) {
-                    Log.e(LOG_TAG, ex.getMessage() + " Cause: " + ex.getCause());
+                    final String msg = ex.getCause().getMessage();
+                    Log.e(LOG_TAG, msg);
+                    runOnUiThread(new Runnable() {
+                                      @Override
+                                      public void run() {
+                                          Toast.makeText(MainActivity.this, msg, Toast.LENGTH_LONG).show();
+                                      }
+                                  }
+                    );
+
                 }
 
                 return null;
@@ -421,13 +457,20 @@ public class MainActivity extends ActionBarActivity {
 
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == REGISTER_USER_REQUEST && resultCode == RESULT_OK) {
+        switch (requestCode ) {
+            case  REGISTER_USER_REQUEST: {
+                if (resultCode == RESULT_OK) {
 
-            Bundle bundle = data.getExtras();
-            String accessToken = bundle.getString("accessToken");
+                    Bundle bundle = data.getExtras();
+                    String accessToken = bundle.getString("accessToken");
 
-            wamsInit(accessToken);
-            refreshRides();
+                    wamsInit(accessToken);
+                    NotificationsManager.handleNotifications(this, SENDER_ID, GCMHandler.class);
+                    pullRides();
+                }
+            }
+            break;
+
         }
     }
 

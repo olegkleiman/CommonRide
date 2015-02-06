@@ -5,10 +5,13 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.RingtoneManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 
 import com.microsoft.windowsazure.mobileservices.notifications.MobileServicePush;
 import com.microsoft.windowsazure.mobileservices.notifications.Registration;
@@ -23,23 +26,42 @@ public class GCMHandler extends  com.microsoft.windowsazure.notifications.Notifi
     private NotificationManager mNotificationManager;
 
     public static final int NOTIFICATION_ID = 1;
+    private static final String USERIDPREF = "userid";
+
+    @Override
+    public void onUnregistered(Context context, String gcmRegistrationId) {
+        super.onUnregistered(context, gcmRegistrationId);
+    }
 
     @Override
     public void onRegistered(Context context,  final String gcmRegistrationId) {
         super.onRegistered(context, gcmRegistrationId);
 
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
+        final String userID = sharedPrefs.getString(USERIDPREF, "");
+
         new AsyncTask<Void, Void, Void>() {
 
             protected Void doInBackground(Void... params) {
                 try {
+
+                    // Better use WAMS SDL v2 like:
+                    //MainActivity.wamsClient.getPush().register(gcmRegistrationId, null);
+
                     MobileServicePush push = MainActivity.wamsClient.getPush();
                     if( push != null ) {
-                        push.register(gcmRegistrationId, null,
+                        String[] tags = {"test_ride", userID};
+
+                        push.register(gcmRegistrationId, tags,
                                 new RegistrationCallback(){
 
                                     @Override
-                                    public void onRegister(Registration registration, Exception e) {
-
+                                    public void onRegister(Registration registration,
+                                                           Exception ex) {
+                                        if( ex != null) {
+                                            String msg =  ex.getMessage();
+                                            Log.e("CommonRide. Registration error:" , msg);
+                                        }
                                     }
                                 });
                     }

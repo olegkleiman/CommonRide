@@ -41,4 +41,7 @@ public class User {
     @com.google.gson.annotations.SerializedName("use_phone")
     public Boolean usePhone;
 
+    @com.google.gson.annotations.SerializedName("group")
+    public String group;
+
 }
