@@ -57,7 +57,7 @@
     <string name="settings_user">User Profile</string>
     <string name="settings_prefs">Preferences</string>
 
-    <string name="title_activity_about">About version Alpha 0.45</string>
+    <string name="title_activity_about">About version Alpha 0.46</string>
     <string name="license">Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at

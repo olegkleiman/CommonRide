@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
@@ -60,6 +61,7 @@ public class SingleRideActivity extends ActionBarActivity {
 
     String myUserID;
     String mDriverID;
+    int mFreePlaces;
 
     String mRideId;
     String mDriverPhone;
@@ -108,12 +110,14 @@ public class SingleRideActivity extends ActionBarActivity {
 
                                 if( ride != null ) {
 
+                                    mFreePlaces = ride.freePlaces;
                                     mDriverID = ride.getDriver();
+
                                     // 'Delete' menu item should be disabled for
                                     // any rides that published by not myUser.
                                     // Actual disabling is done in onPrepareOptionsMenu() method,
                                     // that is implied by invalidateOptionMenu() invocation.
-                                    if( !myUserID.equals(mDriverID) )
+                                    //if( !myUserID.equals(mDriverID) )
                                         invalidateOptionsMenu();
 
                                     TextView v = (TextView) findViewById(R.id.ride_from);
@@ -210,6 +214,10 @@ public class SingleRideActivity extends ActionBarActivity {
 //                                                               imageDriver.setImageBitmap(img);
 
                                                                DrawableManager drawableManager = new DrawableManager();
+                                                               drawableManager.setRounded()
+                                                                       .setCornerRadius(20)
+                                                                       .setBorderColor(Color.GRAY)
+                                                                       .setBorderWidth(4);
                                                                drawableManager.fetchDrawableOnThread(user.getPictureURL(),
                                                                        imageDriver);
 
@@ -246,6 +254,25 @@ public class SingleRideActivity extends ActionBarActivity {
             return false;
         } else
             return true;
+    }
+
+    private void refreshRide() {
+        mRidesTable = mClient.getTable("commonrides", Ride.class);
+        mRidesTable.lookUp(mRideId, new TableOperationCallback<Ride>() {
+
+            public void onCompleted(Ride ride,
+                                    Exception e,
+                                    ServiceFilterResponse serviceFilterResponse) {
+                if (e == null) {
+
+                    if (ride != null) {
+
+                        mFreePlaces = ride.freePlaces;
+                        invalidateOptionsMenu();
+                    }
+                }
+            }
+        });
     }
 
     private void refreshPassengers() {
@@ -298,7 +325,7 @@ public class SingleRideActivity extends ActionBarActivity {
         join.Id = joinId;
 
         final ProgressDialog progress = ProgressDialog.show(this,
-                "Uploading", "Unjoining a ride");
+                "Uploading", "Un-joining a ride");
 
         mJoinsTable = mClient.getTable("joins", Join.class);
         mJoinsTable.delete(join, new TableDeleteCallback() {
@@ -310,7 +337,7 @@ public class SingleRideActivity extends ActionBarActivity {
 
                 if( e != null ) {
                     Toast.makeText(SingleRideActivity.this,
-                            "Unable unjoin. Exception: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            "Unable un-join. Exception: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 } else {
 
                     final ListView listView = (ListView)v.getParent().getParent().getParent();
@@ -331,6 +358,8 @@ public class SingleRideActivity extends ActionBarActivity {
                                                 listView.setAlpha(1);
                                             }
                                         } );
+
+                                refreshRide();
                             }
                         }
                     }
@@ -416,6 +445,7 @@ public class SingleRideActivity extends ActionBarActivity {
                                             ServiceFilterResponse response) {
                         if (exception == null) {
                             refreshPassengers();
+                            refreshRide();
                         } else {
                             Log.e(LOG_TAG, exception.getMessage());
                         }
@@ -432,11 +462,22 @@ public class SingleRideActivity extends ActionBarActivity {
         if( (myUserID != null && !myUserID.isEmpty() )
                 &&
                 (mDriverID != null && !mDriverID.isEmpty()) ) {
+            // Disable 'Delete' if ride was published by not owner of the ride
             if( !myUserID.equals( mDriverID) ) {
                 MenuItem menuItem = menu.findItem(R.id.action_join_delete);
                 if( menuItem != null )
                     menuItem.setEnabled(false);
-                //menu.getItem(2).setEnabled(false);
+            }
+
+            // Disable 'Join' if there is no free places
+            // or this ride was published by the driver
+            if( mFreePlaces == 0
+                    || myUserID.equals( mDriverID)) {
+                MenuItem menuItem = menu.findItem(R.id.action_join_ride);
+                if( menuItem != null ) {
+                    menuItem.setEnabled(false);
+                    menuItem.setVisible(false);
+                }
             }
         }
 

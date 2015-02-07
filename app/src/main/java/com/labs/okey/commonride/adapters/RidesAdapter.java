@@ -1,6 +1,7 @@
 package com.labs.okey.commonride.adapters;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -47,6 +48,11 @@ public class RidesAdapter extends ArrayAdapter<RideAnnotated> {
         mDesc = context.getResources().getString(R.string.ride_desc);
 
         mDrawableManager = new DrawableManager();
+        mDrawableManager.setRounded()
+                .setCornerRadius(20)
+                .setBorderColor(Color.GRAY)
+                .setBorderWidth(4);
+
     }
 
     // This c'tor is used only in online scenario

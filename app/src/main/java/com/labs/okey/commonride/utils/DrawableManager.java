@@ -18,9 +18,11 @@ KIND, either express or implied.  See the License for the
 specific language governing permissions and limitations
 under the License.
 */
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.util.Log;
 import android.widget.ImageView;
 
@@ -36,9 +38,33 @@ import java.util.Map;
 
 public class DrawableManager {
     private final Map<String, Drawable> drawableMap;
+    private Boolean isRounded = false;
+    float cornerRadius = 0;
+    int borderColor = 0;
+    float borderWidth = 0;
 
     public DrawableManager() {
         drawableMap = new HashMap<String, Drawable>();
+    }
+
+    public DrawableManager setRounded() {
+        isRounded = true;
+        return this;
+    }
+
+    public DrawableManager setCornerRadius(float cornerRadius) {
+        this.cornerRadius = cornerRadius;
+        return this;
+    }
+
+    public DrawableManager setBorderColor(int color) {
+        this.borderColor = color;
+        return this;
+    }
+
+    public DrawableManager setBorderWidth(float borderWidth) {
+        this.borderWidth = borderWidth;
+        return this;
     }
 
     public Drawable fetchDrawable(String urlString) {
@@ -50,7 +76,16 @@ public class DrawableManager {
         try {
             InputStream is = fetch(urlString);
             Drawable drawable = Drawable.createFromStream(is, "src");
-
+            if( isRounded ) {
+                drawable = RoundedDrawable.fromDrawable(drawable);
+                if (drawable instanceof RoundedDrawable) {
+                    ((RoundedDrawable) drawable)
+                            .setCornerRadius(cornerRadius)
+                            .setBorderColor(borderColor)
+                            .setBorderWidth(4)
+                            .setOval(true);
+                }
+            }
 
             if (drawable != null) {
                 drawableMap.put(urlString, drawable);
@@ -69,7 +104,7 @@ public class DrawableManager {
             Log.e(this.getClass().getSimpleName(), "fetchDrawable failed", e);
             return null;
         } catch(Exception e) {
-            e.printStackTrace();
+            Log.e(this.getClass().getSimpleName(), "fetchDrawable failed", e);
             return null;
         }
     }

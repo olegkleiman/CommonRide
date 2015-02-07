@@ -2,6 +2,7 @@ package com.labs.okey.commonride.adapters;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -52,6 +53,12 @@ public class PassengersAdapter extends ArrayAdapter<JoinAnnotated>{
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         mDrawableManager = new DrawableManager();
+        mDrawableManager.setRounded()
+                .setCornerRadius(20)
+                .setBorderColor(Color.GRAY)
+                .setBorderWidth(2);
+
+
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
         mMyUserID = sharedPrefs.getString(USERIDPREF, "");
     }
