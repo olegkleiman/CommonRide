@@ -28,6 +28,7 @@ import com.facebook.model.GraphUser;
 import com.facebook.widget.LoginButton;
 import com.labs.okey.commonride.model.Ride;
 import com.labs.okey.commonride.model.User;
+import com.labs.okey.commonride.utils.Globals;
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 import com.microsoft.windowsazure.mobileservices.table.MobileServiceTable;
 import com.microsoft.windowsazure.mobileservices.authentication.MobileServiceUser;
@@ -136,8 +137,8 @@ public class RegisterActivity extends FragmentActivity {
 
             MobileServiceClient wamsClient =
                     new MobileServiceClient(
-                            "https://commonride.azure-mobile.net/",
-                            "RuDCJTbpVcpeCQPvrcYeHzpnLyikPo70",
+                            Globals.WAMS_URL,
+                            Globals.WAMS_API_KEY,
                             this);
 
             // 'Users' table is defined with 'Anybody with the Application Key'

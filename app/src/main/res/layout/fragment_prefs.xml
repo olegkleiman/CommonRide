@@ -21,20 +21,23 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp">
 
-        <TextView
-            android:layout_width="wrap_content"
+        <Switch
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Vibrate on received messsges"
-            android:id="@+id/textView15"
-            android:layout_gravity="center_vertical" />
+            android:text="Vibrate on receive messages"
+            android:id="@+id/switchVibrateReceive"
+            android:layout_gravity="right"
+            android:checked="true" />
 
-        <ToggleButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="New ToggleButton"
-            android:id="@+id/toggleButton"
-            android:layout_gravity="center" />
+
     </LinearLayout>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/saveText"
+        android:id="@+id/btnSettingsPrefsSave"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="20dp" />
 
 </LinearLayout>

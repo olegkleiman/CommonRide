@@ -20,6 +20,7 @@ import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.labs.okey.commonride.model.Ride;
 import com.labs.okey.commonride.utils.GMapV2Direction;
+import com.labs.okey.commonride.utils.Globals;
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 import com.microsoft.windowsazure.mobileservices.table.MobileServiceTable;
 import com.microsoft.windowsazure.mobileservices.http.ServiceFilterResponse;
@@ -44,8 +45,8 @@ public class RideMapActivity extends FragmentActivity {
         mRideId = getIntent().getStringExtra("rideId");
         try {
             mClient = new MobileServiceClient(
-                    "https://commonride.azure-mobile.net/",
-                    "RuDCJTbpVcpeCQPvrcYeHzpnLyikPo70",
+                    Globals.WAMS_URL,
+                    Globals.WAMS_API_KEY,
                     this);
             mRidesTable = mClient.getTable("commonrides", Ride.class);
 

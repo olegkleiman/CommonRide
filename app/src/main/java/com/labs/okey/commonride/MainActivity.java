@@ -38,6 +38,7 @@ import com.google.gson.JsonObject;
 import com.labs.okey.commonride.adapters.RidesAdapter;
 import com.labs.okey.commonride.model.RideAnnotated;
 import com.labs.okey.commonride.utils.ConflictResolvingSyncHandler;
+import com.labs.okey.commonride.utils.Globals;
 import com.microsoft.windowsazure.mobileservices.*;
 
 import com.facebook.*;
@@ -80,6 +81,7 @@ public class MainActivity extends ActionBarActivity{
     static MobileServiceClient wamsClient;
     private MobileServiceSyncTable<RideAnnotated> mRidesTable;
     private Query mPullQuery;
+    SQLiteLocalStore mLocalStore;
 
     public static final String SENDER_ID = "574878603809";
 
@@ -144,9 +146,14 @@ public class MainActivity extends ActionBarActivity{
                 R.layout.drawer_list_item, mDrawerTitles));
         mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
 
-//        // enable ActionBar app icon to behave as action to toggle nav drawer
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);
+        // enable ActionBar app icon to behave as action to toggle nav drawer
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setHomeButtonEnabled(true);
+
+//        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+//        actionBar.newTab().setText("Offers");
+//        actionBar.newTab().setText("Requests");
 
         // ActionBarDrawerToggle ties together the the proper interactions
         // between the sliding drawer and the action bar app icon
@@ -359,15 +366,15 @@ public class MainActivity extends ActionBarActivity{
 
         try {
             wamsClient = new MobileServiceClient(
-                    "https://commonride.azure-mobile.net/",
-                    "RuDCJTbpVcpeCQPvrcYeHzpnLyikPo70",
+                    Globals.WAMS_URL,
+                    Globals.WAMS_API_KEY,
                     this);
                     //.withFilter(new RefreshTokenCacheFilter());
 
             mPullQuery = wamsClient.getTable(RideAnnotated.class).orderBy("when_started", QueryOrder.Ascending);
 
-            SQLiteLocalStore localStore = new SQLiteLocalStore(wamsClient.getContext(),
-                        "user", null, 1);
+            mLocalStore = new SQLiteLocalStore(wamsClient.getContext(),
+                                               "user", null, 1);
             MobileServiceSyncHandler handler = new ConflictResolvingSyncHandler();
             MobileServiceSyncContext syncContext = wamsClient.getSyncContext();
             if (!syncContext.isInitialized()) {
@@ -391,8 +398,8 @@ public class MainActivity extends ActionBarActivity{
                     tableDefinition.put("__deleted", ColumnDataType.Boolean);
                     tableDefinition.put("__version", ColumnDataType.String);
 
-                    localStore.defineTable("rides_annotated", tableDefinition);
-                    syncContext.initialize(localStore, handler).get();
+                    mLocalStore.defineTable("rides_annotated", tableDefinition);
+                    syncContext.initialize(mLocalStore, handler).get();
             }
 
             final JsonObject body = new JsonObject();

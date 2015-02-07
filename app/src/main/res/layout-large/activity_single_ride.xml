@@ -1,3 +1,4 @@
+<!--  Nexus 7 -->
 <LinearLayout  xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -13,6 +14,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:textColor="@android:color/black"
+        android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="@string/driver_caption"
         android:textStyle="bold" />
     <View style="@style/Divider"/>
@@ -25,8 +27,8 @@
 
         <ImageView
             android:id="@+id/imgageViewDriver"
-            android:layout_width="72dp"
-            android:layout_height="72dp"
+            android:layout_width="82dp"
+            android:layout_height="82dp"
             />
 
         <LinearLayout
@@ -39,6 +41,7 @@
                 android:id="@+id/txtDriverName"
                 android:layout_width="wrap_content"
                 android:layout_height="fill_parent"
+                android:textAppearance="?android:attr/textAppearanceLarge"
                 android:textColor="@android:color/black" />
             <LinearLayout
                 android:layout_width="fill_parent"
@@ -54,6 +57,7 @@
                     android:id="@+id/txtDriverEMail"
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textColor="@android:color/black"
                     android:layout_marginLeft="4dp"
                     android:gravity="left|center"
@@ -80,6 +84,7 @@
                     android:id="@+id/txtDriverPhone"
                     android:layout_width="wrap_content"
                     android:layout_height="fill_parent"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textColor="@android:color/black"
                     android:layout_marginLeft="4dp"
                     android:gravity="left|center"
@@ -100,6 +105,7 @@
         <TextView
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="@android:color/black"
             android:text="@string/ride_caption"
             android:layout_marginTop="10dp"
@@ -127,15 +133,17 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@android:color/black"
-            android:text="From: "/>
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="@string/fromText"/>
 
         <TextView android:id="@+id/ride_from"
             android:text="@string/ride_origin"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
             android:layout_gravity="left|top"
             android:textColor="@android:color/black"
-            android:layout_marginLeft="4dp" />
+            android:layout_marginLeft="10dp" />
 
      </LinearLayout>
 
@@ -148,16 +156,19 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@android:color/black"
-            android:text="To: "/>
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="@string/toText"/>
 
         <TextView android:id="@+id/ride_to"
             android:text="@string/ride_origin"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
             android:layout_gravity="left|top"
             android:ellipsize="end"
             android:singleLine="true"
-            android:textColor="@android:color/black" />
+            android:textColor="@android:color/black"
+            android:layout_marginLeft="10dp" />
 
      </LinearLayout>
 
@@ -169,13 +180,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@android:color/black"
+            android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="When: "/>
         <TextView android:id="@+id/ride_when"
             android:text=""
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
             android:layout_gravity="left|top"
-            android:textColor="@android:color/black" />
+            android:textColor="@android:color/black"
+            android:layout_marginLeft="10dp" />
     </LinearLayout>
 
     <fragment
@@ -184,12 +198,14 @@
         android:id="@+id/ride_map"
         map:liteMode="true"
         android:layout_width="fill_parent"
-        android:layout_height="100dp" />
+        android:layout_height="100dp"
+        android:layout_marginTop="10dp" />
 
     <TextView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:textColor="@android:color/black"
+        android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="@string/passengersText"
         android:layout_marginTop="10dp"
         android:textStyle="bold" />

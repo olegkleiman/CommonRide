@@ -12,4 +12,7 @@ public class Globals {
     public static final String PHONE_PREF = "phone";
     public static final String USE_PHONE_PFER = "usephone";
     public static final String REG_CODE_PREF = "regcode";
+
+    public static final String WAMS_URL = "https://commonride.azure-mobile.net/";
+    public static final String WAMS_API_KEY = "RuDCJTbpVcpeCQPvrcYeHzpnLyikPo70";
 }

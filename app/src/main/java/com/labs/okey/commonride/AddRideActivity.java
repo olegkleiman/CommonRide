@@ -29,6 +29,7 @@ import com.labs.okey.commonride.adapters.PlaceAutoCompleteAdapter;
 import com.labs.okey.commonride.model.Ride;
 import com.labs.okey.commonride.pickers.DatePickerFragment;
 import com.labs.okey.commonride.pickers.TimePickerFragment;
+import com.labs.okey.commonride.utils.Globals;
 import com.microsoft.windowsazure.mobileservices.authentication.MobileServiceUser;
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 import com.microsoft.windowsazure.mobileservices.http.ServiceFilterResponse;
@@ -134,8 +135,8 @@ public class AddRideActivity extends  ActionBarActivity {
 
         try {
             wamsClient = new MobileServiceClient(
-                    "https://commonride.azure-mobile.net/",
-                    "RuDCJTbpVcpeCQPvrcYeHzpnLyikPo70",
+                    Globals.WAMS_URL,
+                    Globals.WAMS_API_KEY,
                     this);
 
             SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());

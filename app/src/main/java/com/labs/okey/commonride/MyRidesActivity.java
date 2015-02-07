@@ -27,6 +27,7 @@ import android.widget.Toast;
 
 import com.facebook.UiLifecycleHelper;
 import com.labs.okey.commonride.model.Ride;
+import com.labs.okey.commonride.utils.Globals;
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 import com.microsoft.windowsazure.mobileservices.table.MobileServiceTable;
 import com.microsoft.windowsazure.mobileservices.authentication.MobileServiceUser;
@@ -72,8 +73,8 @@ public class MyRidesActivity extends ActionBarActivity {
 
         try {
             mClient = new MobileServiceClient(
-                    "https://commonride.azure-mobile.net/",
-                    "RuDCJTbpVcpeCQPvrcYeHzpnLyikPo70",
+                    Globals.WAMS_URL,
+                    Globals.WAMS_API_KEY,
                     this);
 
             SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());

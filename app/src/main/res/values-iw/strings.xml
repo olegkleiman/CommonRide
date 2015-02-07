@@ -30,4 +30,6 @@
     <string name="title_activity_my_rides">הנסיעות שלי</string>
     <string name="action_register">רישום</string>
     <string name="title_activity_tabs">הגדרות</string>
+    <string name="driver_caption">נהג</string>
+    <string name="saveText">שמור</string>
 </resources>

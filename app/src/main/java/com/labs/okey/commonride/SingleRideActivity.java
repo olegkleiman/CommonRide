@@ -33,6 +33,7 @@ import com.labs.okey.commonride.model.Ride;
 import com.labs.okey.commonride.model.User;
 import com.labs.okey.commonride.utils.DrawableManager;
 import com.labs.okey.commonride.utils.GMapV2Direction;
+import com.labs.okey.commonride.utils.Globals;
 import com.microsoft.windowsazure.mobileservices.*;
 import com.microsoft.windowsazure.mobileservices.authentication.MobileServiceUser;
 import com.microsoft.windowsazure.mobileservices.http.ServiceFilterResponse;
@@ -82,8 +83,8 @@ public class SingleRideActivity extends ActionBarActivity {
 
         try {
             mClient = new MobileServiceClient(
-                    "https://commonride.azure-mobile.net/",
-                    "RuDCJTbpVcpeCQPvrcYeHzpnLyikPo70",
+                    Globals.WAMS_URL,
+                    Globals.WAMS_API_KEY,
                     this);
 
             SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());

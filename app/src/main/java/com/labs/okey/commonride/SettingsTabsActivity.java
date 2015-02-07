@@ -13,6 +13,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -27,6 +28,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Switch;
@@ -36,6 +38,7 @@ import android.widget.Toast;
 import com.labs.okey.commonride.model.RideAnnotated;
 import com.labs.okey.commonride.model.User;
 import com.labs.okey.commonride.utils.DrawableManager;
+import com.labs.okey.commonride.utils.Globals;
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 import com.microsoft.windowsazure.mobileservices.MobileServiceList;
 import com.microsoft.windowsazure.mobileservices.table.MobileServiceTable;
@@ -230,6 +233,10 @@ public class SettingsTabsActivity extends ActionBarActivity {
                     final ImageView imgUserPic = (ImageView)rootView.findViewById(R.id.imgViewUserSettings);
 
                     DrawableManager drawableManager = new DrawableManager();
+                    drawableManager.setRounded()
+                            .setCornerRadius(20)
+                            .setBorderColor(Color.LTGRAY)
+                            .setBorderWidth(4);
                     drawableManager.fetchDrawableOnThread(user.getPictureURL(),
                                                             imgUserPic);
 
@@ -270,8 +277,8 @@ public class SettingsTabsActivity extends ActionBarActivity {
                                 // for read and update operations,
                                 // so no login is required for this instance of MobileServiceClient
                                 MobileServiceClient wamsClient = new MobileServiceClient(
-                                        "https://commonride.azure-mobile.net/",
-                                        "RuDCJTbpVcpeCQPvrcYeHzpnLyikPo70",
+                                        Globals.WAMS_URL,
+                                        Globals.WAMS_API_KEY,
                                         mContext);
                                 // We are going to update Azure table,
                                 // so no need for Sync table in this case
@@ -328,11 +335,19 @@ public class SettingsTabsActivity extends ActionBarActivity {
 
                 case 2: {
                     rootView = inflater.inflate(R.layout.fragment_prefs, container, false);
+
+                    Button btnSave = (Button)rootView.findViewById(R.id.btnSettingsPrefsSave);
+                    btnSave.setOnClickListener( new View.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(View view) {
+
+                                                    }
+                                                }
+                    );
                 }
                 break;
 
             }
-
 
             return rootView;
         }
