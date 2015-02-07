@@ -1,21 +1,16 @@
 package com.labs.okey.commonride;
 
-import android.app.Activity;
 import android.app.Fragment;
-import android.app.FragmentManager;
 import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.StrictMode;
 import android.preference.PreferenceManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
@@ -34,19 +29,13 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.plus.Plus;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.gson.JsonObject;
 import com.labs.okey.commonride.adapters.RidesAdapter;
-import com.labs.okey.commonride.model.Ride;
 import com.labs.okey.commonride.model.RideAnnotated;
 import com.labs.okey.commonride.utils.ConflictResolvingSyncHandler;
 import com.microsoft.windowsazure.mobileservices.*;
@@ -58,14 +47,11 @@ import com.microsoft.windowsazure.mobileservices.http.NextServiceFilterCallback;
 import com.microsoft.windowsazure.mobileservices.http.ServiceFilter;
 import com.microsoft.windowsazure.mobileservices.http.ServiceFilterRequest;
 import com.microsoft.windowsazure.mobileservices.http.ServiceFilterResponse;
-import com.microsoft.windowsazure.mobileservices.table.MobileServiceTable;
-import com.microsoft.windowsazure.mobileservices.table.TableQueryCallback;
 import com.microsoft.windowsazure.mobileservices.table.query.Query;
 import com.microsoft.windowsazure.mobileservices.table.query.QueryOrder;
 import com.microsoft.windowsazure.mobileservices.table.sync.MobileServiceSyncContext;
 import com.microsoft.windowsazure.mobileservices.table.sync.MobileServiceSyncTable;
 import com.microsoft.windowsazure.mobileservices.table.sync.localstore.ColumnDataType;
-import com.microsoft.windowsazure.mobileservices.table.sync.localstore.MobileServiceLocalStore;
 import com.microsoft.windowsazure.mobileservices.table.sync.localstore.MobileServiceLocalStoreException;
 import com.microsoft.windowsazure.mobileservices.table.sync.localstore.SQLiteLocalStore;
 import com.microsoft.windowsazure.mobileservices.table.sync.synchandler.MobileServiceSyncHandler;
@@ -73,18 +59,12 @@ import com.microsoft.windowsazure.notifications.NotificationsManager;
 
 
 import org.apache.http.StatusLine;
-import org.apache.http.util.ExceptionUtils;
 
 import java.net.MalformedURLException;
-import java.net.URISyntaxException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends ActionBarActivity{
@@ -277,9 +257,18 @@ public class MainActivity extends ActionBarActivity{
 
         new AsyncTask<Void, Void, Void>() {
 
+            Exception mEx = null;
+
             @Override
             protected void onPostExecute(Void result) {
                 progress.dismiss();
+
+                if( mEx != null ) {
+                    Toast.makeText(MainActivity.this,
+                                    mEx.getCause().toString(),
+                                    Toast.LENGTH_LONG)
+                            .show();
+                }
             }
 
             @Override
@@ -301,9 +290,11 @@ public class MainActivity extends ActionBarActivity{
                     refreshRides();
 
                 } catch(ExecutionException ex) {
+                    mEx = ex;
                     String cause = ex.getCause().toString();
                     Log.e(LOG_TAG, ex.getMessage() + " Cause: " + cause);
                 } catch(InterruptedException ex) {
+                    mEx = ex;
                     String cause = ex.getCause().toString();
                     Log.e(LOG_TAG, ex.getMessage() + " Cause: " + cause);
                 }
@@ -427,7 +418,6 @@ public class MainActivity extends ActionBarActivity{
                     return null;
                 }
             }.execute();
-
 
             mRidesTable = wamsClient.getSyncTable("rides_annotated",
                         RideAnnotated.class);
@@ -803,7 +793,7 @@ public class MainActivity extends ActionBarActivity{
                                 long id) {
             switch ( position ){
                 case 0: { // Settings
-                    Intent intent = new Intent(MainActivity.this, TabsActivity.class);
+                    Intent intent = new Intent(MainActivity.this, SettingsTabsActivity.class);
                     startActivity(intent);
                 }
                 break;

@@ -42,6 +42,7 @@ public class RegisterActivity extends FragmentActivity {
     private final String PENDING_ACTION_BUNDLE_KEY = "com.labs.okey.commomride:PendingAction";
 
     private static final String TOKENPREF = "accessToken";
+    private static final String REG_CODE_PREF = "regcode";
     String mAccessToken;
 
     private UiLifecycleHelper uiHelper;
@@ -121,7 +122,8 @@ public class RegisterActivity extends FragmentActivity {
         }
 
         EditText txtRegCode = (EditText)findViewById(R.id.txtRegCode);
-        if( txtRegCode.getText().toString().isEmpty() ) {
+        final String regCode = txtRegCode.getText().toString();
+        if( regCode.isEmpty() ) {
             String error = getResources().getString(R.string.no_registration_code);
             txtRegCode.setError(error);
             return;
@@ -138,21 +140,23 @@ public class RegisterActivity extends FragmentActivity {
                             "RuDCJTbpVcpeCQPvrcYeHzpnLyikPo70",
                             this);
 
-            // 'Users' table is defined with 'Anybody with the Applicatin Key'
+            // 'Users' table is defined with 'Anybody with the Application Key'
             // permissions for READ and INSERT operations, so no authentication is
             // required for adding new user to it
             MobileServiceTable<User> usersTable =
                     wamsClient.getTable("users", User.class);
             User newUser = new User();
-            newUser.registration_id = "Facebook:" + fbUser.getId();
+            newUser.setRegistrationId("Facebook:" + fbUser.getId());
             newUser.setFirstName( fbUser.getFirstName() );
             newUser.setLastName( fbUser.getLastName() );
             String pictureURL = "http://graph.facebook.com/" + fbUser.getId() + "/picture?type=large";
-            newUser.picture_url = pictureURL;
-            newUser.email = (String)fbUser.getProperty("email");
-            newUser.phone = txtUser.getText().toString();
-            newUser.usePhone = switchView.isChecked();
-            newUser.group = "test_drive"; // EditText - registration code
+            newUser.setPictureURL(pictureURL);
+            newUser.setEmail((String)fbUser.getProperty("email"));
+            newUser.setPhone(txtUser.getText().toString());
+            newUser.setUsePhone(switchView.isChecked());
+            newUser.setGroup(regCode);
+
+            newUser.save(this);
 
             usersTable.insert(newUser, new TableOperationCallback<User>(){
 
@@ -169,6 +173,7 @@ public class RegisterActivity extends FragmentActivity {
 
                         Intent returnIntent = new Intent();
                         returnIntent.putExtra(TOKENPREF, mAccessToken);
+                        returnIntent.putExtra(REG_CODE_PREF, regCode);
                         setResult(RESULT_OK, returnIntent);
                         finish();
 

@@ -194,11 +194,11 @@ public class SingleRideActivity extends ActionBarActivity {
                                                        if (user != null) {
                                                            txtDriverName.setText(user.getFirstName() +
                                                                    " " + user.getLastName());
-                                                           mDriverEMail = user.email;
+                                                           mDriverEMail = user.getEmail();
                                                            txtDriverEMail.setText(mDriverEMail);
-                                                           if( user.usePhone ) {
-                                                               mDriverPhone = user.phone;
-                                                               txtDriverPhone.setText(user.phone);
+                                                           if( user.getUsePhone() ) {
+                                                               mDriverPhone = user.getPhone();
+                                                               txtDriverPhone.setText(user.getPhone());
                                                            } else {
                                                                imageCallDriver.setVisibility(View.INVISIBLE);
                                                            }
@@ -210,7 +210,7 @@ public class SingleRideActivity extends ActionBarActivity {
 //                                                               imageDriver.setImageBitmap(img);
 
                                                                DrawableManager drawableManager = new DrawableManager();
-                                                               drawableManager.fetchDrawableOnThread(user.picture_url,
+                                                               drawableManager.fetchDrawableOnThread(user.getPictureURL(),
                                                                        imageDriver);
 
                                                            } catch (Exception ex) {

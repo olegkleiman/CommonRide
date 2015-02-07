@@ -28,4 +28,6 @@
     <string name="no_free_places">לפחות נוסע אחד</string>
     <string name="notes">הערות</string>
     <string name="title_activity_my_rides">הנסיעות שלי</string>
+    <string name="action_register">רישום</string>
+    <string name="title_activity_tabs">הגדרות</string>
 </resources>

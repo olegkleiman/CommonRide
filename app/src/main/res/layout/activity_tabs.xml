@@ -1,7 +1,34 @@
-<android.support.v4.view.ViewPager
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/pager"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".TabsActivity" />
+    tools:context=".TabsActivity">
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/pager"
+        android:layout_width="match_parent"
+        android:layout_height="0px"
+        android:layout_weight="1"/>
+
+    <LinearLayout android:orientation="horizontal"
+        android:gravity="center" android:measureWithLargestChild="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0">
+        <Button android:id="@+id/goto_user"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="gotoUser"
+            android:text="@string/settings_user">
+        </Button>
+        <Button android:id="@+id/goto_prefs"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="gotoPrefs"
+            android:text="@string/settings_prefs">
+        </Button>
+    </LinearLayout>
+</LinearLayout>

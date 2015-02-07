@@ -112,7 +112,7 @@
             android:value="AIzaSyBJryLCLoWeBUnSTabBxwDL4dWO4tExR1c" />
 
         <activity
-            android:name=".TabsActivity"
+            android:name=".SettingsTabsActivity"
             android:parentActivityName=".MainActivity"
             android:theme="@style/Theme.AppCompat.Light"
             android:label="@string/title_activity_tabs" >
