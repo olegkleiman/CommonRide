@@ -27,7 +27,7 @@
             android:id="@+id/imgageViewDriver"
             android:layout_width="72dp"
             android:layout_height="72dp"
-            />
+            android:layout_gravity="center_vertical" />
 
         <LinearLayout
             android:layout_width="fill_parent"
@@ -37,56 +37,62 @@
 
             <TextView
                 android:id="@+id/txtDriverName"
-                android:layout_width="wrap_content"
+                android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="Oleg Kleiman"
                 android:textColor="@android:color/black" />
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:layout_marginTop="6dp">
                 <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
                     android:clickable="true"
                     android:onClick="emailDriver"
-                    android:src="@android:drawable/ic_dialog_email" />
+                    android:src="@drawable/email"
+                    android:layout_gravity="center_vertical"/>
                 <TextView
                     android:id="@+id/txtDriverEMail"
                     android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
+                    android:layout_height="wrap_content"
                     android:textColor="@android:color/black"
                     android:layout_marginLeft="4dp"
-                    android:gravity="left|center"
                     android:ellipsize="end"
                     android:singleLine="true"
                     android:clickable="true"
                     android:onClick="emailDriver"
-                    android:layout_gravity="left" />
+                    android:gravity="left"
+                    android:layout_gravity="center_vertical"/>
              </LinearLayout>
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:layout_marginTop="6dp">
 
                 <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
                     android:clickable="true"
-                    android:src="@android:drawable/stat_sys_phone_call"
+                    android:src="@drawable/phone"
                     android:onClick="showRideMap"
-                    android:id="@+id/imgCallDriver" />
+                    android:id="@+id/imgCallDriver"
+                    android:layout_gravity="center_vertical"/>
 
                 <TextView
                     android:id="@+id/txtDriverPhone"
-                    android:layout_width="wrap_content"
-                    android:layout_height="fill_parent"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
                     android:textColor="@android:color/black"
                     android:layout_marginLeft="4dp"
                     android:gravity="left|center"
                     android:singleLine="true"
                     android:clickable="true"
                     android:onClick="callDriver"
-                    android:layout_gravity="left" />
+                    android:layout_gravity="left|center_vertical" />
             </LinearLayout>
         </LinearLayout>
 
@@ -102,18 +108,12 @@
             android:layout_height="wrap_content"
             android:textColor="@android:color/black"
             android:text="@string/ride_caption"
-            android:layout_marginTop="10dp"
             android:layout_marginLeft="4dp"
             android:textStyle="bold"
-            android:layout_weight="2" />
+            android:layout_weight="2"
+            android:layout_gravity="center_vertical"
+            android:layout_marginTop="6dp" />
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@android:drawable/ic_dialog_map"
-            android:clickable="true"
-            android:onClick="showRideMap"
-            android:layout_gravity="right" />
     </LinearLayout>
 
     <View style="@style/Divider"/>
@@ -123,41 +123,29 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:id="@+id/imageView5"
+            android:src="@drawable/geo_fence50" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@android:color/black"
-            android:text="From: "/>
+            android:layout_gravity="center_vertical"
+            android:text="@string/fromText"
+            android:layout_marginLeft="10dp" />
 
         <TextView android:id="@+id/ride_from"
-            android:text="@string/ride_origin"
+            android:text=""
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="left|top"
+            android:layout_gravity="left|center_vertical"
             android:textColor="@android:color/black"
-            android:layout_marginLeft="4dp" />
-
-     </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@android:color/black"
-            android:text="To: "/>
-
-        <TextView android:id="@+id/ride_to"
-            android:text="@string/ride_origin"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="left|top"
             android:ellipsize="end"
             android:singleLine="true"
-            android:textColor="@android:color/black" />
+            android:layout_marginLeft="10dp" />
 
      </LinearLayout>
 
@@ -165,17 +153,64 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:id="@+id/imageView6"
+            android:src="@drawable/geo_fence50"
+            android:layout_gravity="center_vertical" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@android:color/black"
-            android:text="When: "/>
+            android:text="@string/toText"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="10dp"/>
+
+        <TextView android:id="@+id/ride_to"
+            android:text=""
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left|center_vertical"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:textColor="@android:color/black"
+            android:layout_marginLeft="10dp"/>
+
+     </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:id="@+id/imageView4"
+            android:src="@drawable/clock50"
+            android:layout_gravity="center_vertical" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/black"
+            android:text="@string/whenText"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="10dp" />
+
         <TextView android:id="@+id/ride_when"
             android:text=""
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="left|top"
-            android:textColor="@android:color/black" />
+            android:layout_gravity="left|center_vertical"
+            android:textColor="@android:color/black"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:layout_marginLeft="10dp" />
+
     </LinearLayout>
 
     <fragment
@@ -184,7 +219,8 @@
         android:id="@+id/ride_map"
         map:liteMode="true"
         android:layout_width="fill_parent"
-        android:layout_height="100dp" />
+        android:layout_height="80dp"
+        android:layout_marginTop="10dp" />
 
     <TextView
         android:layout_width="fill_parent"

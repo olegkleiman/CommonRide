@@ -32,6 +32,8 @@ public class RidesAdapter extends ArrayAdapter<RideAnnotated> {
     List<RideAnnotated> rides = new ArrayList<RideAnnotated>();
 
     LayoutInflater m_inflater = null;
+    SimpleDateFormat mDateFormat = new SimpleDateFormat("MMM dd, yyyy HH:mm");
+
     String mDesc;
     DrawableManager mDrawableManager;
 
@@ -122,8 +124,8 @@ public class RidesAdapter extends ArrayAdapter<RideAnnotated> {
         holder.txtRideFrom.setText(ride.ride_from);
         holder.txtRideTo.setText(ride.ride_to);
         holder.txtFreePlaces.setText(Integer.toString(ride.freePlaces));
-        SimpleDateFormat df = new SimpleDateFormat("EEEE MMM dd, yyyy HH:mm");
-        String whenStarts = df.format(ride.whenStarts);
+
+        String whenStarts = mDateFormat.format(ride.whenStarts);
         holder.txtRideTime.setText("at " + whenStarts);
 
         mDrawableManager.fetchDrawableOnThread(ride.picture_url,

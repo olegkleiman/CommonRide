@@ -19,9 +19,9 @@
     <string name="dialog_message_confirm_join_delete">Passengers will be informed about removal</string>
     <string name="dialog_title_confirm_join_delete">Delete this ride?</string>
     <string name="search_hint">Search CommonRide</string>
-    <string name="fromText">From</string>
-    <string name="toText">To</string>
-    <string name="whenText">When</string>
+    <string name="fromText">From:</string>
+    <string name="toText">To:</string>
+    <string name="whenText">When:</string>
     <string name="passengersText">Passengers</string>
     <string name="driver_caption">Driver</string>
     <string name="ride_caption">Ride</string>
@@ -39,7 +39,7 @@
     <string-array name="drawers_array">
         <item>Settings</item>
         <item>My rides</item>
-        <item>Rate</item>
+        <item>Rating</item>
         <item>Logout</item>
         <item>About</item>
     </string-array>
@@ -60,8 +60,7 @@
     <string name="registration_code">Registration code:</string>
     <string name="settings_user">User Profile</string>
     <string name="settings_prefs">Preferences</string>
-
-    <string name="title_activity_about">About version Alpha 0.5</string>
+    <string name="title_activity_about">About version Alpha 0.6</string>
     <string name="license">Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -76,6 +75,9 @@ limitations under the License.</string>
     <string name="copyright">Copyright (C) 2015 Maximum</string>
     <string name="title_activity_tabs">Settings</string>
     <string name="banner_ad_unit_id">ca-app-pub-1910170326360771/1108699642</string>
-<!--     <string name="banner_ad_unit_id">ca-app-pub-3940256099942544/6300978111</string> -->
+    <!-- <string name="banner_ad_unit_id">ca-app-pub-3940256099942544/6300978111</string> -->
+
+    <string name="title_activity_rate">RateActivity</string>
+    <string name="hello_world">Hello world!</string>
 
 </resources>

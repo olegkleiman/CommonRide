@@ -18,6 +18,15 @@
             android:layout_gravity="center"
             android:scaleType="fitXY" />
 
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/imgStatus"
+            android:src="@drawable/accept2_16"
+            android:layout_marginLeft="-20dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginTop="20dp" />
+
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -53,4 +62,26 @@
             android:layout_gravity="center|right" />
     </LinearLayout>
 
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Accept"
+            android:clickable="true"
+            android:id="@+id/btnPassengerAccept"
+            android:src="@drawable/accept" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Decline"
+            android:clickable="true"
+            android:id="@+id/btnPassengerDecline"
+            android:src="@drawable/decline" />
     </LinearLayout>
+
+</LinearLayout>

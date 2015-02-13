@@ -11,7 +11,6 @@
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.VIBRATE" />
-
     <uses-permission android:name="android.permission.CALL_PHONE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -92,13 +91,13 @@
             android:name=".MyRidesActivity"
             android:label="@string/title_activity_my_rides"
             android:parentActivityName=".MainActivity"
-            android:theme="@style/Theme.AppCompat.Light">
+            android:theme="@style/Theme.AppCompat.Light" >
         </activity>
         <activity
             android:name=".AboutActivity"
             android:label="@string/title_activity_about"
             android:parentActivityName=".MainActivity"
-            android:theme="@style/Theme.AppCompat.Light">
+            android:theme="@style/Theme.AppCompat.Light" >
         </activity>
 
         <meta-data
@@ -113,14 +112,19 @@
 
         <activity
             android:name=".SettingsTabsActivity"
+            android:label="@string/title_activity_tabs"
             android:parentActivityName=".MainActivity"
-            android:theme="@style/Theme.AppCompat.Light"
-            android:label="@string/title_activity_tabs" >
+            android:theme="@style/Theme.AppCompat.Light" >
         </activity>
-        <!--Include the AdActivity configChanges and theme. -->
-        <activity android:name="com.google.android.gms.ads.AdActivity"
+        <!-- Include the AdActivity configChanges and theme. -->
+        <activity
+            android:name="com.google.android.gms.ads.AdActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
             android:theme="@android:style/Theme.Translucent" />
+        <activity
+            android:name=".RateActivity"
+            android:label="@string/title_activity_rate" >
+        </activity>
     </application>
 
 </manifest>

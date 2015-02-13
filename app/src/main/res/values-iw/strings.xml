@@ -32,4 +32,6 @@
     <string name="title_activity_tabs">הגדרות</string>
     <string name="driver_caption">נהג</string>
     <string name="saveText">שמור</string>
+    <string name="ride_caption">נסיעה</string>
+    <string name="passengersText">נוסעים</string>
 </resources>

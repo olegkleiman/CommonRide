@@ -103,6 +103,12 @@
                 android:id="@+id/textView13"
                 android:layout_marginTop="10dp" />
 
+            <TextView
+                style="@style/RideScheduleStyle"
+                android:text="This product includes the visual assets from Icon8.com distributed under appropriate license"
+                android:id="@+id/textView14"
+                android:layout_marginTop="10dp" />
+
 
         </LinearLayout>
 

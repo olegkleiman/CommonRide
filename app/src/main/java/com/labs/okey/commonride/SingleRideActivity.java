@@ -12,6 +12,7 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -99,7 +100,7 @@ public class SingleRideActivity extends ActionBarActivity {
             mClient.setCurrentUser(wamsUser);
 
             final ProgressDialog progress = ProgressDialog.show(this,
-                    "Downloading", "Ride");
+                    "Ride", "Downloading");
 
             mRidesTable = mClient.getTable("commonrides", Ride.class);
             mRidesTable.lookUp(mRideId, new TableOperationCallback<Ride>() {
@@ -128,7 +129,7 @@ public class SingleRideActivity extends ActionBarActivity {
                                     v.setText(ride.ride_to);
 
                                     v = (TextView)findViewById(R.id.ride_when);
-                                    SimpleDateFormat df = new SimpleDateFormat("EEEE MMM dd, yyyy HH:mm");
+                                    SimpleDateFormat df = new SimpleDateFormat("MMM dd, yyyy HH:mm");
                                     v.setText(df.format(ride.whenStarts));
 
                                     final TextView txtDriverName =
@@ -314,7 +315,8 @@ public class SingleRideActivity extends ActionBarActivity {
         final ListView listview = (ListView) findViewById(R.id.listViewPassengers);
 
         PassengersAdapter ridesAdapter = new PassengersAdapter(SingleRideActivity.this,
-                R.layout.passenger_item_row, joins);
+                R.layout.passenger_item_row, joins,
+                mDriverID.equals(myUserID));
         listview.setAdapter(ridesAdapter);
     }
 
@@ -434,6 +436,7 @@ public class SingleRideActivity extends ActionBarActivity {
         Join join = new Join();
         join.rideId = mRideId;
         join.whenJoined = new Date();
+        join.status = Globals.JOIN_STATUS_INIT;
 
         final ProgressDialog progress = ProgressDialog.show(this,
                 "Uploading", "Adding a ride");
@@ -534,7 +537,27 @@ public class SingleRideActivity extends ActionBarActivity {
             return true;
 
             case R.id.action_join_ride: {
-                joinRide();
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setMessage("Join from default start location?")
+                        .setTitle("Where you're joining?")
+                        .setPositiveButton(getResources().getString(R.string.yes),
+                                new DialogInterface.OnClickListener() {
+
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        joinRide();
+                                    }
+                                })
+                        .setNegativeButton(getResources().getString(R.string.no),
+                                new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+
+                                }
+                } );
+                builder.create().show();
+
+
             }
             break;
 

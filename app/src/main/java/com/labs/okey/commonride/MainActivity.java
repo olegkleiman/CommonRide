@@ -260,7 +260,7 @@ public class MainActivity extends ActionBarActivity{
     private void pullRides() {
 
         final ProgressDialog progress =
-                ProgressDialog.show(this, "Synchronizing...", "Rides to share");
+                ProgressDialog.show(this, "Rides to share", "Synchronizing...");
 
         new AsyncTask<Void, Void, Void>() {
 
@@ -807,6 +807,12 @@ public class MainActivity extends ActionBarActivity{
 
                 case 1: { // My Rides
                     Intent intent = new Intent(MainActivity.this, MyRidesActivity.class);
+                    startActivity(intent);
+                }
+                break;
+
+                case 2: { // Rating
+                    Intent intent = new Intent(MainActivity.this, RateActivity.class);
                     startActivity(intent);
                 }
                 break;

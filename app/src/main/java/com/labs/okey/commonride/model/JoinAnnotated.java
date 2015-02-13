@@ -25,9 +25,13 @@ public class JoinAnnotated {
     //@com.google.gson.annotations.SerializedName("ride_id")
     public String ride_id;
 
+    @com.google.gson.annotations.SerializedName("email")
+    public String email;
+
     @com.google.gson.annotations.SerializedName("when_joined")
     public Date whenJoined;
 
-    @com.google.gson.annotations.SerializedName("email")
-    public String email;
+    @com.google.gson.annotations.SerializedName("status")
+    public String status;
+
 }

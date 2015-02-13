@@ -17,8 +17,11 @@ public class Join {
     public String getPassengerId() {
         return passengerId;
     }
+    public void setPassengerId(String value) { passengerId = value; }
 
     @com.google.gson.annotations.SerializedName("when_joined")
     public Date whenJoined;
 
+    @com.google.gson.annotations.SerializedName("status")
+    public String status;
 }
