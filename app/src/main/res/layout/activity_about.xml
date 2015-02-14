@@ -105,7 +105,7 @@
 
             <TextView
                 style="@style/RideScheduleStyle"
-                android:text="This product includes the visual assets from Icon8.com distributed under appropriate license"
+                android:text="This product includes the visual assets by Aha-Soft distributed under Basic license https://www.iconfinder.com/licenses/basic"
                 android:id="@+id/textView14"
                 android:layout_marginTop="10dp" />
 

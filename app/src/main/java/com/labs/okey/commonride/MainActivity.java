@@ -68,7 +68,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
-public class MainActivity extends ActionBarActivity{
+public class MainActivity extends BaseActivity{
 
     private static final String LOG_TAG = "CommonRide.Main";
     static final int REGISTER_USER_REQUEST = 1;

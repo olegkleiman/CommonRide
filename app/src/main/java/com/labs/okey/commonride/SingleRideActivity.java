@@ -51,7 +51,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-public class SingleRideActivity extends ActionBarActivity {
+public class SingleRideActivity extends BaseActivity {
 
     private static final String LOG_TAG = "CommonRide.SingleRide";
 
@@ -290,21 +290,14 @@ public class SingleRideActivity extends ActionBarActivity {
                     @Override
                     public void onCompleted(List<JoinAnnotated> joins,
                                             int count,
-                                            Exception error,
+                                            Exception ex,
                                             ServiceFilterResponse serviceFilterResponse) {
                         // Ensure ProgressBar becomes original 'Refresh' menu item
                         invalidateOptionsMenu();
 
-                        if (error != null) {
-                            String err = error.toString();
-                            Throwable t = error.getCause();
-
-                            while (t != null) {
-                                err = err + "\n Cause: " + t.toString();
-                                t = t.getCause();
-                            }
+                        if (ex != null) {
                             Toast.makeText(SingleRideActivity.this,
-                                        t.getMessage(), Toast.LENGTH_LONG).show();
+                                        ex.getMessage(), Toast.LENGTH_LONG).show();
                         } else {
                             setupJoinsListView(joins);
                         }
@@ -517,7 +510,7 @@ public class SingleRideActivity extends ActionBarActivity {
                 (mDriverID != null && !mDriverID.isEmpty()) ) {
             // Disable 'Delete' if ride was published by not owner of the ride
             if( !myUserID.equals( mDriverID) ) {
-                MenuItem menuItem = menu.findItem(R.id.action_join_delete);
+                MenuItem menuItem = menu.findItem(R.id.action_ride_delete);
                 if( menuItem != null )
                     menuItem.setEnabled(false);
             }
@@ -541,7 +534,7 @@ public class SingleRideActivity extends ActionBarActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_single_ride, menu);
-        return true;
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
@@ -552,7 +545,7 @@ public class SingleRideActivity extends ActionBarActivity {
         int id = item.getItemId();
 
         switch ( id ) {
-            case R.id.action_join_delete: {
+            case R.id.action_ride_delete: {
                 new AlertDialog.Builder(this)
                         .setIcon(android.R.drawable.ic_dialog_alert)
                         .setTitle(R.string.dialog_title_confirm_join_delete)

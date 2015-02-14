@@ -52,7 +52,7 @@ import java.util.Date;
 import java.util.concurrent.ExecutionException;
 
 
-public class AddRideActivity extends  ActionBarActivity {
+public class AddRideActivity extends BaseActivity {
 
     private static final String LOG_TAG = "CommonRide.AddRide";
 

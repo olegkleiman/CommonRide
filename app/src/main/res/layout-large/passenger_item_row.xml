@@ -74,7 +74,7 @@
             android:background="@null"
             android:clickable="true"
             android:id="@+id/btnPassengerAccept"
-            android:drawableLeft="@drawable/accept" />
+            android:drawableLeft="@drawable/accept_24" />
 
         <Button
             android:layout_width="wrap_content"
@@ -83,7 +83,7 @@
             android:background="@null"
             android:clickable="true"
             android:id="@+id/btnPassengerDecline"
-            android:drawableLeft="@drawable/decline"
+            android:drawableLeft="@drawable/stop_24"
             android:layout_marginLeft="8dp" />
     </LinearLayout>
 

@@ -12,7 +12,7 @@
         android:icon="@drawable/ic_action_refresh"
         android:orderInCategory="101"
         app:showAsAction="ifRoom" />
-    <item android:id="@+id/action_join_delete"
+    <item android:id="@+id/action_ride_delete"
         android:title="@string/action_join_delete"
         android:icon="@android:drawable/ic_menu_delete"
         android:orderInCategory="102"

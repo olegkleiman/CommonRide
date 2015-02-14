@@ -179,7 +179,7 @@ public class PassengersAdapter extends ArrayAdapter<JoinAnnotated>{
             holder.btnAccept.setVisibility(View.GONE);
             holder.btnDecline.setVisibility(View.GONE);
 
-            holder.imgAccepted.setImageResource(R.drawable.decline);
+            holder.imgAccepted.setImageResource(R.drawable.stop_16);
         }
 
 

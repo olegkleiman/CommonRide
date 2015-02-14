@@ -100,7 +100,7 @@ public class GCMHandler extends  com.microsoft.windowsazure.notifications.Notifi
 
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(ctx)
-                        .setSmallIcon(R.drawable.ic_launcher)
+                        .setSmallIcon(R.drawable.launcher_48)
                         .setVibrate(new long[]{500, 500})
                         .setContentTitle("Common Ride")
                         .setAutoCancel(true)

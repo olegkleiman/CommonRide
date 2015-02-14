@@ -52,7 +52,8 @@
             android:textSize="26sp"
             android:id="@+id/txtFreePlaces"
             android:layout_gravity="center|right"
-            android:layout_marginRight="10dp" />
+            android:layout_marginRight="10dp"
+            android:textColor="#ff00a1f1" />
 
     </LinearLayout>
 
