@@ -67,21 +67,24 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent">
 
-        <ImageView
+        <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Accept"
+            android:text="@string/accept"
+            android:background="@null"
             android:clickable="true"
             android:id="@+id/btnPassengerAccept"
-            android:src="@drawable/accept" />
+            android:drawableLeft="@drawable/accept_small_16" />
 
-        <ImageView
+        <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Decline"
+            android:text="@string/decline"
+            android:background="@null"
             android:clickable="true"
             android:id="@+id/btnPassengerDecline"
-            android:src="@drawable/decline" />
+            android:drawableLeft="@drawable/decline_small_16"
+            android:layout_marginLeft="8dp" />
     </LinearLayout>
 
 </LinearLayout>

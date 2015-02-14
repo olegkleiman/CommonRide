@@ -60,6 +60,8 @@
     <string name="registration_code">Registration code:</string>
     <string name="settings_user">User Profile</string>
     <string name="settings_prefs">Preferences</string>
+    <string name="accept">Accept</string>
+    <string name="decline">Decline</string>
     <string name="title_activity_about">About version Alpha 0.6</string>
     <string name="license">Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -75,6 +77,7 @@ limitations under the License.</string>
     <string name="copyright">Copyright (C) 2015 Maximum</string>
     <string name="title_activity_tabs">Settings</string>
     <string name="banner_ad_unit_id">ca-app-pub-1910170326360771/1108699642</string>
+    <!--<string name="banner_ad_unit_id">ca-app-pub-1910170326360771</string>-->
     <!-- <string name="banner_ad_unit_id">ca-app-pub-3940256099942544/6300978111</string> -->
 
     <string name="title_activity_rate">RateActivity</string>

@@ -15,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.labs.okey.commonride.R;
+import com.labs.okey.commonride.SingleRideActivity;
 import com.labs.okey.commonride.model.Join;
 import com.labs.okey.commonride.model.JoinAnnotated;
 import com.labs.okey.commonride.model.RideAnnotated;
@@ -99,20 +100,9 @@ public class PassengersAdapter extends ArrayAdapter<JoinAnnotated>{
     }
 
     private void updateJoin(JoinAnnotated join, String status) {
-        if(  join.Id.isEmpty() )
-            return;
 
-        Join _join = new Join();
-        _join.Id = join.Id;
-        _join.rideId = join.ride_id;
-        _join.setPassengerId( join.passengerId );
-        _join.whenJoined = join.whenJoined;
-        _join.status = status;
-
-        if( mJoinsTable != null ) {
-            mJoinsTable.update(_join);
-            notifyDataSetChanged();
-        }
+        SingleRideActivity parentActivity = (SingleRideActivity)context;
+        parentActivity.updateJoin(join,status);
     }
 
     @Override
@@ -132,14 +122,14 @@ public class PassengersAdapter extends ArrayAdapter<JoinAnnotated>{
             holder.imageView = (ImageView)row.findViewById(R.id.imgPassengerPic);
             holder.imgDeleteJoin = (ImageView)row.findViewById(R.id.passenger_delete);
             holder.imgAccepted = (ImageView) row.findViewById(R.id.imgStatus);
-            holder.btnAccept = (ImageView)row.findViewById(R.id.btnPassengerAccept);
+            holder.btnAccept = (Button)row.findViewById(R.id.btnPassengerAccept);
             holder.btnAccept.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     updateJoin( join, Globals.JOIN_STATUS_ACCEPTED );
                 }
             });
-            holder.btnDecline = (ImageView)row.findViewById(R.id.btnPassengerDecline);
+            holder.btnDecline = (Button)row.findViewById(R.id.btnPassengerDecline);
             holder.btnDecline.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -168,17 +158,30 @@ public class PassengersAdapter extends ArrayAdapter<JoinAnnotated>{
         holder.btnAccept.setTag(join.Id);
         holder.btnDecline.setTag(join.Id);
 
-        if( mShowAcceptDecline
-                && join.status.equals(Globals.JOIN_STATUS_INIT) ) {
-            holder.btnAccept.setVisibility(View.VISIBLE);
-            holder.btnDecline.setVisibility(View.VISIBLE);
-            holder.imgAccepted.setVisibility(View.INVISIBLE);
-        } else {
+        if( join.status.equals(Globals.JOIN_STATUS_INIT) ){
+            if( mShowAcceptDecline ) {
+                holder.btnAccept.setVisibility(View.VISIBLE);
+                holder.btnDecline.setVisibility(View.VISIBLE);
+                holder.imgAccepted.setVisibility(View.INVISIBLE);
+            } else {
+                holder.btnAccept.setVisibility(View.GONE);
+                holder.btnDecline.setVisibility(View.GONE);
+
+                holder.imgAccepted.setImageResource(R.drawable.question2_16);
+            }
+        }
+        else if( join.status.equals(Globals.JOIN_STATUS_ACCEPTED) ) {
             holder.btnAccept.setVisibility(View.GONE);
             holder.btnDecline.setVisibility(View.GONE);
+
+            holder.imgAccepted.setImageResource(R.drawable.accept2_16);
+        } else if( join.status.equals(Globals.JOIN_STATUS_DECLINED) ) {
+            holder.btnAccept.setVisibility(View.GONE);
+            holder.btnDecline.setVisibility(View.GONE);
+
+            holder.imgAccepted.setImageResource(R.drawable.decline);
         }
 
-        //if( join.status.equals(Globals.JOIN_STATUS_ACCEPTED))
 
         return row;
     }
@@ -190,7 +193,7 @@ public class PassengersAdapter extends ArrayAdapter<JoinAnnotated>{
         ImageView imgDeleteJoin;
 
         ImageView imgAccepted;
-        ImageView btnAccept;
-        ImageView btnDecline;
+        Button btnAccept;
+        Button btnDecline;
     }
 }

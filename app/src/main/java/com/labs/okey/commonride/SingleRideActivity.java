@@ -10,6 +10,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.location.Location;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
@@ -48,6 +49,7 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public class SingleRideActivity extends ActionBarActivity {
 
@@ -318,6 +320,53 @@ public class SingleRideActivity extends ActionBarActivity {
                 R.layout.passenger_item_row, joins,
                 mDriverID.equals(myUserID));
         listview.setAdapter(ridesAdapter);
+    }
+
+
+    private ProgressDialog mProgress;
+
+    public void updateJoin(JoinAnnotated join, String status) {
+
+        mProgress = ProgressDialog.show(this, "Updating a ride", "Uploading");
+
+        if( join.Id.isEmpty() )
+            return;
+
+        final Join _join = new Join();
+        _join.Id = join.Id;
+        _join.rideId = join.ride_id;
+        _join.setPassengerId( join.passengerId );
+        _join.whenJoined = join.whenJoined;
+        _join.status = status;
+
+        new AsyncTask<Void, Void, Void>(){
+
+            @Override
+            protected void onPostExecute(Void result) {
+                refreshPassengers();
+
+                mProgress.dismiss();
+            }
+
+            @Override
+            protected Void doInBackground(Void... voids) {
+
+                if( mJoinsTable == null ) {
+                    mJoinsTable = mClient.getTable("joins", Join.class);
+                }
+
+                try {
+                    mJoinsTable.update(_join).get();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
+
+                return null;
+            }
+        }.execute();
+
     }
 
     public void deletePassenger(final View v){
