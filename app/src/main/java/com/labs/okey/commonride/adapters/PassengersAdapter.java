@@ -31,7 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Oleg on 28-Jan-15.
+ * Created by Oleg Kleiman on 28-Jan-15.
  */
 public class PassengersAdapter extends ArrayAdapter<JoinAnnotated>{
 

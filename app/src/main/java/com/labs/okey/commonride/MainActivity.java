@@ -12,6 +12,7 @@ import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.provider.MediaStore;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -35,6 +36,7 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.gson.JsonObject;
+import com.labs.okey.commonride.adapters.DrawerAdapter;
 import com.labs.okey.commonride.adapters.RidesAdapter;
 import com.labs.okey.commonride.model.RideAnnotated;
 import com.labs.okey.commonride.utils.ConflictResolvingSyncHandler;
@@ -64,7 +66,10 @@ import org.apache.http.StatusLine;
 import java.net.MalformedURLException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
@@ -142,6 +147,13 @@ public class MainActivity extends BaseActivity{
         // set a custom shadow that overlays the main content when the drawer opens
         mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
         // set up the drawer's list view with items and click listener
+
+//        List<String> drawerItemsList = new ArrayList<String>(Arrays.asList(mDrawerTitles));
+//        DrawerAdapter drawerAdapter = new DrawerAdapter(this,
+//                R.layout.drawer_list_item_ext, drawerItemsList);
+//        String path = MediaStore.Images.Media.DATA;
+//        mDrawerList.setAdapter(drawerAdapter);
+
         mDrawerList.setAdapter(new ArrayAdapter<String>(this,
                 R.layout.drawer_list_item, mDrawerTitles));
         mDrawerList.setOnItemClickListener(new DrawerItemClickListener());

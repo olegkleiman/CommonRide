@@ -222,13 +222,31 @@
         android:layout_height="80dp"
         android:layout_marginTop="10dp" />
 
-    <TextView
+    <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:textColor="@android:color/black"
-        android:text="@string/passengersText"
-        android:layout_marginTop="10dp"
-        android:textStyle="bold" />
+        android:orientation="horizontal"
+        android:layout_marginTop="10dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/black"
+            android:text="@string/passengersText"
+            android:textStyle="bold"
+            android:layout_gravity="center" />
+
+        <Button
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:background="@null"
+            android:drawableLeft="@drawable/launcher16"
+            android:id="@+id/btnCommunicatePassengers"
+            android:layout_marginLeft="8dp"
+            android:layout_gravity="left|center_vertical"
+            android:layout_weight="1" />
+
+    </LinearLayout>
+
     <View style="@style/Divider"/>
 
     <ListView

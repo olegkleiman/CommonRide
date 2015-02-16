@@ -10,12 +10,11 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 /**
- * Created by Oleg on 14-Feb-15.
+ * Created by Oleg Kleiman on 14-Feb-15.
  */
-public class BaseActivity extends ActionBarActivity {
+public abstract class BaseActivity extends ActionBarActivity {
 
     public Boolean isNetworkConnected = false;
 
