@@ -117,8 +117,13 @@ public class SingleRideActivity extends BaseActivity {
         button1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                try {
                     FacebookDialog dialog = builder.build();
                     dialog.present();
+                } catch(Exception ex) {
+                    Log.e(LOG_TAG, ex.getCause().toString());
+                }
             }
         });
 
@@ -130,14 +135,10 @@ public class SingleRideActivity extends BaseActivity {
         itemIconEmail.setImageDrawable(getResources().getDrawable(R.drawable.email32));
         SubActionButton button3 = itemBuilder.setContentView(itemIconEmail).build();
 
-        ImageView itemIconPhone = new ImageView(this);
-        itemIconPhone.setImageDrawable(getResources().getDrawable(R.drawable.phone32));
-        SubActionButton button4 = itemBuilder.setContentView(itemIconPhone).build();
-
         ImageView itemIconShare = new ImageView(this);
         itemIconShare.setImageDrawable(getResources().getDrawable(R.drawable.sharethis32));
-        SubActionButton button5 = itemBuilder.setContentView(itemIconShare).build();
-        button5.setOnClickListener(new View.OnClickListener() {
+        SubActionButton button4 = itemBuilder.setContentView(itemIconShare).build();
+        button4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Toast.makeText(SingleRideActivity.this, "Make a phone call", Toast.LENGTH_LONG).show();
@@ -152,7 +153,6 @@ public class SingleRideActivity extends BaseActivity {
                 .addSubActionView(button2)
                 .addSubActionView(button3)
                 .addSubActionView(button4)
-                .addSubActionView(button5)
                         // ...
                 .attachTo(actionButton)
                 .build();
@@ -401,7 +401,7 @@ public class SingleRideActivity extends BaseActivity {
 
     public void updateJoin(JoinAnnotated join, String status) {
 
-        mProgress = ProgressDialog.show(this, "Updating a ride", "Uploading");
+        mProgress = ProgressDialog.show(this, "Updating a ride", "Uploading...");
 
         if( join.Id.isEmpty() )
             return;
@@ -443,6 +443,17 @@ public class SingleRideActivity extends BaseActivity {
 
     }
 
+    public void callPassenger(View v) {
+
+        try {
+            String phoneNumber = (String)v.getTag();
+            callPhoneNumber(phoneNumber);
+        } catch(android.content.ActivityNotFoundException ex) {
+            Toast.makeText(this,
+                    "Call failed: " + ex.getMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
+
     public void deletePassenger(final View v){
 
         String joinId = (String)v.getTag();
@@ -451,7 +462,7 @@ public class SingleRideActivity extends BaseActivity {
         join.Id = joinId;
 
         final ProgressDialog progress = ProgressDialog.show(this,
-                "Uploading", "Un-joining a ride");
+                "Un-joining a ride", "Uploading...");
 
         mJoinsTable = mClient.getTable("joins", Join.class);
         mJoinsTable.delete(join, new TableDeleteCallback() {
@@ -496,15 +507,21 @@ public class SingleRideActivity extends BaseActivity {
         });
     }
 
-    public void callDriver(View v){
+    public void callPhoneNumber(String phoneNumber)
+            throws android.content.ActivityNotFoundException {
         Intent phoneIntent = new Intent(Intent.ACTION_CALL);
-        phoneIntent.setData(Uri.parse("tel:" + mDriverPhone));
+        phoneIntent.setData(Uri.parse("tel:" + phoneNumber));
+
+        startActivity(phoneIntent);
+    }
+
+    public void callDriver(View v){
 
         try {
-            startActivity(phoneIntent);
+            callPhoneNumber(mDriverPhone);
         } catch(android.content.ActivityNotFoundException ex) {
             Toast.makeText(this,
-                    "Call failed: " + ex.getMessage(), Toast.LENGTH_SHORT).show();
+                    "Call failed: " + ex.getMessage(), Toast.LENGTH_LONG).show();
         }
 
     }

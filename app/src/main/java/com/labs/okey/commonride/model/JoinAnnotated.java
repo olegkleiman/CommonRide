@@ -28,6 +28,9 @@ public class JoinAnnotated {
     @com.google.gson.annotations.SerializedName("email")
     public String email;
 
+    @com.google.gson.annotations.SerializedName("phone")
+    public String phone;
+
     @com.google.gson.annotations.SerializedName("when_joined")
     public Date whenJoined;
 

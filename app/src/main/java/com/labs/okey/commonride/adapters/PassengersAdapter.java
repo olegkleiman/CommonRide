@@ -1,5 +1,6 @@
 package com.labs.okey.commonride.adapters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -12,8 +13,10 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.facebook.widget.FacebookDialog;
 import com.labs.okey.commonride.R;
 import com.labs.okey.commonride.SingleRideActivity;
 import com.labs.okey.commonride.model.Join;
@@ -25,6 +28,8 @@ import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 import com.microsoft.windowsazure.mobileservices.http.ServiceFilterResponse;
 import com.microsoft.windowsazure.mobileservices.table.MobileServiceTable;
 import com.microsoft.windowsazure.mobileservices.table.TableOperationCallback;
+import com.oguzdev.circularfloatingactionmenu.library.FloatingActionMenu;
+import com.oguzdev.circularfloatingactionmenu.library.SubActionButton;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -120,6 +125,7 @@ public class PassengersAdapter extends ArrayAdapter<JoinAnnotated>{
             holder.txtPassengerName = (TextView)row.findViewById(R.id.txtPassengerName);
             holder.txtJoined = (TextView)row.findViewById(R.id.txtPassengerWhenJoined);
             holder.imageView = (ImageView)row.findViewById(R.id.imgPassengerPic);
+            holder.btnPassengerLines = (Button)row.findViewById(R.id.passenger_lines);
             holder.imgDeleteJoin = (ImageView)row.findViewById(R.id.passenger_delete);
             holder.imgAccepted = (ImageView) row.findViewById(R.id.imgStatus);
             holder.btnAccept = (Button)row.findViewById(R.id.btnPassengerAccept);
@@ -151,12 +157,19 @@ public class PassengersAdapter extends ArrayAdapter<JoinAnnotated>{
                                                 holder.imageView);
 
         if( !join.passengerId.equals(mMyUserID)) {
-              holder.imgDeleteJoin.setVisibility(View.INVISIBLE);
+            holder.imgDeleteJoin.setVisibility(View.GONE);
+
+            setupRadialMenu((Activity)context, holder.btnPassengerLines);
+
+            //holder.imgDeleteJoin.setImageDrawable(context.getResources().getDrawable(R.drawable.launcher_32));
+        } else {
+            holder.btnPassengerLines.setVisibility(View.GONE);
         }
 
         holder.imgDeleteJoin.setTag(join.Id);
         holder.btnAccept.setTag(join.Id);
         holder.btnDecline.setTag(join.Id);
+        holder.btnPassengerLines.setTag(join.phone);
 
         if( join.status.equals(Globals.JOIN_STATUS_INIT) ){
             if( mShowAcceptDecline ) {
@@ -182,8 +195,61 @@ public class PassengersAdapter extends ArrayAdapter<JoinAnnotated>{
             holder.imgAccepted.setImageResource(R.drawable.stop_16);
         }
 
-
         return row;
+    }
+
+    private void setupRadialMenu(final Activity activity, Button actionButton){
+
+        SubActionButton.Builder itemBuilder = new SubActionButton.Builder(activity);
+
+        ImageView itemIconFacebook = new ImageView(activity);
+        itemIconFacebook.setImageDrawable(activity.getResources().getDrawable(R.drawable.facebook32));
+        SubActionButton button1 = itemBuilder.setContentView(itemIconFacebook).build();
+        button1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                try {
+//                        FacebookDialog dialog = builder.build();
+//                        dialog.present();
+                } catch(Exception ex) {
+                    Log.e(LOG_TAG, ex.getCause().toString());
+                }
+            }
+        });
+
+        ImageView itemIconWhatsup = new ImageView(activity);
+        itemIconWhatsup.setImageDrawable(activity.getResources().getDrawable(R.drawable.whatsapp32));
+        SubActionButton button2 = itemBuilder.setContentView(itemIconWhatsup).build();
+
+        ImageView itemIconEmail = new ImageView(activity);
+        itemIconEmail.setImageDrawable(activity.getResources().getDrawable(R.drawable.email32));
+        SubActionButton button3 = itemBuilder.setContentView(itemIconEmail).build();
+
+        ImageView itemIconShare = new ImageView(activity);
+        itemIconShare.setImageDrawable(activity.getResources().getDrawable(R.drawable.phone32));
+        SubActionButton button4 = itemBuilder.setContentView(itemIconShare).build();
+        button4.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            String phoneNumber = (String)view.getTag();
+                                            SingleRideActivity srActivity =
+                                                    (SingleRideActivity)activity;
+                                            srActivity.callPhoneNumber(phoneNumber);
+                                        }
+                                   });
+
+        FloatingActionMenu actionMenu = new FloatingActionMenu.Builder(activity)
+                .setStartAngle(90)
+                .setEndAngle(180)
+                .setRadius(activity.getResources().getDimensionPixelSize(R.dimen.radius_medium))
+                .addSubActionView(button1)
+                .addSubActionView(button2)
+                .addSubActionView(button3)
+                .addSubActionView(button4)
+                .attachTo(actionButton)
+                .build();
+
     }
 
     static class JoinsHolder {
@@ -191,7 +257,7 @@ public class PassengersAdapter extends ArrayAdapter<JoinAnnotated>{
         TextView txtJoined;
         ImageView imageView;
         ImageView imgDeleteJoin;
-
+        Button btnPassengerLines;
         ImageView imgAccepted;
         Button btnAccept;
         Button btnDecline;

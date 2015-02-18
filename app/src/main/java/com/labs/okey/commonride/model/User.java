@@ -63,17 +63,22 @@ public class User {
     public String getGroup() { return this.group; }
     public void setGroup(String value) { this.group = value; }
 
-    public void load(Context context) {
+    public static User load(Context context) {
+
+        User _user = new User();
+
         SharedPreferences sharedPrefs =
                 PreferenceManager.getDefaultSharedPreferences(context);
-        this.setFirstName(sharedPrefs.getString(Globals.FIRST_NAME_PREF, ""));
-        this.setLastName(sharedPrefs.getString(Globals.LAST_NAME_PREF, ""));
-        this.setRegistrationId(sharedPrefs.getString(Globals.REG_ID_PREF, ""));
-        this.setPictureURL(sharedPrefs.getString(Globals.PICTURE_URL_PREF, ""));
-        this.setEmail(sharedPrefs.getString(Globals.EMAIL_PREF, ""));
-        this.setPhone(sharedPrefs.getString(Globals.PHONE_PREF, ""));
-        this.setUsePhone(sharedPrefs.getBoolean(Globals.USE_PHONE_PFER, false));
-        this.setGroup(sharedPrefs.getString(Globals.REG_CODE_PREF, ""));
+        _user.setFirstName(sharedPrefs.getString(Globals.FIRST_NAME_PREF, ""));
+        _user.setLastName(sharedPrefs.getString(Globals.LAST_NAME_PREF, ""));
+        _user.setRegistrationId(sharedPrefs.getString(Globals.REG_ID_PREF, ""));
+        _user.setPictureURL(sharedPrefs.getString(Globals.PICTURE_URL_PREF, ""));
+        _user.setEmail(sharedPrefs.getString(Globals.EMAIL_PREF, ""));
+        _user.setPhone(sharedPrefs.getString(Globals.PHONE_PREF, ""));
+        _user.setUsePhone(sharedPrefs.getBoolean(Globals.USE_PHONE_PFER, false));
+        _user.setGroup(sharedPrefs.getString(Globals.REG_CODE_PREF, ""));
+
+        return _user;
     }
 
     public void save(Context context) {

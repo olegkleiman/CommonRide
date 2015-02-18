@@ -51,13 +51,21 @@
 
         </LinearLayout>
 
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/passenger_lines"
+            android:background="@null"
+            android:drawableRight="@drawable/launcher_48"
+            android:layout_marginRight="8dp" />
+
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:clickable="true"
             android:onClick="deletePassenger"
             android:id="@+id/passenger_delete"
-            android:src="@android:drawable/ic_delete"
+            android:src="@drawable/cancel_48"
             android:scaleType="fitXY"
             android:layout_gravity="center|right" />
     </LinearLayout>

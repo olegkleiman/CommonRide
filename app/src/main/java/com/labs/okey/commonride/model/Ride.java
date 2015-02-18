@@ -3,7 +3,7 @@ package com.labs.okey.commonride.model;
 import java.util.Date;
 
 /**
- * Created by Oleg on 21-Jan-15.
+ * Created by Oleg Kleiman on 21-Jan-15.
  */
 public class Ride {
 

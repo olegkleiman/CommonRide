@@ -3,6 +3,7 @@ package com.labs.okey.commonride;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
@@ -27,20 +28,35 @@ import android.widget.Toast;
 
 import com.facebook.UiLifecycleHelper;
 import com.labs.okey.commonride.model.Ride;
+import com.labs.okey.commonride.model.RideAnnotated;
+import com.labs.okey.commonride.model.User;
+import com.labs.okey.commonride.utils.ConflictResolvingSyncHandler;
 import com.labs.okey.commonride.utils.Globals;
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
+import com.microsoft.windowsazure.mobileservices.MobileServiceList;
 import com.microsoft.windowsazure.mobileservices.table.MobileServiceTable;
 import com.microsoft.windowsazure.mobileservices.authentication.MobileServiceUser;
 import com.microsoft.windowsazure.mobileservices.http.ServiceFilterResponse;
 import com.microsoft.windowsazure.mobileservices.table.TableQueryCallback;
+import com.microsoft.windowsazure.mobileservices.table.query.Query;
+import com.microsoft.windowsazure.mobileservices.table.sync.MobileServiceSyncContext;
+import com.microsoft.windowsazure.mobileservices.table.sync.MobileServiceSyncTable;
+import com.microsoft.windowsazure.mobileservices.table.sync.localstore.ColumnDataType;
+import com.microsoft.windowsazure.mobileservices.table.sync.localstore.SQLiteLocalStore;
+import com.microsoft.windowsazure.mobileservices.table.sync.synchandler.MobileServiceSyncHandler;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class MyRidesActivity extends ActionBarActivity {
 
-    static MobileServiceClient mClient;
-    private MobileServiceTable<Ride> mRidesTable;
+    private static MobileServiceClient mClient;
+    private MobileServiceSyncTable<Ride> mRidesTable;
+    private Query mPullDriverQuery;
+    private SQLiteLocalStore mLocalStore;
+
     ActionBar.Tab tab1, tab2;
 
     private static final String LOG_TAG = "CommonRide.MyRides";
@@ -65,12 +81,22 @@ public class MyRidesActivity extends ActionBarActivity {
         tab1 = actionBar.newTab().setText("Offers");
         tab2 = actionBar.newTab().setText("Participation");
 
+        wamsInit();
+
+        fragmentTab1 = new FragmentTabOffers();
+        fragmentTab2 = new FragmentTabParticipation();
+
         tab1.setTabListener(new MyTabListener(fragmentTab1));
         tab2.setTabListener(new MyTabListener(fragmentTab2));
 
         actionBar.addTab(tab1);
         actionBar.addTab(tab2);
 
+
+        refreshRides();
+    }
+
+    private void wamsInit() {
         try {
             mClient = new MobileServiceClient(
                     Globals.WAMS_URL,
@@ -88,28 +114,69 @@ public class MyRidesActivity extends ActionBarActivity {
 
             mClient.setCurrentUser(wamsUser);
 
-            mRidesTable = mClient.getTable("commonrides", Ride.class);
-            mRidesTable//.where().field("")
-                    .execute(new TableQueryCallback<Ride>() {
+            User myUser = User.load(this);
+
+            mPullDriverQuery = mClient.getTable(Ride.class)
+                    .where()
+                    .field("user_driver")
+                    .eq(myUser.getRegistrationId());
+            mLocalStore = new SQLiteLocalStore(mClient.getContext(),
+                    "myrides", null, 1);
+            MobileServiceSyncHandler handler = new ConflictResolvingSyncHandler();
+            MobileServiceSyncContext syncContext = mClient.getSyncContext();
+            if (!syncContext.isInitialized()) {
+                Map<String, ColumnDataType> tableDefinition = new HashMap<String, ColumnDataType>();
+                tableDefinition.put("id", ColumnDataType.String);
+                tableDefinition.put("user_driver", ColumnDataType.String);
+                tableDefinition.put("when_starts", ColumnDataType.Date);
+                tableDefinition.put("ride_from", ColumnDataType.String);
+                tableDefinition.put("ride_to", ColumnDataType.String);
+                tableDefinition.put("__deleted", ColumnDataType.Boolean);
+                tableDefinition.put("__version", ColumnDataType.String);
+
+                mLocalStore.defineTable("commonrides", tableDefinition);
+
+                syncContext.initialize(mLocalStore, handler).get();
+            }
+
+            mRidesTable = mClient.getSyncTable("commonrides", Ride.class);
+
+        } catch(Exception e) {
+            Log.i(LOG_TAG, e.getMessage());
+        }
+
+    }
+
+    private void refreshRides() {
+        new AsyncTask<Void, Void, Void>(){
+
+            @Override
+            protected Void doInBackground(Void... voids) {
+                try {
+                    final MobileServiceList<Ride> rides = mRidesTable
+                            .read(mPullDriverQuery)
+                            .get();
+                    runOnUiThread(new Runnable() {
                         @Override
-                        public void onCompleted(List<Ride> rides,
-                                                int i,
-                                                Exception e,
-                                                ServiceFilterResponse serviceFilterResponse) {
-                            if (e != null) {
-                                Toast.makeText(MyRidesActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
-                            }else {
+                        public void run() {
+                            //mRidesAdapter.clear();
+
+                            for (Ride _ride : rides) {
+                                Log.i(LOG_TAG, _ride.whenStarts.toString());
+                                //mRidesAdapter.add(_ride);
                             }
                         }
                     });
 
+                } catch(Exception ex) {
+                    Log.e(LOG_TAG, ex.getCause().toString());
+                }
 
+                return null;
+            }
+        }.execute();
 
-        } catch(Exception e) {
-            Log.i(LOG_TAG, e.getMessage());
-         }
-
-     }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -126,8 +193,10 @@ public class MyRidesActivity extends ActionBarActivity {
 
     @SuppressLint("ValidFragment")
     public class FragmentTabOffers extends android.support.v4.app.Fragment{
+
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState){
+
             View view = inflater.inflate(R.layout.my_rides_driver, container, false);
 
             ListView myRideslistView = (ListView)view.findViewById(R.id.listViewMyDriver);
