@@ -12,10 +12,11 @@
         android:background="@color/material_blue_grey_800">
 
         <ImageView
-            android:layout_width="68dp"
-            android:layout_height="90dp"
-            android:id="@+id/imageView7"
-            android:src="@drawable/me" />
+            android:layout_width="85dp"
+            android:layout_height="112dp"
+            android:id="@+id/imageViewMe"
+            android:src="@drawable/me"
+            android:layout_marginLeft="4dp" />
 
         <TextView
             android:layout_width="wrap_content"

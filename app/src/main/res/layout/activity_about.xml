@@ -109,6 +109,11 @@
                 android:id="@+id/textView14"
                 android:layout_marginTop="10dp" />
 
+            <TextView
+                style="@style/RideScheduleStyle"
+                android:text="This product includes the software by Oğuz Bilgener (https://github.com/oguzbilgener) distributed under MIT licence. See file LICENCE. "
+                android:id="@+id/textView15"
+                android:layout_marginTop="10dp" />
 
         </LinearLayout>
 

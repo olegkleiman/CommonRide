@@ -81,16 +81,19 @@
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
         <activity
             android:name=".RegisterActivity"
+            android:screenOrientation="portrait"
             android:label="@string/title_activity_register" >
         </activity>
         <activity
             android:name=".RideMapActivity"
+            android:theme="@style/Theme.AppCompat.Light"
             android:label="@string/title_activity_ride_map"
             android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name=".MyRidesActivity"
             android:label="@string/title_activity_my_rides"
+            android:screenOrientation="portrait"
             android:parentActivityName=".MainActivity"
             android:theme="@style/Theme.AppCompat.Light" >
         </activity>

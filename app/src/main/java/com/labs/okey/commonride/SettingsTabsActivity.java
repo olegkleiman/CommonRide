@@ -226,8 +226,7 @@ public class SettingsTabsActivity extends ActionBarActivity {
                     if( mContext == null )
                         return null;
 
-                    final User user = new User();
-                    user.load(mContext);
+                    final User user = User.load(mContext);
 
                     rootView = inflater.inflate(R.layout.fragment_user, container, false);
                     final ImageView imgUserPic = (ImageView)rootView.findViewById(R.id.imgViewUserSettings);

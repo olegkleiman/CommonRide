@@ -2,6 +2,7 @@ package com.labs.okey.commonride;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
@@ -27,6 +28,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.UiLifecycleHelper;
+import com.labs.okey.commonride.adapters.MyridesDriverAdapter;
 import com.labs.okey.commonride.model.Ride;
 import com.labs.okey.commonride.model.RideAnnotated;
 import com.labs.okey.commonride.model.User;
@@ -45,9 +47,11 @@ import com.microsoft.windowsazure.mobileservices.table.sync.localstore.ColumnDat
 import com.microsoft.windowsazure.mobileservices.table.sync.localstore.SQLiteLocalStore;
 import com.microsoft.windowsazure.mobileservices.table.sync.synchandler.MobileServiceSyncHandler;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 
 public class MyRidesActivity extends ActionBarActivity {
@@ -65,6 +69,7 @@ public class MyRidesActivity extends ActionBarActivity {
     private static final String USERIDPREF = "userid";
 
     Fragment fragmentTab1 = new FragmentTabOffers();
+    MyridesDriverAdapter mDriverRidesAdapter;
     Fragment fragmentTab2 = new FragmentTabParticipation();
 
     @Override
@@ -119,7 +124,8 @@ public class MyRidesActivity extends ActionBarActivity {
             mPullDriverQuery = mClient.getTable(Ride.class)
                     .where()
                     .field("user_driver")
-                    .eq(myUser.getRegistrationId());
+                    .eq(myUser.getRegistrationId())
+                    .and().field("when_starts").le(new Date());
             mLocalStore = new SQLiteLocalStore(mClient.getContext(),
                     "myrides", null, 1);
             MobileServiceSyncHandler handler = new ConflictResolvingSyncHandler();
@@ -128,11 +134,16 @@ public class MyRidesActivity extends ActionBarActivity {
                 Map<String, ColumnDataType> tableDefinition = new HashMap<String, ColumnDataType>();
                 tableDefinition.put("id", ColumnDataType.String);
                 tableDefinition.put("user_driver", ColumnDataType.String);
+                tableDefinition.put("when_published", ColumnDataType.Date);
+                tableDefinition.put("free_places", ColumnDataType.Number);
                 tableDefinition.put("when_starts", ColumnDataType.Date);
                 tableDefinition.put("ride_from", ColumnDataType.String);
                 tableDefinition.put("ride_to", ColumnDataType.String);
-                tableDefinition.put("__deleted", ColumnDataType.Boolean);
-                tableDefinition.put("__version", ColumnDataType.String);
+                tableDefinition.put("from_lat", ColumnDataType.String);
+                tableDefinition.put("from_lon", ColumnDataType.String);
+                tableDefinition.put("to_lat", ColumnDataType.String);
+                tableDefinition.put("to_lon", ColumnDataType.String);
+                tableDefinition.put("notes", ColumnDataType.String);
 
                 mLocalStore.defineTable("commonrides", tableDefinition);
 
@@ -159,11 +170,14 @@ public class MyRidesActivity extends ActionBarActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            //mRidesAdapter.clear();
+                            if( mDriverRidesAdapter == null )
+                                return;
+
+                            mDriverRidesAdapter.clear();
 
                             for (Ride _ride : rides) {
                                 Log.i(LOG_TAG, _ride.whenStarts.toString());
-                                //mRidesAdapter.add(_ride);
+                                mDriverRidesAdapter.add(_ride);
                             }
                         }
                     });
@@ -188,6 +202,40 @@ public class MyRidesActivity extends ActionBarActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch ( item.getItemId() ) {
+            case R.id.myrides_action_refresh: {
+
+                final ProgressDialog progress =
+                        ProgressDialog.show(this, "My rides", "Synchronizing...");
+
+                new AsyncTask<Void, Void, Void>() {
+
+                    @Override
+                    protected void onPostExecute(Void result) {
+                        progress.dismiss();
+                    }
+
+                    @Override
+                    protected Void doInBackground(Void... voids) {
+                        try {
+                            mRidesTable.purge(mPullDriverQuery);
+                            mRidesTable.pull(mPullDriverQuery).get();
+
+                            refreshRides();
+                        }
+                        catch (Exception ex) {
+                            Log.e(LOG_TAG, ex.getCause().toString());
+                        }
+
+                        return null;
+                    }
+                }.execute();
+
+            }
+            break;
+        }
+
         return super.onOptionsItemSelected(item);
     }
 
@@ -199,8 +247,15 @@ public class MyRidesActivity extends ActionBarActivity {
 
             View view = inflater.inflate(R.layout.my_rides_driver, container, false);
 
-            ListView myRideslistView = (ListView)view.findViewById(R.id.listViewMyDriver);
-            //myRideslistView.setAdapter();
+            User myUser = User.load(MyRidesActivity.this);
+            TextView txtView = (TextView)view.findViewById(R.id.txtMyDriver);
+            txtView.setText(myUser.getFirstName() + " " + myUser.getLastName());
+
+            ListView myRidesListView = (ListView)view.findViewById(R.id.listViewMyDriver);
+            mDriverRidesAdapter = new MyridesDriverAdapter(MyRidesActivity.this,
+                    R.layout.my_rides_driver_row );
+
+            myRidesListView.setAdapter(mDriverRidesAdapter);
 
             return view;
         }
