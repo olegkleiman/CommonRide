@@ -12,7 +12,8 @@
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="@color/material_blue_grey_800">
 
         <ImageView
             android:layout_width="72dp"
@@ -31,10 +32,12 @@
 
             <TextView
                 style="@style/RideScheduleStyle"
+                android:textColor="@android:color/white"
                 android:id="@+id/textViewFirstNameSettings"/>
 
             <TextView
                 style="@style/RideScheduleStyle"
+                android:textColor="@android:color/white"
                 android:id="@+id/textViewLastNameSettings" />
         </LinearLayout>
 
@@ -44,17 +47,18 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginTop="10dp">
+        android:background="@color/material_blue_grey_800">
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:clickable="true"
-            android:src="@android:drawable/ic_dialog_email" />
+            android:src="@android:drawable/ic_dialog_email"
+            android:layout_marginLeft="8dp" />
         <TextView
             android:id="@+id/txtUserEMailSettings"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:textColor="@android:color/black"
+            android:textColor="@android:color/white"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:layout_marginLeft="4dp"
             android:gravity="left|center"
@@ -67,7 +71,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginTop="10dp">
+        android:background="@color/material_blue_grey_800">
 
         <ImageView
             android:layout_width="wrap_content"
@@ -75,12 +79,14 @@
             android:clickable="true"
             android:src="@android:drawable/stat_sys_phone_call"
             android:id="@+id/imgCallDriver"
-            android:layout_gravity="center" />
+            android:layout_gravity="center"
+            android:layout_marginLeft="8dp" />
 
         <AutoCompleteTextView android:id="@+id/txtUserPhoneSettings"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/prompt_phone"
+            android:textColor="@android:color/white"
             android:layout_marginLeft="4dp"
             android:gravity="left|center"
             android:inputType="phone"

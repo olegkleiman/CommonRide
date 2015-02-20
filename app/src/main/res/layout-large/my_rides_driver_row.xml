@@ -8,18 +8,18 @@
         android:orientation="horizontal"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_marginLeft="4dp"
-        android:layout_marginRight="4dp">
+        android:layout_margin="4dp">
 
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="4dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textAppearance="?android:attr/textAppearanceLarge"
                 android:textColor="#ff00a1f1"
                 android:id="@+id/txtMyRidesDriverTitle1"
                 android:layout_gravity="center_vertical"
@@ -27,7 +27,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textAppearance="?android:attr/textAppearanceLarge"
                 android:textColor="#ff00a1f1"
                 android:id="@+id/txtMyRidesDriverTitle2"
                 android:layout_gravity="center_vertical"
@@ -39,7 +39,7 @@
             android:orientation="vertical"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="6dp">
+            android:layout_marginLeft="10dp">
 
             <LinearLayout
                 android:orientation="horizontal"
@@ -64,7 +64,8 @@
                     android:text="Medium Text"
                     android:id="@+id/txtMyRidesDriverFrom"
                     android:ellipsize="end"
-                    android:singleLine="true" />
+                    android:singleLine="true"
+                    android:layout_marginLeft="4dp" />
             </LinearLayout>
 
             <LinearLayout
@@ -90,7 +91,8 @@
                     android:text="Medium Text"
                     android:id="@+id/txtMyRidesDriverTo"
                     android:ellipsize="end"
-                    android:singleLine="true" />
+                    android:singleLine="true"
+                    android:layout_marginLeft="4dp" />
 
             </LinearLayout>
 

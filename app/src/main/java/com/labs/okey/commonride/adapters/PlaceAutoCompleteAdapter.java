@@ -28,7 +28,7 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 
 /**
- * Created by Oleg on 26-Jan-15.
+ * Created by Oleg Kleiman on 26-Jan-15.
  */
 public class PlaceAutoCompleteAdapter  extends ArrayAdapter<FoundPlace>
     implements Filterable{

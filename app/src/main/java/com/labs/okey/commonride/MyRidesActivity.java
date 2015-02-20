@@ -3,6 +3,7 @@ package com.labs.okey.commonride;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
@@ -22,6 +23,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.support.v4.widget.DrawerLayout;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -29,6 +31,8 @@ import android.widget.Toast;
 
 import com.facebook.UiLifecycleHelper;
 import com.labs.okey.commonride.adapters.MyridesDriverAdapter;
+import com.labs.okey.commonride.adapters.MyridesPassengerAdapter;
+import com.labs.okey.commonride.model.Join;
 import com.labs.okey.commonride.model.Ride;
 import com.labs.okey.commonride.model.RideAnnotated;
 import com.labs.okey.commonride.model.User;
@@ -58,7 +62,9 @@ public class MyRidesActivity extends ActionBarActivity {
 
     private static MobileServiceClient mClient;
     private MobileServiceSyncTable<Ride> mRidesTable;
+    private MobileServiceSyncTable<Join> mJoinsTable;
     private Query mPullDriverQuery;
+    private Query mPullPassengerQuery;
     private SQLiteLocalStore mLocalStore;
 
     ActionBar.Tab tab1, tab2;
@@ -70,6 +76,7 @@ public class MyRidesActivity extends ActionBarActivity {
 
     Fragment fragmentTab1 = new FragmentTabOffers();
     MyridesDriverAdapter mDriverRidesAdapter;
+    MyridesPassengerAdapter mPassengerRidesAdapter;
     Fragment fragmentTab2 = new FragmentTabParticipation();
 
     @Override
@@ -83,8 +90,10 @@ public class MyRidesActivity extends ActionBarActivity {
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-        tab1 = actionBar.newTab().setText("Offers");
-        tab2 = actionBar.newTab().setText("Participation");
+        String caption = getResources().getString(R.string.driverTabCaption);
+        tab1 = actionBar.newTab().setText(caption);
+        caption = getResources().getString(R.string.passengerTabCaption);
+        tab2 = actionBar.newTab().setText(caption);
 
         wamsInit();
 
@@ -126,6 +135,13 @@ public class MyRidesActivity extends ActionBarActivity {
                     .field("user_driver")
                     .eq(myUser.getRegistrationId())
                     .and().field("when_starts").le(new Date());
+
+            mPullPassengerQuery = mClient.getTable(Join.class)
+                    .where()
+                    .field("passenger_id")
+                    .eq(myUser.getRegistrationId())
+                    .and().field("when_joined").le(new Date());
+
             mLocalStore = new SQLiteLocalStore(mClient.getContext(),
                     "myrides", null, 1);
             MobileServiceSyncHandler handler = new ConflictResolvingSyncHandler();
@@ -151,11 +167,46 @@ public class MyRidesActivity extends ActionBarActivity {
             }
 
             mRidesTable = mClient.getSyncTable("commonrides", Ride.class);
+            mJoinsTable = mClient.getSyncTable("joins", Join.class);
 
         } catch(Exception e) {
             Log.i(LOG_TAG, e.getMessage());
         }
 
+    }
+
+    private void refreshJoins() {
+        new AsyncTask<Void, Void, Void>(){
+
+            @Override
+            protected Void doInBackground(Void... voids) {
+
+                try {
+                    final MobileServiceList<Join> joins = mJoinsTable
+                        .read(mPullPassengerQuery)
+                        .get();
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if( mPassengerRidesAdapter == null )
+                                return;
+
+                            mPassengerRidesAdapter.clear();
+
+                            for (Join _join : joins) {
+                                Log.i(LOG_TAG, _join.whenJoined.toString());
+                                mPassengerRidesAdapter.add(_join);
+                            }
+                        }
+                    });
+                } catch(Exception ex) {
+                    Log.e(LOG_TAG, ex.getCause().toString());
+                }
+
+                return null;
+            }
+        }.execute();
     }
 
     private void refreshRides() {
@@ -167,6 +218,7 @@ public class MyRidesActivity extends ActionBarActivity {
                     final MobileServiceList<Ride> rides = mRidesTable
                             .read(mPullDriverQuery)
                             .get();
+
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -254,6 +306,21 @@ public class MyRidesActivity extends ActionBarActivity {
             ListView myRidesListView = (ListView)view.findViewById(R.id.listViewMyDriver);
             mDriverRidesAdapter = new MyridesDriverAdapter(MyRidesActivity.this,
                     R.layout.my_rides_driver_row );
+            myRidesListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+                @Override
+                public void onItemClick(AdapterView<?> parent, final View view,
+                                        int position, long id) {
+                    final Ride ride = (Ride) parent.getItemAtPosition(position);
+
+                    Intent intent = new Intent(MyRidesActivity.this,
+                                                SingleRideActivity.class);
+                    Bundle b = new Bundle();
+                    b.putString("rideId", ride.Id);
+                    intent.putExtras(b);
+                    startActivity(intent);
+                }
+            });
 
             myRidesListView.setAdapter(mDriverRidesAdapter);
 
@@ -270,6 +337,9 @@ public class MyRidesActivity extends ActionBarActivity {
             View view = inflater.inflate(R.layout.my_rides_passenger, container, false);
 
             ListView myRideslistView = (ListView)view.findViewById(R.id.listViewMyPassenger);
+            mPassengerRidesAdapter = new MyridesPassengerAdapter(MyRidesActivity.this,
+                        R.layout.my_rides_passesnger_row);
+            myRideslistView.setAdapter(mPassengerRidesAdapter);
 
             return view;
         }

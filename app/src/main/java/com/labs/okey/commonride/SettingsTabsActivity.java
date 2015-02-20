@@ -1,6 +1,10 @@
 package com.labs.okey.commonride;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -14,7 +18,10 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
+import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v7.app.ActionBarActivity;
@@ -39,6 +46,7 @@ import com.labs.okey.commonride.model.RideAnnotated;
 import com.labs.okey.commonride.model.User;
 import com.labs.okey.commonride.utils.DrawableManager;
 import com.labs.okey.commonride.utils.Globals;
+import com.labs.okey.commonride.utils.RoundedDrawable;
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 import com.microsoft.windowsazure.mobileservices.MobileServiceList;
 import com.microsoft.windowsazure.mobileservices.table.MobileServiceTable;
@@ -211,6 +219,14 @@ public class SettingsTabsActivity extends ActionBarActivity {
             mContext = context;
         }
 
+        private InputStream fetch(String urlString) throws MalformedURLException, IOException {
+            DefaultHttpClient httpClient = new DefaultHttpClient();
+            HttpGet request = new HttpGet(urlString);
+            HttpResponse response = httpClient.execute(request);
+            return response.getEntity().getContent();
+
+        }
+
         @Override
         public View onCreateView(LayoutInflater inflater,
                                  ViewGroup container,
@@ -231,13 +247,79 @@ public class SettingsTabsActivity extends ActionBarActivity {
                     rootView = inflater.inflate(R.layout.fragment_user, container, false);
                     final ImageView imgUserPic = (ImageView)rootView.findViewById(R.id.imgViewUserSettings);
 
-                    DrawableManager drawableManager = new DrawableManager();
-                    drawableManager.setRounded()
-                            .setCornerRadius(20)
-                            .setBorderColor(Color.LTGRAY)
-                            .setBorderWidth(4);
-                    drawableManager.fetchDrawableOnThread(user.getPictureURL(),
-                                                            imgUserPic);
+                    // Try load user picture from sdcard
+                    BitmapFactory.Options options = new BitmapFactory.Options();
+                    options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+                    //String root = Environment.getExternalStorageDirectory().getPath();
+                    final File myPhotoFile = new File(mContext.getFilesDir(), "me.jpg");
+                    //final File myPhotoFile = new File(root + "/me.jpg");
+                    Bitmap myPictureBitmap;
+                    if(myPhotoFile.exists()) {
+                        //myPhotoFile.delete();
+                        myPictureBitmap =
+                                BitmapFactory.decodeFile(myPhotoFile.toString(), options);
+                        if( myPictureBitmap != null ) {
+                            Drawable drawable = new BitmapDrawable(myPictureBitmap);
+                            drawable = RoundedDrawable.fromDrawable(drawable);
+                            ((RoundedDrawable) drawable)
+                                    .setCornerRadius(Globals.PICTURE_CORNER_RADIUS)
+                                    .setBorderColor(Color.LTGRAY)
+                                    .setBorderWidth(Globals.PICTURE_BORDER_WIDTH)
+                                    .setOval(true);
+                            imgUserPic.setImageDrawable(drawable);
+                        }
+                    } else {
+                        // If the picture was not there, download it from Web
+
+                        new AsyncTask<Void, Void, Void>(){
+
+                            Drawable drawable = null;
+
+                            @Override
+                            protected void onPostExecute(Void result){
+                                if( drawable != null )
+                                    imgUserPic.setImageDrawable(drawable);
+                            }
+
+                            @Override
+                            protected Void doInBackground(Void... voids) {
+
+                                try {
+                                    InputStream is = fetch(user.getPictureURL());
+                                    drawable = Drawable.createFromStream(is, "src");
+                                    drawable = RoundedDrawable.fromDrawable(drawable);
+                                    ((RoundedDrawable) drawable)
+                                            .setCornerRadius(20)
+                                            .setBorderColor(Color.LTGRAY)
+                                            .setBorderWidth(4)
+                                            .setOval(true);
+
+                                    Bitmap bmp = Bitmap.createBitmap(drawable.getIntrinsicWidth(),
+                                                                     drawable.getIntrinsicHeight(),
+                                                                      Bitmap.Config.ARGB_8888);
+                                    if( bmp != null ) {
+                                        OutputStream fileOut = new FileOutputStream(myPhotoFile);
+                                        bmp.compress(Bitmap.CompressFormat.JPEG, 100, fileOut);
+                                        fileOut.flush();
+                                        fileOut.close();
+                                    }
+                                } catch(Exception ex) {
+                                    Log.e(LOG_TAG, ex.getCause().toString());
+                                }
+
+                                return null;
+                            }
+                        }.execute();
+
+                    }
+
+//                    DrawableManager drawableManager = new DrawableManager();
+//                    drawableManager.setRounded()
+//                            .setCornerRadius(20)
+//                            .setBorderColor(Color.LTGRAY)
+//                            .setBorderWidth(4);
+//                    drawableManager.fetchDrawableOnThread(user.getPictureURL(),
+//                                                          imgUserPic);
 
                     TextView txtView = (TextView)rootView.findViewById(R.id.textViewFirstNameSettings);
                     txtView.setText(user.getFirstName());

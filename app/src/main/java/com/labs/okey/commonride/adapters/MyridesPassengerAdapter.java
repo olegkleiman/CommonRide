@@ -8,23 +8,21 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.labs.okey.commonride.R;
+import com.labs.okey.commonride.model.Join;
 import com.labs.okey.commonride.model.Ride;
 
-import java.text.SimpleDateFormat;
-
-
 /**
- * Created by Oleg Kleiman on 18-Feb-15.
+ * Created by Oleg Kleiman on 19-Feb-15.
  */
-public class MyridesDriverAdapter extends ArrayAdapter<Ride> {
+public class MyridesPassengerAdapter extends ArrayAdapter<Join> {
 
     Context context;
     int layoutResourceId;
 
     LayoutInflater m_inflater = null;
 
-    public MyridesDriverAdapter(Context context,
-                        int layoutResourceId) {
+    public MyridesPassengerAdapter(Context context,
+                                int layoutResourceId) {
         super(context, layoutResourceId);
 
         this.context = context;
@@ -40,35 +38,24 @@ public class MyridesDriverAdapter extends ArrayAdapter<Ride> {
         View row = convertView;
         Holder holder = null;
 
-        Ride ride = this.getItem(position);
+        Join join = this.getItem(position);
 
         if( row == null ) {
             row = m_inflater.inflate(layoutResourceId, parent, false);
 
             holder = new Holder();
-            holder.txtTitle1 = (TextView)row.findViewById(R.id.txtMyRidesDriverTitle1);
-            holder.txtTitle2 = (TextView)row.findViewById(R.id.txtMyRidesDriverTitle2);
-            holder.txtFrom = (TextView)row.findViewById(R.id.txtMyRidesDriverFrom);
-            holder.txtTo = (TextView)row.findViewById(R.id.txtMyRidesDriverTo);
+            holder.txtTitle1 = (TextView)row.findViewById(R.id.txtMyRidesPassengerTitle1);
+            holder.txtTitle2 = (TextView)row.findViewById(R.id.txtMyRidesPassengerTitle2);
+            holder.txtFrom = (TextView)row.findViewById(R.id.txtMyRidesPassengerFrom);
+            holder.txtTo = (TextView)row.findViewById(R.id.txtMyRidesPassengerTo);
 
             row.setTag(holder);
-
-        } else {
+        }else {
             holder = (Holder)row.getTag();
         }
 
-        SimpleDateFormat df = new SimpleDateFormat("dd");
-        holder.txtTitle1.setText( df.format(ride.whenStarts) );
-
-        df = new SimpleDateFormat("MMM");
-        holder.txtTitle2.setText( df.format(ride.whenStarts) );
-
-        holder.txtFrom.setText( ride.ride_from );
-        holder.txtTo.setText( ride.ride_to );
-
-        return row;
+            return row;
     }
-
 
     static class Holder {
         TextView txtTitle1;
@@ -77,5 +64,4 @@ public class MyridesDriverAdapter extends ArrayAdapter<Ride> {
         TextView txtFrom;
         TextView txtTo;
     }
-
 }

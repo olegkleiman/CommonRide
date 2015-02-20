@@ -12,7 +12,7 @@ import com.labs.okey.commonride.R;
 import com.labs.okey.commonride.model.RideAnnotated;
 
 /**
- * Created by Oleg on 08-Feb-15.
+ * Created by Oleg Kleiman on 08-Feb-15.
  */
 public class RatingAdapter extends ArrayAdapter<RideAnnotated> {
 

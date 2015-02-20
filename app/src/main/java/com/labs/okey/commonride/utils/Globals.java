@@ -1,7 +1,7 @@
 package com.labs.okey.commonride.utils;
 
 /**
- * Created by Oleg on 06-Feb-15.
+ * Created by Oleg Kleiman on 06-Feb-15.
  */
 public class Globals {
     public static final String FIRST_NAME_PREF = "firstname";
@@ -16,6 +16,9 @@ public class Globals {
     public static final String JOIN_STATUS_INIT = "init";
     public static final String JOIN_STATUS_ACCEPTED = "accepted";
     public static final String JOIN_STATUS_DECLINED = "declined";
+
+    public static float PICTURE_CORNER_RADIUS = 20;
+    public static float PICTURE_BORDER_WIDTH = 4;
 
     public static final String WAMS_URL = "https://commonride.azure-mobile.net/";
     public static final String WAMS_API_KEY = "RuDCJTbpVcpeCQPvrcYeHzpnLyikPo70";

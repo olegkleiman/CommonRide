@@ -100,6 +100,14 @@
         <activity
             android:name=".AboutActivity"
             android:label="@string/title_activity_about"
+            android:screenOrientation="portrait"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/Theme.AppCompat.Light" >
+        </activity>
+        <activity
+            android:name=".RateActivity"
+            android:label="@string/title_activity_rate"
+            android:screenOrientation="portrait"
             android:parentActivityName=".MainActivity"
             android:theme="@style/Theme.AppCompat.Light" >
         </activity>
@@ -125,10 +133,6 @@
             android:name="com.google.android.gms.ads.AdActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
             android:theme="@android:style/Theme.Translucent" />
-        <activity
-            android:name=".RateActivity"
-            android:label="@string/title_activity_rate" >
-        </activity>
     </application>
 
 </manifest>

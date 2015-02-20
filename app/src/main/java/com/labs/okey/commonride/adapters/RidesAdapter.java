@@ -23,7 +23,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Created by Oleg on 21-Jan-15.
+ * Created by Oleg Kleiman on 21-Jan-15.
  */
 public class RidesAdapter extends ArrayAdapter<RideAnnotated> {
 

@@ -111,6 +111,12 @@
 
             <TextView
                 style="@style/RideScheduleStyle"
+                android:id="@+id/textViewVincentMi"
+                android:text="This product includes the software by Vincent Mi, Copyright (C) 2015 Vincent Mi distributed under Apache License, Version 2.0"
+                android:layout_marginTop="10dp" />
+
+            <TextView
+                style="@style/RideScheduleStyle"
                 android:text="This product includes the software by Oğuz Bilgener (https://github.com/oguzbilgener) distributed under MIT licence. See file LICENCE. "
                 android:id="@+id/textView15"
                 android:layout_marginTop="10dp" />

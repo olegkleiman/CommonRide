@@ -36,4 +36,6 @@
     <string name="passengersText">נוסעים</string>
     <string name="accept">אישור</string>
     <string name="decline">דחה</string>
+    <string name="driverTabCaption">נהג</string>
+    <string name="passengerTabCaption">נוסע</string>
 </resources>
