@@ -19,6 +19,7 @@ public class Globals {
 
     public static float PICTURE_CORNER_RADIUS = 20;
     public static float PICTURE_BORDER_WIDTH = 4;
+    public static String MY_PICTURE_FILE_NAME = "me.png";
 
     public static final String WAMS_URL = "https://commonride.azure-mobile.net/";
     public static final String WAMS_API_KEY = "RuDCJTbpVcpeCQPvrcYeHzpnLyikPo70";

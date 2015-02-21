@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">CommonRide</string>
+    <string name="app_name">Annex</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_single_ride">Ride details</string>
     <string name="ride_origin"></string>
@@ -18,7 +18,7 @@
     <string name="dialog_confirm">Confirm</string>
     <string name="dialog_message_confirm_join_delete">Passengers will be informed about removal</string>
     <string name="dialog_title_confirm_join_delete">Delete this ride?</string>
-    <string name="search_hint">Search CommonRide</string>
+    <string name="search_hint">Search Annex</string>
     <string name="fromText">From:</string>
     <string name="toText">To:</string>
     <string name="whenText">When:</string>
@@ -27,7 +27,7 @@
     <string name="ride_caption">Ride</string>
     <string name="saveText">Save</string>
     <string name="contentDescriptionAddRide">Add new ride</string>
-    <string name="common_rides">Common Ride</string>
+    <string name="app_label">Annex</string>
     <string name="no_phone_number">Provide your phone number. You may prefer to not share it with others by switching off the following indicator</string>
     <string name="no_registration_code">Provide the registration code</string>
     <string name="no_to_location">Type the address</string>

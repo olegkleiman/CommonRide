@@ -54,7 +54,7 @@ import java.util.concurrent.ExecutionException;
 
 public class AddRideActivity extends BaseActivity {
 
-    private static final String LOG_TAG = "CommonRide.AddRide";
+    private static final String LOG_TAG = "Annex.AddRide";
 
     private MobileServiceClient wamsClient;
     private MobileServiceTable<Ride> mRidesTable;

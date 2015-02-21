@@ -69,7 +69,7 @@ public class MyRidesActivity extends ActionBarActivity {
 
     ActionBar.Tab tab1, tab2;
 
-    private static final String LOG_TAG = "CommonRide.MyRides";
+    private static final String LOG_TAG = "Annex.MyRides";
 
     private static final String WAMSTOKENPREF = "wamsToken";
     private static final String USERIDPREF = "userid";

@@ -58,7 +58,7 @@ import java.util.concurrent.ExecutionException;
 
 public class SingleRideActivity extends BaseActivity {
 
-    private static final String LOG_TAG = "CommonRide.SingleRide";
+    private static final String LOG_TAG = "Annex.SingleRide";
 
     private static final String WAMSTOKENPREF = "wamsToken";
     private static final String USERIDPREF = "userid";

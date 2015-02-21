@@ -40,7 +40,7 @@ import java.util.List;
  */
 public class PassengersAdapter extends ArrayAdapter<JoinAnnotated>{
 
-    private static final String LOG_TAG = "CommonRide.PassengersAdapter";
+    private static final String LOG_TAG = "Annex.PassengersAdapter";
 
     Context context;
     int layoutResourceId;

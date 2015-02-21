@@ -60,7 +60,7 @@ public class GCMHandler extends  com.microsoft.windowsazure.notifications.Notifi
                                                            Exception ex) {
                                         if( ex != null) {
                                             String msg =  ex.getMessage();
-                                            Log.e("CommonRide. Registration error:" , msg);
+                                            Log.e("Registration error: " , msg);
                                         }
                                     }
                                 });
@@ -82,10 +82,12 @@ public class GCMHandler extends  com.microsoft.windowsazure.notifications.Notifi
         String nhMessage = bundle.getString("message");
         String rideId =  bundle.getString("extras");
 
-        sendNotification(nhMessage, rideId);
+        String title = context.getResources().getString(R.string.app_label);
+
+        sendNotification(nhMessage, rideId, title);
     }
 
-    private void sendNotification(String msg, String rideId) {
+    private void sendNotification(String msg, String rideId, String title) {
         mNotificationManager = (NotificationManager)
                 ctx.getSystemService(Context.NOTIFICATION_SERVICE);
 
@@ -102,7 +104,7 @@ public class GCMHandler extends  com.microsoft.windowsazure.notifications.Notifi
                 new NotificationCompat.Builder(ctx)
                         .setSmallIcon(R.drawable.launcher_48)
                         .setVibrate(new long[]{500, 500})
-                        .setContentTitle("Common Ride")
+                        .setContentTitle(title)
                         .setAutoCancel(true)
                         .setStyle(new NotificationCompat.BigTextStyle()
                                 .bigText(msg))

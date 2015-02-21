@@ -33,7 +33,7 @@ import java.util.ArrayList;
 public class PlaceAutoCompleteAdapter  extends ArrayAdapter<FoundPlace>
     implements Filterable{
 
-    private static final String LOG_TAG = "CommonRide.placeautocompleteadapter";
+    private static final String LOG_TAG = "Annex.placeautocompleteadapter";
 
     private static final String PLACES_API_BASE = "https://maps.googleapis.com/maps/api/place";
     private static final String TYPE_AUTOCOMPLETE = "/autocomplete";

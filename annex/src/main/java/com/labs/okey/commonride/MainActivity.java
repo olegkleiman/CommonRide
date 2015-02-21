@@ -75,7 +75,7 @@ import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends BaseActivity{
 
-    private static final String LOG_TAG = "CommonRide.Main";
+    private static final String LOG_TAG = "Annex.Main";
     static final int REGISTER_USER_REQUEST = 1;
 
     final boolean DEVELOPER_MODE = true;

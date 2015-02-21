@@ -38,7 +38,7 @@ import com.microsoft.windowsazure.mobileservices.table.TableOperationCallback;
 
 public class RegisterActivity extends FragmentActivity {
 
-    private static final String LOG_TAG = "CommonRide.RegisterActivity";
+    private static final String LOG_TAG = "Annex.RegisterActivity";
     private final String fbProvider = "fb";
     private final String PENDING_ACTION_BUNDLE_KEY = "com.labs.okey.commomride:PendingAction";
 

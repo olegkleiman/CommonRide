@@ -29,7 +29,7 @@ import com.microsoft.windowsazure.mobileservices.table.TableOperationCallback;
 
 public class RideMapActivity extends FragmentActivity {
 
-    private static final String LOG_TAG = "CommonRide.RideMapActivity";
+    private static final String LOG_TAG = "Annex.RideMapActivity";
 
     private MobileServiceClient mClient;
     private MobileServiceTable<Ride> mRidesTable;

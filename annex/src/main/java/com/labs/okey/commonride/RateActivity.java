@@ -23,7 +23,7 @@ import java.net.MalformedURLException;
 
 public class RateActivity extends ActionBarActivity {
 
-    private static final String LOG_TAG = "CommonRide.Rating";
+    private static final String LOG_TAG = "Annex.Rating";
 
     static MobileServiceClient wamsClient;
     private MobileServiceSyncTable<RideAnnotated> mRidesTable;

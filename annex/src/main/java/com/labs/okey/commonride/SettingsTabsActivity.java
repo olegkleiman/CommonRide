@@ -1,6 +1,9 @@
 package com.labs.okey.commonride;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,6 +23,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.preference.PreferenceManager;
@@ -63,7 +67,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 
 public class SettingsTabsActivity extends ActionBarActivity {
 
-    private static final String LOG_TAG = "CommonRide.SettingsTabsActivity";
+    private static final String LOG_TAG = "Annex.SettingsActivity";
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -227,6 +231,14 @@ public class SettingsTabsActivity extends ActionBarActivity {
 
         }
 
+        private File getFilePath(String fileName){
+//            File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
+//                                 fileName);
+            File file = new File(mContext.getCacheDir(), fileName);
+
+            return file;
+        }
+
         @Override
         public View onCreateView(LayoutInflater inflater,
                                  ViewGroup container,
@@ -250,15 +262,16 @@ public class SettingsTabsActivity extends ActionBarActivity {
                     // Try load user picture from sdcard
                     BitmapFactory.Options options = new BitmapFactory.Options();
                     options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-                    //String root = Environment.getExternalStorageDirectory().getPath();
-                    final File myPhotoFile = new File(mContext.getFilesDir(), "me.jpg");
-                    //final File myPhotoFile = new File(root + "/me.jpg");
+                    final File myPhotoFile = getFilePath(Globals.MY_PICTURE_FILE_NAME);
+
                     Bitmap myPictureBitmap;
                     if(myPhotoFile.exists()) {
-                        //myPhotoFile.delete();
-                        myPictureBitmap =
+
+                        try {
+
+                            myPictureBitmap =
                                 BitmapFactory.decodeFile(myPhotoFile.toString(), options);
-                        if( myPictureBitmap != null ) {
+
                             Drawable drawable = new BitmapDrawable(myPictureBitmap);
                             drawable = RoundedDrawable.fromDrawable(drawable);
                             ((RoundedDrawable) drawable)
@@ -267,7 +280,13 @@ public class SettingsTabsActivity extends ActionBarActivity {
                                     .setBorderWidth(Globals.PICTURE_BORDER_WIDTH)
                                     .setOval(true);
                             imgUserPic.setImageDrawable(drawable);
+
+                        } catch (Exception ex) {
+                            Log.e(LOG_TAG, ex.getCause().toString());
                         }
+
+                        myPhotoFile.delete();
+
                     } else {
                         // If the picture was not there, download it from Web
 
@@ -277,8 +296,16 @@ public class SettingsTabsActivity extends ActionBarActivity {
 
                             @Override
                             protected void onPostExecute(Void result){
-                                if( drawable != null )
+                                if( drawable != null ) {
+                                    drawable = RoundedDrawable.fromDrawable(drawable);
+                                    ((RoundedDrawable) drawable)
+                                            .setCornerRadius(20)
+                                            .setBorderColor(Color.LTGRAY)
+                                            .setBorderWidth(4)
+                                            .setOval(true);
+
                                     imgUserPic.setImageDrawable(drawable);
+                                }
                             }
 
                             @Override
@@ -287,19 +314,12 @@ public class SettingsTabsActivity extends ActionBarActivity {
                                 try {
                                     InputStream is = fetch(user.getPictureURL());
                                     drawable = Drawable.createFromStream(is, "src");
-                                    drawable = RoundedDrawable.fromDrawable(drawable);
-                                    ((RoundedDrawable) drawable)
-                                            .setCornerRadius(20)
-                                            .setBorderColor(Color.LTGRAY)
-                                            .setBorderWidth(4)
-                                            .setOval(true);
 
-                                    Bitmap bmp = Bitmap.createBitmap(drawable.getIntrinsicWidth(),
-                                                                     drawable.getIntrinsicHeight(),
-                                                                      Bitmap.Config.ARGB_8888);
+                                    Bitmap bmp = ((BitmapDrawable)drawable).getBitmap();
                                     if( bmp != null ) {
+                                        boolean bRes = myPhotoFile.createNewFile();
                                         OutputStream fileOut = new FileOutputStream(myPhotoFile);
-                                        bmp.compress(Bitmap.CompressFormat.JPEG, 100, fileOut);
+                                        bRes = bmp.compress(Bitmap.CompressFormat.PNG, 100, fileOut);
                                         fileOut.flush();
                                         fileOut.close();
                                     }
