@@ -13,6 +13,8 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.util.Locale;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -48,7 +50,6 @@ import android.widget.Toast;
 
 import com.labs.okey.commonride.model.RideAnnotated;
 import com.labs.okey.commonride.model.User;
-import com.labs.okey.commonride.utils.DrawableManager;
 import com.labs.okey.commonride.utils.Globals;
 import com.labs.okey.commonride.utils.RoundedDrawable;
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
@@ -223,22 +224,6 @@ public class SettingsTabsActivity extends ActionBarActivity {
             mContext = context;
         }
 
-        private InputStream fetch(String urlString) throws MalformedURLException, IOException {
-            DefaultHttpClient httpClient = new DefaultHttpClient();
-            HttpGet request = new HttpGet(urlString);
-            HttpResponse response = httpClient.execute(request);
-            return response.getEntity().getContent();
-
-        }
-
-        private File getFilePath(String fileName){
-//            File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
-//                                 fileName);
-            File file = new File(mContext.getCacheDir(), fileName);
-
-            return file;
-        }
-
         @Override
         public View onCreateView(LayoutInflater inflater,
                                  ViewGroup container,
@@ -259,79 +244,97 @@ public class SettingsTabsActivity extends ActionBarActivity {
                     rootView = inflater.inflate(R.layout.fragment_user, container, false);
                     final ImageView imgUserPic = (ImageView)rootView.findViewById(R.id.imgViewUserSettings);
 
-                    // Try load user picture from sdcard
-                    BitmapFactory.Options options = new BitmapFactory.Options();
-                    options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-                    final File myPhotoFile = getFilePath(Globals.MY_PICTURE_FILE_NAME);
-
-                    Bitmap myPictureBitmap;
-                    if(myPhotoFile.exists()) {
-
-                        try {
-
-                            myPictureBitmap =
-                                BitmapFactory.decodeFile(myPhotoFile.toString(), options);
-
-                            Drawable drawable = new BitmapDrawable(myPictureBitmap);
+                    try {
+                        Drawable drawable = Globals.drawMan.userDrawable(mContext,
+                                                          user.getRegistrationId(),
+                                                          user.getPictureURL()).get();
+                        if( drawable != null ) {
                             drawable = RoundedDrawable.fromDrawable(drawable);
                             ((RoundedDrawable) drawable)
                                     .setCornerRadius(Globals.PICTURE_CORNER_RADIUS)
                                     .setBorderColor(Color.LTGRAY)
                                     .setBorderWidth(Globals.PICTURE_BORDER_WIDTH)
                                     .setOval(true);
-                            imgUserPic.setImageDrawable(drawable);
 
-                        } catch (Exception ex) {
-                            Log.e(LOG_TAG, ex.getCause().toString());
+                            imgUserPic.setImageDrawable(drawable);
                         }
 
-                        myPhotoFile.delete();
-
-                    } else {
-                        // If the picture was not there, download it from Web
-
-                        new AsyncTask<Void, Void, Void>(){
-
-                            Drawable drawable = null;
-
-                            @Override
-                            protected void onPostExecute(Void result){
-                                if( drawable != null ) {
-                                    drawable = RoundedDrawable.fromDrawable(drawable);
-                                    ((RoundedDrawable) drawable)
-                                            .setCornerRadius(20)
-                                            .setBorderColor(Color.LTGRAY)
-                                            .setBorderWidth(4)
-                                            .setOval(true);
-
-                                    imgUserPic.setImageDrawable(drawable);
-                                }
-                            }
-
-                            @Override
-                            protected Void doInBackground(Void... voids) {
-
-                                try {
-                                    InputStream is = fetch(user.getPictureURL());
-                                    drawable = Drawable.createFromStream(is, "src");
-
-                                    Bitmap bmp = ((BitmapDrawable)drawable).getBitmap();
-                                    if( bmp != null ) {
-                                        boolean bRes = myPhotoFile.createNewFile();
-                                        OutputStream fileOut = new FileOutputStream(myPhotoFile);
-                                        bRes = bmp.compress(Bitmap.CompressFormat.PNG, 100, fileOut);
-                                        fileOut.flush();
-                                        fileOut.close();
-                                    }
-                                } catch(Exception ex) {
-                                    Log.e(LOG_TAG, ex.getCause().toString());
-                                }
-
-                                return null;
-                            }
-                        }.execute();
-
+                    } catch (Exception e) {
+                        Log.e(LOG_TAG, e.getCause().toString());
                     }
+
+//                    BitmapFactory.Options options = new BitmapFactory.Options();
+//                    options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+//                    final File myPhotoFile = getFilePath(Globals.MY_PICTURE_FILE_NAME);
+//
+//                    Bitmap myPictureBitmap;
+//                    if(myPhotoFile.exists()) {
+//
+//                        try {
+//
+//                            myPictureBitmap =
+//                                BitmapFactory.decodeFile(myPhotoFile.toString(), options);
+//
+//                            Drawable drawable = new BitmapDrawable(myPictureBitmap);
+//                            drawable = RoundedDrawable.fromDrawable(drawable);
+//                            ((RoundedDrawable) drawable)
+//                                    .setCornerRadius(Globals.PICTURE_CORNER_RADIUS)
+//                                    .setBorderColor(Color.LTGRAY)
+//                                    .setBorderWidth(Globals.PICTURE_BORDER_WIDTH)
+//                                    .setOval(true);
+//                            imgUserPic.setImageDrawable(drawable);
+//
+//                        } catch (Exception ex) {
+//                            Log.e(LOG_TAG, ex.getCause().toString());
+//                        }
+//
+//                        myPhotoFile.delete();
+//
+//                    } else {
+//                        // If the picture was not there, download it from Web
+//
+//                        new AsyncTask<Void, Void, Void>(){
+//
+//                            Drawable drawable = null;
+//
+//                            @Override
+//                            protected void onPostExecute(Void result){
+//                                if( drawable != null ) {
+//                                    drawable = RoundedDrawable.fromDrawable(drawable);
+//                                    ((RoundedDrawable) drawable)
+//                                            .setCornerRadius(20)
+//                                            .setBorderColor(Color.LTGRAY)
+//                                            .setBorderWidth(4)
+//                                            .setOval(true);
+//
+//                                    imgUserPic.setImageDrawable(drawable);
+//                                }
+//                            }
+//
+//                            @Override
+//                            protected Void doInBackground(Void... voids) {
+//
+//                                try {
+//                                    InputStream is = fetch(user.getPictureURL());
+//                                    drawable = Drawable.createFromStream(is, "src");
+//
+//                                    Bitmap bmp = ((BitmapDrawable)drawable).getBitmap();
+//                                    if( bmp != null ) {
+//                                        myPhotoFile.createNewFile();
+//                                        OutputStream fileOut = new FileOutputStream(myPhotoFile);
+//                                        bmp.compress(Bitmap.CompressFormat.PNG, 100, fileOut);
+//                                        fileOut.flush();
+//                                        fileOut.close();
+//                                    }
+//                                } catch(Exception ex) {
+//                                    Log.e(LOG_TAG, ex.getCause().toString());
+//                                }
+//
+//                                return null;
+//                            }
+//                        }.execute();
+//
+//                    }
 
 //                    DrawableManager drawableManager = new DrawableManager();
 //                    drawableManager.setRounded()
@@ -424,7 +427,6 @@ public class SettingsTabsActivity extends ActionBarActivity {
                             } catch(Exception ex) {
                                 Toast.makeText(mContext, "Exception: " + ex.getMessage(),
                                                 Toast.LENGTH_LONG).show();
-                                return;
                             }
 
 

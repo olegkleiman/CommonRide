@@ -14,7 +14,6 @@
             android:layout_width="85dp"
             android:layout_height="112dp"
             android:id="@+id/imageViewMe"
-            android:src="@drawable/me"
             android:layout_marginLeft="4dp" />
 
         <TextView

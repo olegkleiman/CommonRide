@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -35,9 +36,9 @@ import com.labs.okey.commonride.model.Join;
 import com.labs.okey.commonride.model.JoinAnnotated;
 import com.labs.okey.commonride.model.Ride;
 import com.labs.okey.commonride.model.User;
-import com.labs.okey.commonride.utils.DrawableManager;
 import com.labs.okey.commonride.utils.GMapV2Direction;
 import com.labs.okey.commonride.utils.Globals;
+import com.labs.okey.commonride.utils.RoundedDrawable;
 import com.microsoft.windowsazure.mobileservices.*;
 import com.microsoft.windowsazure.mobileservices.authentication.MobileServiceUser;
 import com.microsoft.windowsazure.mobileservices.http.ServiceFilterResponse;
@@ -292,22 +293,22 @@ public class SingleRideActivity extends BaseActivity {
                                                                imageCallDriver.setVisibility(View.INVISIBLE);
                                                            }
 
-
                                                            try {
-//                                                               URL pictureURL = new URL(user.picture_url);
-//                                                               Bitmap img = BitmapFactory.decodeStream(pictureURL.openConnection().getInputStream());
-//                                                               imageDriver.setImageBitmap(img);
+                                                                Drawable drawable = (Globals.drawMan.userDrawable(SingleRideActivity.this,
+                                                                          user.getRegistrationId(),
+                                                                          user.getPictureURL()))
+                                                                          .get();
+                                                               drawable = RoundedDrawable.fromDrawable(drawable);
+                                                               ((RoundedDrawable) drawable)
+                                                                       .setCornerRadius(Globals.PICTURE_CORNER_RADIUS)
+                                                                       .setBorderColor(Color.LTGRAY)
+                                                                       .setBorderWidth(Globals.PICTURE_BORDER_WIDTH)
+                                                                       .setOval(true);
 
-                                                               DrawableManager drawableManager = new DrawableManager();
-                                                               drawableManager.setRounded()
-                                                                       .setCornerRadius(20)
-                                                                       .setBorderColor(Color.GRAY)
-                                                                       .setBorderWidth(4);
-                                                               drawableManager.fetchDrawableOnThread(user.getPictureURL(),
-                                                                       imageDriver);
+                                                               imageDriver.setImageDrawable(drawable);
 
                                                            } catch (Exception ex) {
-                                                               ex.printStackTrace();
+                                                               Log.e(LOG_TAG, ex.getCause().toString());
                                                            }
                                                        }
                                                    }

@@ -36,4 +36,8 @@ public class RideAnnotated { //extends Ride {
 
     @com.google.gson.annotations.SerializedName("email")
     public String email;
+
+    @com.google.gson.annotations.SerializedName("driver_id")
+    public String driverId;
+
 }

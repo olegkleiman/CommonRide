@@ -3,6 +3,7 @@ package com.labs.okey.commonride.adapters;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +14,8 @@ import android.widget.TextView;
 import com.labs.okey.commonride.R;
 import com.labs.okey.commonride.model.Ride;
 import com.labs.okey.commonride.model.RideAnnotated;
-import com.labs.okey.commonride.utils.DrawableManager;
+import com.labs.okey.commonride.utils.Globals;
+import com.labs.okey.commonride.utils.RoundedDrawable;
 
 import java.io.InputStream;
 import java.net.URL;
@@ -27,6 +29,8 @@ import java.util.List;
  */
 public class RidesAdapter extends ArrayAdapter<RideAnnotated> {
 
+    private static final String LOG_TAG = "Annex.RidesAdapter";
+
     Context context;
     int layoutResourceId;
     List<RideAnnotated> rides = new ArrayList<RideAnnotated>();
@@ -35,7 +39,7 @@ public class RidesAdapter extends ArrayAdapter<RideAnnotated> {
     SimpleDateFormat mDateFormat = new SimpleDateFormat("MMM dd, yyyy HH:mm");
 
     String mDesc;
-    DrawableManager mDrawableManager;
+    //DrawableManager mDrawableManager;
 
     public RidesAdapter(Context context,
                         int layoutResourceId) {
@@ -49,11 +53,11 @@ public class RidesAdapter extends ArrayAdapter<RideAnnotated> {
 
         mDesc = context.getResources().getString(R.string.ride_desc);
 
-        mDrawableManager = new DrawableManager();
-        mDrawableManager.setRounded()
-                .setCornerRadius(20)
-                .setBorderColor(Color.GRAY)
-                .setBorderWidth(4);
+//        mDrawableManager = new DrawableManager();
+//        mDrawableManager.setRounded()
+//                .setCornerRadius(20)
+//                .setBorderColor(Color.GRAY)
+//                .setBorderWidth(4);
 
     }
 
@@ -74,7 +78,7 @@ public class RidesAdapter extends ArrayAdapter<RideAnnotated> {
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mDesc = context.getResources().getString(R.string.ride_desc);
 
-        mDrawableManager = new DrawableManager();
+        //mDrawableManager = new DrawableManager();
     }
 
 //    @Override
@@ -128,8 +132,24 @@ public class RidesAdapter extends ArrayAdapter<RideAnnotated> {
         String whenStarts = mDateFormat.format(ride.whenStarts);
         holder.txtRideTime.setText("at " + whenStarts);
 
-        mDrawableManager.fetchDrawableOnThread(ride.picture_url,
-                                               holder.imageView);
+        try{
+            Drawable drawable = (Globals.drawMan.userDrawable(context,
+                                    ride.driverId,
+                                    ride.picture_url)).get();
+            drawable = RoundedDrawable.fromDrawable(drawable);
+            ((RoundedDrawable) drawable)
+                    .setCornerRadius(Globals.PICTURE_CORNER_RADIUS)
+                    .setBorderColor(Color.LTGRAY)
+                    .setBorderWidth(Globals.PICTURE_BORDER_WIDTH)
+                    .setOval(true);
+
+            holder.imageView.setImageDrawable(drawable);
+        } catch (Exception e) {
+            Log.e(LOG_TAG, e.getCause().toString());
+        }
+
+//        mDrawableManager.fetchDrawableOnThread(ride.picture_url,
+//                                               holder.imageView);
 
         return row;
     }

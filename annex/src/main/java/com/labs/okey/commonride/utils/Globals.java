@@ -4,6 +4,21 @@ package com.labs.okey.commonride.utils;
  * Created by Oleg Kleiman on 06-Feb-15.
  */
 public class Globals {
+
+    private static class DManClassFactory {
+
+        static DrawMan drawMan;
+
+        static DrawMan getDrawMan(){
+            if( drawMan == null )
+                return new DrawMan();
+            else
+                return drawMan;
+        }
+    }
+
+    public static final DrawMan drawMan = DManClassFactory.getDrawMan();
+
     public static final String FIRST_NAME_PREF = "firstname";
     public static final String LAST_NAME_PREF = "lastname";
     public static final String REG_ID_PREF = "regid";

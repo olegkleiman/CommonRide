@@ -407,6 +407,7 @@ public class MainActivity extends BaseActivity{
                     tableDefinition.put("last_name", ColumnDataType.String);
                     tableDefinition.put("picture_url", ColumnDataType.String);
                     tableDefinition.put("email", ColumnDataType.String);
+                    tableDefinition.put("driver_id", ColumnDataType.String);
                     tableDefinition.put("__deleted", ColumnDataType.Boolean);
                     tableDefinition.put("__version", ColumnDataType.String);
 

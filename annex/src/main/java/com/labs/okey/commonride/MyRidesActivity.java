@@ -5,6 +5,8 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentTransaction;
@@ -25,6 +27,7 @@ import android.view.ViewGroup;
 import android.support.v4.widget.DrawerLayout;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -38,6 +41,7 @@ import com.labs.okey.commonride.model.RideAnnotated;
 import com.labs.okey.commonride.model.User;
 import com.labs.okey.commonride.utils.ConflictResolvingSyncHandler;
 import com.labs.okey.commonride.utils.Globals;
+import com.labs.okey.commonride.utils.RoundedDrawable;
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 import com.microsoft.windowsazure.mobileservices.MobileServiceList;
 import com.microsoft.windowsazure.mobileservices.table.MobileServiceTable;
@@ -74,10 +78,10 @@ public class MyRidesActivity extends ActionBarActivity {
     private static final String WAMSTOKENPREF = "wamsToken";
     private static final String USERIDPREF = "userid";
 
-    Fragment fragmentTab1 = new FragmentTabOffers();
+    Fragment fragmentTab1;
     MyridesDriverAdapter mDriverRidesAdapter;
     MyridesPassengerAdapter mPassengerRidesAdapter;
-    Fragment fragmentTab2 = new FragmentTabParticipation();
+    Fragment fragmentTab2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,7 +101,7 @@ public class MyRidesActivity extends ActionBarActivity {
 
         wamsInit();
 
-        fragmentTab1 = new FragmentTabOffers();
+        fragmentTab1 = new FragmentTabOffers(this);
         fragmentTab2 = new FragmentTabParticipation();
 
         tab1.setTabListener(new MyTabListener(fragmentTab1));
@@ -143,7 +147,7 @@ public class MyRidesActivity extends ActionBarActivity {
                     .and().field("when_joined").le(new Date());
 
             mLocalStore = new SQLiteLocalStore(mClient.getContext(),
-                    "myrides", null, 1);
+                                                "myrides", null, 1);
             MobileServiceSyncHandler handler = new ConflictResolvingSyncHandler();
             MobileServiceSyncContext syncContext = mClient.getSyncContext();
             if (!syncContext.isInitialized()) {
@@ -294,6 +298,12 @@ public class MyRidesActivity extends ActionBarActivity {
     @SuppressLint("ValidFragment")
     public class FragmentTabOffers extends android.support.v4.app.Fragment{
 
+        Context context;
+
+        public FragmentTabOffers(Context context){
+            this.context = context;
+        }
+
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState){
 
@@ -302,6 +312,26 @@ public class MyRidesActivity extends ActionBarActivity {
             User myUser = User.load(MyRidesActivity.this);
             TextView txtView = (TextView)view.findViewById(R.id.txtMyDriver);
             txtView.setText(myUser.getFirstName() + " " + myUser.getLastName());
+
+            ImageView imageMe = (ImageView)view.findViewById(R.id.imageViewMe);
+            try{
+
+                Drawable drawable = (Globals.drawMan.userDrawable(context,
+                        myUser.getRegistrationId(),
+                        myUser.getPictureURL()))
+                        .get();
+                if( drawable != null ) {
+                    drawable = RoundedDrawable.fromDrawable(drawable);
+                    ((RoundedDrawable) drawable)
+                            .setCornerRadius(Globals.PICTURE_CORNER_RADIUS)
+                            .setBorderColor(Color.LTGRAY)
+                            .setBorderWidth(Globals.PICTURE_BORDER_WIDTH)
+                            .setOval(true);
+                    imageMe.setImageDrawable(drawable);
+                }
+            } catch (Exception e) {
+                Log.e(LOG_TAG, e.getCause().toString());
+            }
 
             ListView myRidesListView = (ListView)view.findViewById(R.id.listViewMyDriver);
             mDriverRidesAdapter = new MyridesDriverAdapter(MyRidesActivity.this,

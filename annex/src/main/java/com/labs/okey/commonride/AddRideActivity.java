@@ -93,8 +93,10 @@ public class AddRideActivity extends BaseActivity {
                 FoundPlace place = (FoundPlace)adapterView.getItemAtPosition(position);
 
                 StringBuilder sb = new StringBuilder(PLACES_API_BASE + OUT_JSON);
-                sb.append("?placeid=" + place.getPlaceID());
-                sb.append("&key=" + API_KEY);
+                sb.append("?placeid=");
+                sb.append(place.getPlaceID());
+                sb.append("&key=");
+                sb.append(API_KEY);
 
                 CallPlaceDetails task = new CallPlaceDetails();
                 task.setPlaceDescription(place.getDescription(), "from");
@@ -114,7 +116,8 @@ public class AddRideActivity extends BaseActivity {
 
                 StringBuilder sb = new StringBuilder(PLACES_API_BASE + OUT_JSON);
                 sb.append("?placeid=" + place.getPlaceID());
-                sb.append("&key=" + API_KEY);
+                sb.append("&key=");
+                sb.append(API_KEY);
 
                 CallPlaceDetails task = new CallPlaceDetails();
                 task.setPlaceDescription(place.getDescription(), "to");
@@ -276,16 +279,8 @@ public class AddRideActivity extends BaseActivity {
                 if (exception == null) {
                     finish();
                 } else {
-                    String err = exception.toString();
-                    Throwable t = exception.getCause();
-
-                    while (t != null) {
-                        err = err + "\n Cause: " + t.toString();
-                        t = t.getCause();
-                    }
-
                     Toast.makeText(AddRideActivity.this,
-                                   t.getMessage(),
+                                    exception.getCause().toString(),
                                    Toast.LENGTH_LONG).show();
                 }
                 progress.dismiss();

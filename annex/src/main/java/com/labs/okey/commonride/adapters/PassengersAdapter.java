@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -22,8 +23,8 @@ import com.labs.okey.commonride.SingleRideActivity;
 import com.labs.okey.commonride.model.Join;
 import com.labs.okey.commonride.model.JoinAnnotated;
 import com.labs.okey.commonride.model.RideAnnotated;
-import com.labs.okey.commonride.utils.DrawableManager;
 import com.labs.okey.commonride.utils.Globals;
+import com.labs.okey.commonride.utils.RoundedDrawable;
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 import com.microsoft.windowsazure.mobileservices.http.ServiceFilterResponse;
 import com.microsoft.windowsazure.mobileservices.table.MobileServiceTable;
@@ -56,7 +57,6 @@ public class PassengersAdapter extends ArrayAdapter<JoinAnnotated>{
     LayoutInflater m_inflater = null;
     SimpleDateFormat mDateFormat = new SimpleDateFormat("MMM dd, yyyy");
 
-    DrawableManager mDrawableManager;
     String mMyUserID;
     Boolean mShowAcceptDecline;
 
@@ -75,12 +75,6 @@ public class PassengersAdapter extends ArrayAdapter<JoinAnnotated>{
 
         m_inflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-        mDrawableManager = new DrawableManager();
-        mDrawableManager.setRounded()
-                .setCornerRadius(20)
-                .setBorderColor(Color.GRAY)
-                .setBorderWidth(2);
 
         try {
             wamsClient = new MobileServiceClient(
@@ -153,8 +147,23 @@ public class PassengersAdapter extends ArrayAdapter<JoinAnnotated>{
 
         holder.txtJoined.setText("Joined at " + mDateFormat.format(join.whenJoined));
 
-        mDrawableManager.fetchDrawableOnThread(join.picture_url,
-                                                holder.imageView);
+        try{
+            Drawable drawable = (Globals.drawMan.userDrawable(context,
+                                                            join.passengerId,
+                                                            join.picture_url))
+                                .get();
+            if( drawable != null ) {
+                drawable = RoundedDrawable.fromDrawable(drawable);
+                ((RoundedDrawable) drawable)
+                        .setCornerRadius(Globals.PICTURE_CORNER_RADIUS)
+                        .setBorderColor(Color.LTGRAY)
+                        .setBorderWidth(Globals.PICTURE_BORDER_WIDTH)
+                        .setOval(true);
+                holder.imageView.setImageDrawable(drawable);
+            }
+        } catch (Exception e) {
+            Log.e(LOG_TAG, e.getCause().toString());
+        }
 
         if( !join.passengerId.equals(mMyUserID)) {
             holder.imgDeleteJoin.setVisibility(View.GONE);

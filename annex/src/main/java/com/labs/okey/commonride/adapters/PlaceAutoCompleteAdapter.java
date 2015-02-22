@@ -33,7 +33,7 @@ import java.util.ArrayList;
 public class PlaceAutoCompleteAdapter  extends ArrayAdapter<FoundPlace>
     implements Filterable{
 
-    private static final String LOG_TAG = "Annex.placeautocompleteadapter";
+    private static final String LOG_TAG = "Annex.placeautocomplete";
 
     private static final String PLACES_API_BASE = "https://maps.googleapis.com/maps/api/place";
     private static final String TYPE_AUTOCOMPLETE = "/autocomplete";
@@ -142,7 +142,8 @@ public class PlaceAutoCompleteAdapter  extends ArrayAdapter<FoundPlace>
             StringBuilder sb = new StringBuilder(PLACES_API_BASE + TYPE_AUTOCOMPLETE + OUT_JSON);
             sb.append("?key=" + API_KEY);
             sb.append("&components=country:il");
-            sb.append("&input=" + URLEncoder.encode(input, "utf8"));
+            sb.append("&input=");
+            sb.append(URLEncoder.encode(input, "utf8"));
 
             URL url = new URL(sb.toString());
             conn = (HttpURLConnection) url.openConnection();
@@ -194,7 +195,6 @@ public class PlaceAutoCompleteAdapter  extends ArrayAdapter<FoundPlace>
     static class PlaceHolder
     {
         TextView txtView;
-
     }
 
 }
