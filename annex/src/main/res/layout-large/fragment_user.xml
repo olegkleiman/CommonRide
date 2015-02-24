@@ -11,18 +11,14 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:background="#607D8B"
-        android:paddingTop="@dimen/section_vertical_margin"
-        android:paddingLeft="@dimen/section_horizontal_margin"
-        android:paddingRight="@dimen/section_horizontal_margin"
-        android:paddingBottom="@dimen/section_vertical_margin">
+        android:layout_marginTop="6dp">
 
         <ImageView
             android:id="@+id/imgViewUserSettings"
-            android:layout_width="84dp"
-            android:layout_height="84dp"
+            android:layout_width="128dp"
+            android:layout_height="128dp"
             android:layout_gravity="center_vertical"
-            android:scaleType="fitXY"
-            android:layout_marginLeft="6dp" />
+            android:scaleType="fitXY" />
 
         <LinearLayout
             android:layout_width="fill_parent"
@@ -36,7 +32,8 @@
                 android:layout_height="fill_parent"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:text="Oleg Kleiman"
-                android:textColor="@android:color/white" />
+                android:textColor="@android:color/white"
+                android:textSize="36dp" />
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
@@ -45,20 +42,21 @@
                 <ImageView
                     android:layout_width="20dp"
                     android:layout_height="20dp"
+                    android:clickable="true"
                     android:src="@drawable/email"
-                    android:layout_gravity="center"/>
+                    android:layout_gravity="center_vertical"/>
                 <TextView
                     android:id="@+id/txtUserEMailSettings"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:textColor="@android:color/white"
-                    android:layout_marginLeft="6dp"
+                    android:layout_marginLeft="4dp"
                     android:ellipsize="end"
                     android:singleLine="true"
                     android:clickable="true"
                     android:onClick="emailDriver"
                     android:gravity="left"
-                    android:layout_gravity="center"/>
+                    android:layout_gravity="center_vertical"/>
             </LinearLayout>
             <LinearLayout
                 android:layout_width="fill_parent"
@@ -71,17 +69,17 @@
                     android:layout_height="20dp"
                     android:src="@drawable/phone"
                     android:id="@+id/imgCallDriver"
-                    android:layout_gravity="center"/>
+                    android:layout_gravity="center_vertical"/>
 
                 <AutoCompleteTextView
                     android:id="@+id/txtUserPhoneSettings"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:textColor="@android:color/white"
-                    android:layout_marginLeft="6dp"
+                    android:layout_marginLeft="4dp"
                     android:gravity="left|center"
                     android:singleLine="true"
-                    android:layout_gravity="left|center" />
+                    android:layout_gravity="left|center_vertical" />
             </LinearLayout>
         </LinearLayout>
 
@@ -95,9 +93,9 @@
         android:layout_height="wrap_content"
         android:text="@string/prompt_use_phone"
         android:id="@+id/switchUsePhoneSettings"
+        android:layout_marginTop="10dp"
         android:checked="true"
-        android:layout_gravity="left"
-        android:layout_margin="10dp" />
+        android:layout_gravity="left" />
 
     <ImageButton
         android:layout_width="48dp"

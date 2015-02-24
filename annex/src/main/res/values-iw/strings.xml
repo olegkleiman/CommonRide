@@ -38,4 +38,5 @@
     <string name="decline">דחה</string>
     <string name="driverTabCaption">נהג</string>
     <string name="passengerTabCaption">נוסע</string>
+    <string name="publish_anonym">פרסם בעילום שם</string>
 </resources>

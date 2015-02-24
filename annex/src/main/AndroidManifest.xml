@@ -70,6 +70,13 @@
             android:theme="@style/Theme.AppCompat.Light" >
         </activity>
         <activity
+            android:name=".SettingsTabsActivity"
+            android:label="@string/title_activity_tabs"
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light" >
+        </activity>
+        <activity
             android:name=".AddRideActivity"
             android:label="@string/title_activity_add_ride"
             android:parentActivityName=".MainActivity"
@@ -122,12 +129,6 @@
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyBJryLCLoWeBUnSTabBxwDL4dWO4tExR1c" />
 
-        <activity
-            android:name=".SettingsTabsActivity"
-            android:label="@string/title_activity_tabs"
-            android:parentActivityName=".MainActivity"
-            android:theme="@style/Theme.AppCompat.Light" >
-        </activity>
         <!-- Include the AdActivity configChanges and theme. -->
         <activity
             android:name="com.google.android.gms.ads.AdActivity"

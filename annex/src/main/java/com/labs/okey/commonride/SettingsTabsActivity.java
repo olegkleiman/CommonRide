@@ -345,9 +345,11 @@ public class SettingsTabsActivity extends ActionBarActivity {
 //                                                          imgUserPic);
 
                     TextView txtView = (TextView)rootView.findViewById(R.id.textViewFirstNameSettings);
-                    txtView.setText(user.getFirstName());
-                    txtView = (TextView)rootView.findViewById(R.id.textViewLastNameSettings);
-                    txtView.setText(user.getLastName());
+                    txtView.setText(user.getFirstName() + " " + user.getLastName());
+//                    txtView = (TextView)rootView.findViewById(R.id.textViewLastNameSettings);
+//                    txtView.setText(user.getLastName());
+
+
 
                     TextView txtViewMail = (TextView)rootView.findViewById(R.id.txtUserEMailSettings);
                     txtViewMail.setText(user.getEmail());

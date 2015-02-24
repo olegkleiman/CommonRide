@@ -25,6 +25,9 @@ public class RideAnnotated { //extends Ride {
     @com.google.gson.annotations.SerializedName("when_starts")
     public Date whenStarts;
 
+    @com.google.gson.annotations.SerializedName("isanonymous")
+    public Boolean isAnonymous;
+
     @com.google.gson.annotations.SerializedName("first_name")
     public String first_name;
 

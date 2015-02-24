@@ -398,6 +398,7 @@ public class MainActivity extends BaseActivity{
                     tableDefinition.put("user_driver", ColumnDataType.String);
                     tableDefinition.put("free_places", ColumnDataType.Number);
                     tableDefinition.put("when_starts", ColumnDataType.Date);
+                    tableDefinition.put("isanonymous", ColumnDataType.Boolean);
                     tableDefinition.put("from_lat", ColumnDataType.String);
                     tableDefinition.put("from_lon", ColumnDataType.String);
                     tableDefinition.put("to_lat", ColumnDataType.String);

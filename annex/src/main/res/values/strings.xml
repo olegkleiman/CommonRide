@@ -64,6 +64,7 @@
     <string name="decline">Decline</string>
     <string name="driverTabCaption">Driver</string>
     <string name="passengerTabCaption">Passenger</string>
+    <string name="publish_anonym">Publish anonymously</string>
     <string name="title_activity_about">About version Alpha 0.8</string>
     <string name="license">Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

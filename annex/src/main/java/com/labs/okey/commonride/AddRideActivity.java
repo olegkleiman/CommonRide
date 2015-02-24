@@ -254,6 +254,8 @@ public class AddRideActivity extends BaseActivity {
 
         ride.freePlaces = freePlaces;
 
+        ride.isAnonymous = false;
+
         EditText txtNotes = (EditText)findViewById(R.id.txtRideNotes);
         ride.notes = txtNotes.getText().toString();
 

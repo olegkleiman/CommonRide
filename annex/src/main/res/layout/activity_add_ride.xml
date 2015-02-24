@@ -115,10 +115,7 @@
 
     </LinearLayout>
 
-    <TextView
-        android:layout_width="fill_parent"
-        android:id="@+id/textViewDivider2"
-        style="@style/Divider" />
+    <View style="@style/Divider"/>
 
     <LinearLayout
         android:orientation="horizontal"
@@ -152,10 +149,7 @@
             android:text="3" />
     </LinearLayout>
 
-    <TextView
-        android:layout_width="fill_parent"
-        android:id="@+id/textViewDivider3"
-        style="@style/Divider" />
+    <View style="@style/Divider"/>
 
     <LinearLayout
         android:orientation="horizontal"
@@ -186,6 +180,18 @@
         android:ems="10"
         android:id="@+id/txtRideNotes" />
 
+    <View style="@style/Divider"/>
+
+    <Switch
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/publish_anonym"
+        android:id="@+id/switchPublishAnonym"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:checked="false"
+        android:showText="false"
+        android:splitTrack="false" />
+
     <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -193,7 +199,8 @@
         android:src="@drawable/ic_action_accept"
         android:onClick="btnAddRideClick"
         android:layout_gravity="center_horizontal|bottom"
-        android:contentDescription="@string/contentDescriptionAddRide" />
+        android:contentDescription="@string/contentDescriptionAddRide"
+        android:layout_marginTop="8dp" />
 
 
 </LinearLayout>

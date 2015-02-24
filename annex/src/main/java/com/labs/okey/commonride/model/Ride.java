@@ -45,4 +45,7 @@ public class Ride {
 
     @com.google.gson.annotations.SerializedName("notes")
     public String notes;
+
+    @com.google.gson.annotations.SerializedName("isanonymous")
+    public Boolean isAnonymous;
 }
