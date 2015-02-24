@@ -42,6 +42,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Switch;
@@ -346,15 +347,12 @@ public class SettingsTabsActivity extends ActionBarActivity {
 
                     TextView txtView = (TextView)rootView.findViewById(R.id.textViewFirstNameSettings);
                     txtView.setText(user.getFirstName() + " " + user.getLastName());
-//                    txtView = (TextView)rootView.findViewById(R.id.textViewLastNameSettings);
-//                    txtView.setText(user.getLastName());
 
 
-
-                    TextView txtViewMail = (TextView)rootView.findViewById(R.id.txtUserEMailSettings);
+                    EditText txtViewMail = (EditText)rootView.findViewById(R.id.txtUserEMailSettings);
                     txtViewMail.setText(user.getEmail());
 
-                    final AutoCompleteTextView txtViewPhone = (AutoCompleteTextView)rootView.findViewById(R.id.txtUserPhoneSettings);
+                    final EditText txtViewPhone = (EditText)rootView.findViewById(R.id.txtUserPhoneSettings);
                     txtViewPhone.setText(user.getPhone());
 
                     final Switch switchView = (Switch)rootView.findViewById(R.id.switchUsePhoneSettings);

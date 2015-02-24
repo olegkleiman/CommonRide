@@ -271,8 +271,8 @@ public class MainActivity extends BaseActivity{
 
     private void pullRides() {
 
-        final ProgressDialog progress =
-                ProgressDialog.show(this, "Rides to share", "Synchronizing...");
+//        final ProgressDialog progress =
+//                ProgressDialog.show(this, "Rides to share", "Synchronizing...");
 
         new AsyncTask<Void, Void, Void>() {
 
@@ -280,7 +280,8 @@ public class MainActivity extends BaseActivity{
 
             @Override
             protected void onPostExecute(Void result) {
-                progress.dismiss();
+                //progress.dismiss();
+                invalidateOptionsMenu();
 
                 if( mEx != null ) {
                     Toast.makeText(MainActivity.this,
@@ -624,6 +625,8 @@ public class MainActivity extends BaseActivity{
 
                 SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                 String accessToken = sharedPrefs.getString(TOKENPREF, "");
+
+                item.setActionView(R.layout.action_progress);
 
                 pullRides();
 
