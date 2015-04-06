@@ -45,7 +45,7 @@
                     android:clickable="true"
                     android:src="@drawable/email"
                     android:layout_gravity="center_vertical"/>
-                <TextView
+                <EditText
                     android:id="@+id/txtUserEMailSettings"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
@@ -58,6 +58,8 @@
                     android:onClick="emailDriver"
                     android:gravity="left"
                     android:layout_gravity="center_vertical"
+                    android:inputType="textEmailAddress"
+                    android:ems="10"
                     android:textSize="28dp"
                     android:text="oleg_kleyman@hotmail.com" />
             </LinearLayout>
@@ -74,7 +76,7 @@
                     android:id="@+id/imgCallDriver"
                     android:layout_gravity="center_vertical"/>
 
-                <AutoCompleteTextView
+                <EditText
                     android:id="@+id/txtUserPhoneSettings"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
@@ -83,7 +85,9 @@
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:gravity="left|center"
                     android:singleLine="true"
-                    android:layout_gravity="left|center_vertical"
+                    android:layout_gravity="left|center"
+                    android:inputType="phone"
+                    android:ems="10"
                     android:textSize="28dp" />
             </LinearLayout>
         </LinearLayout>

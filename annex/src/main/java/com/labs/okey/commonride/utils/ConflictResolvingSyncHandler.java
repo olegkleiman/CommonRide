@@ -1,7 +1,7 @@
 package com.labs.okey.commonride.utils;
 
 import com.google.gson.JsonObject;
-import com.microsoft.windowsazure.mobileservices.table.MobileServicePreconditionFailedExceptionBase;
+import com.microsoft.windowsazure.mobileservices.table.MobileServicePreconditionFailedException;
 import com.microsoft.windowsazure.mobileservices.table.sync.operations.RemoteTableOperationProcessor;
 import com.microsoft.windowsazure.mobileservices.table.sync.operations.TableOperation;
 import com.microsoft.windowsazure.mobileservices.table.sync.push.MobileServicePushCompletionResult;
@@ -18,14 +18,14 @@ public class ConflictResolvingSyncHandler implements MobileServiceSyncHandler {
                                             TableOperation operation)
             throws MobileServiceSyncHandlerException {
 
-        MobileServicePreconditionFailedExceptionBase ex = null;
+        MobileServicePreconditionFailedException ex = null;
         JsonObject result = null;
         try {
             result = operation.accept(processor);
-        } catch (MobileServicePreconditionFailedExceptionBase e) {
+        } catch (MobileServicePreconditionFailedException e) {
             ex = e;
         } catch (Throwable e) {
-            ex = (MobileServicePreconditionFailedExceptionBase) e.getCause();
+            ex = (MobileServicePreconditionFailedException) e.getCause();
         }
 
         if (ex != null) {
@@ -33,7 +33,7 @@ public class ConflictResolvingSyncHandler implements MobileServiceSyncHandler {
             // by discarding the client version of the item
             // Other policies could be used, such as prompt the user for
             // which version to maintain.
-            JsonObject serverItem = ex.getValue();
+            JsonObject serverItem = (JsonObject)ex.getItem();
             if (serverItem == null) {
                 // Item not returned in the exception, retrieving it from the server
 //                try {

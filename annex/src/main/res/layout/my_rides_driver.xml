@@ -21,7 +21,7 @@
             android:layout_height="wrap_content"
             android:textColor="@android:color/white"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Oleg Kleiman"
+            android:text=""
             android:id="@+id/txtMyDriver"
             android:layout_gravity="left|center_vertical"
             android:layout_marginLeft="8dp" />

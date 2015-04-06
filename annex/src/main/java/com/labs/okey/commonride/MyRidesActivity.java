@@ -78,15 +78,16 @@ public class MyRidesActivity extends ActionBarActivity {
     private static final String WAMSTOKENPREF = "wamsToken";
     private static final String USERIDPREF = "userid";
 
-    Fragment fragmentTab1;
+    Fragment fragmentTab1, fragmentTab2;
     MyridesDriverAdapter mDriverRidesAdapter;
     MyridesPassengerAdapter mPassengerRidesAdapter;
-    Fragment fragmentTab2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_rides);
+
+        wamsInit();
 
         // enable ActionBar app icon to behave as action to toggle nav drawer
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -99,17 +100,14 @@ public class MyRidesActivity extends ActionBarActivity {
         caption = getResources().getString(R.string.passengerTabCaption);
         tab2 = actionBar.newTab().setText(caption);
 
-        wamsInit();
-
         fragmentTab1 = new FragmentTabOffers(this);
-        fragmentTab2 = new FragmentTabParticipation();
+        fragmentTab2 = new FragmentTabParticipation(this);
 
         tab1.setTabListener(new MyTabListener(fragmentTab1));
         tab2.setTabListener(new MyTabListener(fragmentTab2));
 
         actionBar.addTab(tab1);
         actionBar.addTab(tab2);
-
 
         refreshRides();
     }
@@ -304,6 +302,7 @@ public class MyRidesActivity extends ActionBarActivity {
             this.context = context;
         }
 
+        @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState){
 
@@ -361,10 +360,40 @@ public class MyRidesActivity extends ActionBarActivity {
     @SuppressLint("ValidFragment")
     public class FragmentTabParticipation extends android.support.v4.app.Fragment{
 
+        Context context;
+
+        public FragmentTabParticipation(Context context){
+            this.context = context;
+        }
+
+        @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState)
         {
             View view = inflater.inflate(R.layout.my_rides_passenger, container, false);
+            User myUser = User.load(MyRidesActivity.this);
+            TextView txtView = (TextView)view.findViewById(R.id.txtMyDriver);
+            txtView.setText(myUser.getFirstName() + " " + myUser.getLastName());
+
+            ImageView imageMe = (ImageView)view.findViewById(R.id.imageViewMe);
+            try{
+
+                Drawable drawable = (Globals.drawMan.userDrawable(context,
+                        myUser.getRegistrationId(),
+                        myUser.getPictureURL()))
+                        .get();
+                if( drawable != null ) {
+                    drawable = RoundedDrawable.fromDrawable(drawable);
+                    ((RoundedDrawable) drawable)
+                            .setCornerRadius(Globals.PICTURE_CORNER_RADIUS)
+                            .setBorderColor(Color.LTGRAY)
+                            .setBorderWidth(Globals.PICTURE_BORDER_WIDTH)
+                            .setOval(true);
+                    imageMe.setImageDrawable(drawable);
+                }
+            } catch (Exception e) {
+                Log.e(LOG_TAG, e.getCause().toString());
+            }
 
             ListView myRideslistView = (ListView)view.findViewById(R.id.listViewMyPassenger);
             mPassengerRidesAdapter = new MyridesPassengerAdapter(MyRidesActivity.this,
