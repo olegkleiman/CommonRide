@@ -28,7 +28,7 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile files('libs/mobileservices-2.0.1-beta.jar')
     compile files('libs/notifications-1.0.1.jar')
-    compile files('libs/gson-2.2.2.jar')
+    compile 'com.google.code.gson:gson:2.+'
     compile 'com.android.support:appcompat-v7:21.0.3'
     compile 'com.facebook.android:facebook-android-sdk:3.21.1'
     compile 'com.google.guava:guava:17.+'

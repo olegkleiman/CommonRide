@@ -2,32 +2,31 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:paddingBottom="@dimen/frame_vertical_margin">
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:layout_height="fill_parent"
+        android:orientation="vertical"
         android:background="#607D8B"
         android:paddingTop="@dimen/section_vertical_margin"
         android:paddingLeft="@dimen/section_horizontal_margin"
         android:paddingRight="@dimen/section_horizontal_margin"
         android:paddingBottom="@dimen/section_vertical_margin">
 
-        <ImageView
-            android:id="@+id/imgViewUserSettings"
-            android:layout_width="84dp"
-            android:layout_height="84dp"
-            android:layout_gravity="center_vertical"
-            android:scaleType="fitXY"
-            android:layout_marginLeft="6dp" />
-
         <LinearLayout
+            android:orientation="horizontal"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginLeft="6dp">
+            android:weightSum="1">
+
+            <ImageView
+                android:id="@+id/imgViewUserSettings"
+                android:layout_width="84dp"
+                android:layout_height="84dp"
+                android:layout_gravity="center_vertical"
+                android:scaleType="fitXY"
+                android:layout_marginLeft="6dp" />
 
             <TextView
                 android:id="@+id/textViewFirstNameSettings"
@@ -35,7 +34,18 @@
                 android:layout_height="fill_parent"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:text="Oleg Kleiman"
-                android:textColor="@android:color/white" />
+                android:textColor="@android:color/white"
+                android:layout_gravity="center_vertical"
+                android:gravity="left|center"
+                android:layout_marginLeft="12dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginLeft="6dp">
+
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
@@ -59,9 +69,7 @@
                     android:layout_gravity="center"
                     android:inputType="textEmailAddress"
                     android:ems="10"
-                    android:textSize="22dp"
-                    android:text="oleg_kleyman@hotmail.com" />
-
+                    android:textSize="22dp" />
 
             </LinearLayout>
             <LinearLayout
@@ -88,35 +96,32 @@
                     android:layout_gravity="left|center"
                     android:inputType="phone"
                     android:ems="10"
-                    android:textSize="22dp"
-                    android:text="0543307026" />
+                    android:textSize="22dp"/>
 
 
             </LinearLayout>
+
+            <Switch
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/prompt_use_phone"
+                android:id="@+id/switchUsePhoneSettings"
+                android:checked="true"
+                android:layout_gravity="left"
+                android:layout_margin="10dp" />
+
+            <ImageButton
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:id="@+id/btnSaveSettings"
+                android:src="@drawable/accept_24"
+                android:background="@android:color/transparent"
+                android:layout_gravity="bottom|center_horizontal"
+                android:scaleType="fitXY"
+                android:layout_marginTop="40dp" />
         </LinearLayout>
 
     </LinearLayout>
 
-
-
-
-    <Switch
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/prompt_use_phone"
-        android:id="@+id/switchUsePhoneSettings"
-        android:checked="true"
-        android:layout_gravity="left"
-        android:layout_margin="10dp" />
-
-    <ImageButton
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:id="@+id/btnSaveSettings"
-        android:src="@drawable/accept_24"
-        android:background="@android:color/transparent"
-        android:layout_gravity="bottom|center_horizontal"
-        android:layout_marginTop="40dp"
-        android:scaleType="fitXY" />
 
 </LinearLayout>
