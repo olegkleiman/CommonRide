@@ -1,12 +1,10 @@
 package com.labs.okey.commonride;
 
-import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.media.RingtoneManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -23,7 +21,6 @@ import com.microsoft.windowsazure.mobileservices.notifications.RegistrationCallb
 public class GCMHandler extends  com.microsoft.windowsazure.notifications.NotificationsHandler{
 
     Context ctx;
-    private NotificationManager mNotificationManager;
 
     public static final int NOTIFICATION_ID = 1;
     private static final String USERIDPREF = "userid";
@@ -69,7 +66,7 @@ public class GCMHandler extends  com.microsoft.windowsazure.notifications.Notifi
                 }
                 catch(Exception e) {
                     String msg = e.getMessage();
-                    // handle error
+                    Log.e("Registration error: ", msg);
                 }
                 return null;
             }
@@ -88,7 +85,7 @@ public class GCMHandler extends  com.microsoft.windowsazure.notifications.Notifi
     }
 
     private void sendNotification(String msg, String rideId, String title) {
-        mNotificationManager = (NotificationManager)
+        NotificationManager mNotificationManager = (NotificationManager)
                 ctx.getSystemService(Context.NOTIFICATION_SERVICE);
 
         Intent launchIntent = new Intent(ctx, SingleRideActivity.class);

@@ -4,52 +4,40 @@ import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
 import android.content.SharedPreferences;
-import android.location.Location;
 import android.os.AsyncTask;
-import android.preference.PreferenceManager;
-import android.support.v4.app.DialogFragment;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.text.Editable;
+import android.preference.PreferenceManager;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-import com.google.gson.JsonObject;
-import com.labs.okey.commonride.model.*;
 import com.labs.okey.commonride.adapters.PlaceAutoCompleteAdapter;
+import com.labs.okey.commonride.model.FoundPlace;
 import com.labs.okey.commonride.model.Ride;
 import com.labs.okey.commonride.pickers.DatePickerFragment;
 import com.labs.okey.commonride.pickers.TimePickerFragment;
 import com.labs.okey.commonride.utils.Globals;
-import com.microsoft.windowsazure.mobileservices.authentication.MobileServiceUser;
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
+import com.microsoft.windowsazure.mobileservices.authentication.MobileServiceUser;
 import com.microsoft.windowsazure.mobileservices.http.ServiceFilterResponse;
 import com.microsoft.windowsazure.mobileservices.table.MobileServiceTable;
 import com.microsoft.windowsazure.mobileservices.table.TableOperationCallback;
-import com.microsoft.windowsazure.mobileservices.table.sync.MobileServiceSyncTable;
-
 
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.concurrent.ExecutionException;
 
 
 public class AddRideActivity extends BaseActivity {
@@ -223,7 +211,7 @@ public class AddRideActivity extends BaseActivity {
         }
 
         EditText txtPassengers = (EditText)findViewById(R.id.txtNumberPassengers);
-        int freePlaces = 0;
+        int freePlaces;
         String errorNoFreePlaces = getResources().getString(R.string.no_free_places);
         try {
 
@@ -254,7 +242,8 @@ public class AddRideActivity extends BaseActivity {
 
         ride.freePlaces = freePlaces;
 
-        ride.isAnonymous = false;
+        Switch switchAnonym = (Switch)findViewById(R.id.switchPublishAnonym);
+        ride.isAnonymous = switchAnonym.isChecked();
 
         EditText txtNotes = (EditText)findViewById(R.id.txtRideNotes);
         ride.notes = txtNotes.getText().toString();
@@ -278,6 +267,9 @@ public class AddRideActivity extends BaseActivity {
             public void onCompleted(Ride entity,
                                     Exception exception,
                                     ServiceFilterResponse response) {
+
+                progress.dismiss();
+
                 if (exception == null) {
                     finish();
                 } else {
@@ -285,7 +277,7 @@ public class AddRideActivity extends BaseActivity {
                                     exception.getCause().toString(),
                                    Toast.LENGTH_LONG).show();
                 }
-                progress.dismiss();
+
             }
         });
     }
@@ -312,10 +304,10 @@ public class AddRideActivity extends BaseActivity {
                 String strLat = jsonObjLocation.getString("lat");
                 String strLon = jsonObjLocation.getString("lng");
 
-                if( Tag == "from") {
+                if( Tag.equals("from") ) {
                     from_lat = strLat;
                     from_lon = strLon;
-                } else if( Tag == "to" ) {
+                } else if( Tag.equals("to") ) {
                     to_lat = strLat;
                     to_lon = strLon;
                 }

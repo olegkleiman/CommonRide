@@ -1,20 +1,18 @@
 package com.labs.okey.commonride;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
-import android.preference.PreferenceManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.ActionBar;
-import android.support.v4.app.Fragment;
-import android.content.Context;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -57,16 +55,15 @@ public class MyRidesActivity extends ActionBarActivity {
     private MobileServiceSyncTable<JoinedRide> mJoinsTable;
     private Query mPullDriverQuery;
     private Query mPullPassengerQuery;
-    private SQLiteLocalStore mLocalStore;
 
-    ActionBar.Tab tab1, tab2;
+    //ActionBar.Tab tab1, tab2;
 
     private static final String LOG_TAG = "Annex.MyRides";
 
     private static final String WAMSTOKENPREF = "wamsToken";
     private static final String USERIDPREF = "userid";
 
-    Fragment fragmentTab1, fragmentTab2;
+    //Fragment fragmentTab1, fragmentTab2;
     MyRidesDriverAdapter mDriverRidesAdapter;
     MyRidesPassengerAdapter mPassengerRidesAdapter;
 
@@ -84,20 +81,28 @@ public class MyRidesActivity extends ActionBarActivity {
         actionBar.setHomeButtonEnabled(true);
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
-        String caption = getResources().getString(R.string.driverTabCaption);
-        tab1 = actionBar.newTab().setText(caption);
-        caption = getResources().getString(R.string.passengerTabCaption);
-        tab2 = actionBar.newTab().setText(caption);
+        //String caption = getResources().getString(R.string.driverTabCaption);
+        //tab1 = actionBar.newTab().setText(caption);
+        //caption = getResources().getString(R.string.passengerTabCaption);
+        //tab2 = actionBar.newTab().setText(caption);
 
-        fragmentTab1 = new FragmentTabOffers(this);
-        fragmentTab2 = new FragmentTabParticipation(this);
+//        fragmentTab1 = new FragmentTabOffers(this);
+//        fragmentTab2 = new FragmentTabParticipation(this);
 
-        tab1.setTabListener(new MyTabListener(fragmentTab1));
-        tab2.setTabListener(new MyTabListener(fragmentTab2));
+        //tab1.setTabListener(new MyTabListener(fragmentTab1));
+        //tab2.setTabListener(new MyTabListener(fragmentTab2));
 
-        actionBar.addTab(tab1);
-        actionBar.addTab(tab2);
+        //actionBar.addTab(tab1);
+        actionBar.addTab(actionBar.newTab()
+                        .setText(getResources().getString(R.string.driverTabCaption))
+                        .setTabListener(new MyTabListener(new FragmentTabOffers(this))));
+//        actionBar.addTab(tab2);
+        actionBar.addTab(actionBar.newTab()
+                .setText(getResources().getString(R.string.passengerTabCaption))
+                .setTabListener(new MyTabListener(new FragmentTabParticipation(this))));
+
     }
+
 
     private void wamsInit() {
         try {
@@ -132,12 +137,13 @@ public class MyRidesActivity extends ActionBarActivity {
 //                    .and().field("when_joined").le(new Date());
             mPullPassengerQuery.parameter("passenger_id", myUser.getRegistrationId());
 
-            mLocalStore = new SQLiteLocalStore(mClient.getContext(),
-                                                "myrides", null, 1);
+            SQLiteLocalStore mLocalStore =
+                    new SQLiteLocalStore(mClient.getContext(),
+                                        "myrides", null, 1);
             MobileServiceSyncHandler handler = new ConflictResolvingSyncHandler();
             MobileServiceSyncContext syncContext = mClient.getSyncContext();
             if (!syncContext.isInitialized()) {
-                Map<String, ColumnDataType> tableDefinition = new HashMap<String, ColumnDataType>();
+                Map<String, ColumnDataType> tableDefinition = new HashMap<>();
                 tableDefinition.put("id", ColumnDataType.String);
                 tableDefinition.put("user_driver", ColumnDataType.String);
                 tableDefinition.put("when_published", ColumnDataType.Date);
@@ -155,7 +161,7 @@ public class MyRidesActivity extends ActionBarActivity {
                 tableDefinition.put("__version", ColumnDataType.String);
                 mLocalStore.defineTable("commonrides", tableDefinition);
 
-                Map<String, ColumnDataType> joinsTableDefinition = new HashMap<String, ColumnDataType>();
+                Map<String, ColumnDataType> joinsTableDefinition = new HashMap<>();
                 joinsTableDefinition.put("id", ColumnDataType.String);
                 joinsTableDefinition.put("ride_id", ColumnDataType.String);
                 joinsTableDefinition.put("when_joined", ColumnDataType.Date);
@@ -179,8 +185,6 @@ public class MyRidesActivity extends ActionBarActivity {
     }
 
     private void refreshJoins() {
-
-        final Activity activity = this;
 
         new AsyncTask<Void, Void, Void>(){
 

@@ -1,7 +1,6 @@
 package com.labs.okey.commonride;
 
 import android.app.Fragment;
-import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
@@ -12,13 +11,11 @@ import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.provider.MediaStore;
+import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v7.widget.SearchView;
 import android.util.Base64;
 import android.util.Log;
@@ -32,18 +29,18 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.facebook.AppEventsLogger;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.gson.JsonObject;
-import com.labs.okey.commonride.adapters.DrawerAdapter;
 import com.labs.okey.commonride.adapters.RidesAdapter;
 import com.labs.okey.commonride.model.RideAnnotated;
 import com.labs.okey.commonride.utils.ConflictResolvingSyncHandler;
 import com.labs.okey.commonride.utils.Globals;
-import com.microsoft.windowsazure.mobileservices.*;
-
-import com.facebook.*;
+import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
+import com.microsoft.windowsazure.mobileservices.MobileServiceList;
+import com.microsoft.windowsazure.mobileservices.ServiceFilterResponseCallback;
 import com.microsoft.windowsazure.mobileservices.authentication.MobileServiceAuthenticationProvider;
 import com.microsoft.windowsazure.mobileservices.authentication.MobileServiceUser;
 import com.microsoft.windowsazure.mobileservices.http.NextServiceFilterCallback;
@@ -60,16 +57,12 @@ import com.microsoft.windowsazure.mobileservices.table.sync.localstore.SQLiteLoc
 import com.microsoft.windowsazure.mobileservices.table.sync.synchandler.MobileServiceSyncHandler;
 import com.microsoft.windowsazure.notifications.NotificationsManager;
 
-
 import org.apache.http.StatusLine;
 
 import java.net.MalformedURLException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
@@ -147,14 +140,8 @@ public class MainActivity extends BaseActivity{
 
         // set a custom shadow that overlays the main content when the drawer opens
         mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
+
         // set up the drawer's list view with items and click listener
-
-//        List<String> drawerItemsList = new ArrayList<String>(Arrays.asList(mDrawerTitles));
-//        DrawerAdapter drawerAdapter = new DrawerAdapter(this,
-//                R.layout.drawer_list_item_ext, drawerItemsList);
-//        String path = MediaStore.Images.Media.DATA;
-//        mDrawerList.setAdapter(drawerAdapter);
-
         mDrawerList.setAdapter(new ArrayAdapter<String>(this,
                 R.layout.drawer_list_item, mDrawerTitles));
         mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
@@ -225,7 +212,7 @@ public class MainActivity extends BaseActivity{
 
             if( Intent.ACTION_SEARCH.equals(intent.getAction())) {
                  String query = intent.getStringExtra(SearchManager.QUERY);
-                 wams_GetSearch(accessToken, query);
+                 wams_GetSearch(query);
             } else {
                 refreshRides();
             }
@@ -250,8 +237,7 @@ public class MainActivity extends BaseActivity{
          super.onStop();
     }
 
-    private void wams_GetSearch(String accessToken,
-                                final String query)  {
+    private void wams_GetSearch(final String query)  {
 
         final Query searchQuery = wamsClient.getTable(RideAnnotated.class).where();
         try {
@@ -263,9 +249,7 @@ public class MainActivity extends BaseActivity{
                         || _ride.ride_to.contains(query))
                     mRidesAdapter.add(_ride);
             }
-        } catch (InterruptedException ex) {
-            Toast.makeText(this, ex.getMessage(), Toast.LENGTH_LONG).show();
-        } catch (ExecutionException ex) {
+        } catch (InterruptedException | ExecutionException ex) {
             Toast.makeText(this, ex.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
@@ -310,11 +294,7 @@ public class MainActivity extends BaseActivity{
 
                     refreshRides();
 
-                } catch(ExecutionException ex) {
-                    mEx = ex;
-                    String cause = ex.getCause().toString();
-                    Log.e(LOG_TAG, ex.getMessage() + " Cause: " + cause);
-                } catch(InterruptedException ex) {
+                } catch(ExecutionException | InterruptedException ex) {
                     mEx = ex;
                     String cause = ex.getCause().toString();
                     Log.e(LOG_TAG, ex.getMessage() + " Cause: " + cause);
@@ -345,18 +325,7 @@ public class MainActivity extends BaseActivity{
                             }
                         }
                     });
-                } catch(InterruptedException ex) {
-                    final String msg = ex.getCause().getMessage();
-                    Log.e(LOG_TAG, msg);
-                    runOnUiThread(new Runnable() {
-                                      @Override
-                                      public void run() {
-                                          Toast.makeText(MainActivity.this, msg, Toast.LENGTH_LONG).show();
-                                      }
-                                  }
-                    );
-
-                } catch(ExecutionException ex) {
+                } catch(InterruptedException | ExecutionException ex) {
                     final String msg = ex.getCause().getMessage();
                     Log.e(LOG_TAG, msg);
                     runOnUiThread(new Runnable() {
@@ -392,7 +361,7 @@ public class MainActivity extends BaseActivity{
             MobileServiceSyncHandler handler = new ConflictResolvingSyncHandler();
             MobileServiceSyncContext syncContext = wamsClient.getSyncContext();
             if (!syncContext.isInitialized()) {
-                    Map<String, ColumnDataType> tableDefinition = new HashMap<String, ColumnDataType>();
+                    Map<String, ColumnDataType> tableDefinition = new HashMap<>();
                     tableDefinition.put("id", ColumnDataType.String);
                     tableDefinition.put("ride_from", ColumnDataType.String);
                     tableDefinition.put("ride_to", ColumnDataType.String);
@@ -431,10 +400,7 @@ public class MainActivity extends BaseActivity{
                                 wamsClient.login(MobileServiceAuthenticationProvider.Facebook,
                                         body).get();
                         saveUser(mobileServiceUser);
-                    } catch(ExecutionException ex ) {
-                        Log.e(LOG_TAG, ex.getMessage());
-                    }
-                    catch(InterruptedException ex) {
+                    } catch(ExecutionException | InterruptedException ex ) {
                         Log.e(LOG_TAG, ex.getMessage());
                     }
 
@@ -445,13 +411,7 @@ public class MainActivity extends BaseActivity{
             mRidesTable = wamsClient.getSyncTable("rides_annotated",
                         RideAnnotated.class);
 
-            } catch(MalformedURLException ex ) {
-                Log.e(LOG_TAG, ex.getMessage() + " Cause: " + ex.getCause());
-            } catch(InterruptedException ex) {
-                Log.e(LOG_TAG, ex.getMessage() + " Cause: " + ex.getCause());
-            } catch(ExecutionException ex) {
-                Log.e(LOG_TAG, ex.getMessage() + " Cause: " + ex.getCause());
-            } catch (MobileServiceLocalStoreException ex) {
+            } catch(MalformedURLException | MobileServiceLocalStoreException | ExecutionException | InterruptedException ex ) {
                 Log.e(LOG_TAG, ex.getMessage() + " Cause: " + ex.getCause());
             }
     }
@@ -462,7 +422,7 @@ public class MainActivity extends BaseActivity{
         SharedPreferences.Editor editor = sharedPrefs.edit();
         editor.putString(WAMSTOKENPREF, mobileServiceUser.getAuthenticationToken());
         editor.putString(USERIDPREF, mobileServiceUser.getUserId());
-        editor.commit();
+        editor.apply();
     }
 
     @Override
@@ -498,7 +458,7 @@ public class MainActivity extends BaseActivity{
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         SharedPreferences.Editor preferencesEditor = sharedPrefs.edit();
         preferencesEditor.clear();
-        preferencesEditor.commit();
+        preferencesEditor.apply();
 
         wamsClient.logout();
 
@@ -546,7 +506,7 @@ public class MainActivity extends BaseActivity{
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         // If the nav drawer is open, hide action items related to the content view
-        boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
+        //boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
         //menu.findItem(R.id.action_websearch).setVisible(!drawerOpen);
         return super.onPrepareOptionsMenu(menu);
     }
