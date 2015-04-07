@@ -33,9 +33,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.UiLifecycleHelper;
-import com.labs.okey.commonride.adapters.MyridesDriverAdapter;
-import com.labs.okey.commonride.adapters.MyridesPassengerAdapter;
+import com.labs.okey.commonride.adapters.MyRidesDriverAdapter;
+import com.labs.okey.commonride.adapters.MyRidesPassengerAdapter;
 import com.labs.okey.commonride.model.Join;
+import com.labs.okey.commonride.model.JoinAnnotated;
+import com.labs.okey.commonride.model.JoinedRide;
 import com.labs.okey.commonride.model.Ride;
 import com.labs.okey.commonride.model.RideAnnotated;
 import com.labs.okey.commonride.model.User;
@@ -66,7 +68,7 @@ public class MyRidesActivity extends ActionBarActivity {
 
     private static MobileServiceClient mClient;
     private MobileServiceSyncTable<Ride> mRidesTable;
-    private MobileServiceSyncTable<Join> mJoinsTable;
+    private MobileServiceSyncTable<JoinedRide> mJoinsTable;
     private Query mPullDriverQuery;
     private Query mPullPassengerQuery;
     private SQLiteLocalStore mLocalStore;
@@ -79,8 +81,8 @@ public class MyRidesActivity extends ActionBarActivity {
     private static final String USERIDPREF = "userid";
 
     Fragment fragmentTab1, fragmentTab2;
-    MyridesDriverAdapter mDriverRidesAdapter;
-    MyridesPassengerAdapter mPassengerRidesAdapter;
+    MyRidesDriverAdapter mDriverRidesAdapter;
+    MyRidesPassengerAdapter mPassengerRidesAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,12 +91,13 @@ public class MyRidesActivity extends ActionBarActivity {
 
         wamsInit();
 
-        // enable ActionBar app icon to behave as action to toggle nav drawer
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);
-
         ActionBar actionBar = getSupportActionBar();
+
+        // enable ActionBar app icon to behave as action to toggle nav drawer
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setHomeButtonEnabled(true);
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+
         String caption = getResources().getString(R.string.driverTabCaption);
         tab1 = actionBar.newTab().setText(caption);
         caption = getResources().getString(R.string.passengerTabCaption);
@@ -108,8 +111,6 @@ public class MyRidesActivity extends ActionBarActivity {
 
         actionBar.addTab(tab1);
         actionBar.addTab(tab2);
-
-        refreshRides();
     }
 
     private void wamsInit() {
@@ -132,17 +133,18 @@ public class MyRidesActivity extends ActionBarActivity {
 
             User myUser = User.load(this);
 
-            mPullDriverQuery = mClient.getTable(Ride.class)
+            mPullDriverQuery = mClient.getTable("commonrides", Ride.class)
                     .where()
                     .field("user_driver")
                     .eq(myUser.getRegistrationId())
                     .and().field("when_starts").le(new Date());
 
-            mPullPassengerQuery = mClient.getTable(Join.class)
-                    .where()
-                    .field("passenger_id")
-                    .eq(myUser.getRegistrationId())
-                    .and().field("when_joined").le(new Date());
+            mPullPassengerQuery = mClient.getTable("joined_rides", JoinedRide.class)
+                    .where();
+//                    .field("passenger_id")
+//                    .eq(myUser.getRegistrationId())
+//                    .and().field("when_joined").le(new Date());
+            mPullPassengerQuery.parameter("passenger_id", myUser.getRegistrationId());
 
             mLocalStore = new SQLiteLocalStore(mClient.getContext(),
                                                 "myrides", null, 1);
@@ -157,19 +159,32 @@ public class MyRidesActivity extends ActionBarActivity {
                 tableDefinition.put("when_starts", ColumnDataType.Date);
                 tableDefinition.put("ride_from", ColumnDataType.String);
                 tableDefinition.put("ride_to", ColumnDataType.String);
+                tableDefinition.put("isanonymous", ColumnDataType.Boolean);
                 tableDefinition.put("from_lat", ColumnDataType.String);
                 tableDefinition.put("from_lon", ColumnDataType.String);
                 tableDefinition.put("to_lat", ColumnDataType.String);
                 tableDefinition.put("to_lon", ColumnDataType.String);
                 tableDefinition.put("notes", ColumnDataType.String);
-
+                tableDefinition.put("__deleted", ColumnDataType.Boolean);
+                tableDefinition.put("__version", ColumnDataType.String);
                 mLocalStore.defineTable("commonrides", tableDefinition);
+
+                Map<String, ColumnDataType> joinsTableDefinition = new HashMap<String, ColumnDataType>();
+                joinsTableDefinition.put("id", ColumnDataType.String);
+                joinsTableDefinition.put("ride_id", ColumnDataType.String);
+                joinsTableDefinition.put("when_joined", ColumnDataType.Date);
+                joinsTableDefinition.put("status", ColumnDataType.String);
+                joinsTableDefinition.put("ride_to", ColumnDataType.String);
+                joinsTableDefinition.put("ride_from", ColumnDataType.String);
+                joinsTableDefinition.put("__deleted", ColumnDataType.Boolean);
+                joinsTableDefinition.put("__version", ColumnDataType.String);
+                mLocalStore.defineTable("joined_rides", joinsTableDefinition);
 
                 syncContext.initialize(mLocalStore, handler).get();
             }
 
             mRidesTable = mClient.getSyncTable("commonrides", Ride.class);
-            mJoinsTable = mClient.getSyncTable("joins", Join.class);
+            mJoinsTable = mClient.getSyncTable("joined_rides", JoinedRide.class);
 
         } catch(Exception e) {
             Log.i(LOG_TAG, e.getMessage());
@@ -184,7 +199,7 @@ public class MyRidesActivity extends ActionBarActivity {
             protected Void doInBackground(Void... voids) {
 
                 try {
-                    final MobileServiceList<Join> joins = mJoinsTable
+                    final MobileServiceList<JoinedRide> joins = mJoinsTable
                         .read(mPullPassengerQuery)
                         .get();
 
@@ -196,7 +211,7 @@ public class MyRidesActivity extends ActionBarActivity {
 
                             mPassengerRidesAdapter.clear();
 
-                            for (Join _join : joins) {
+                            for (JoinedRide _join : joins) {
                                 Log.i(LOG_TAG, _join.whenJoined.toString());
                                 mPassengerRidesAdapter.add(_join);
                             }
@@ -260,31 +275,59 @@ public class MyRidesActivity extends ActionBarActivity {
         switch ( item.getItemId() ) {
             case R.id.myrides_action_refresh: {
 
+                ActionBar actionBar = getSupportActionBar();
+                ActionBar.Tab selectedTab = actionBar.getSelectedTab();
+                int position = selectedTab.getPosition();
+
                 final ProgressDialog progress =
                         ProgressDialog.show(this, "My rides", "Synchronizing...");
 
-                new AsyncTask<Void, Void, Void>() {
+                if( position == 0) {
+                    new AsyncTask<Void, Void, Void>() {
 
-                    @Override
-                    protected void onPostExecute(Void result) {
-                        progress.dismiss();
-                    }
-
-                    @Override
-                    protected Void doInBackground(Void... voids) {
-                        try {
-                            mRidesTable.purge(mPullDriverQuery);
-                            mRidesTable.pull(mPullDriverQuery).get();
-
-                            refreshRides();
-                        }
-                        catch (Exception ex) {
-                            Log.e(LOG_TAG, ex.getCause().toString());
+                        @Override
+                        protected void onPostExecute(Void result) {
+                            progress.dismiss();
                         }
 
-                        return null;
-                    }
-                }.execute();
+                        @Override
+                        protected Void doInBackground(Void... voids) {
+                            try {
+                                mRidesTable.purge(mPullDriverQuery);
+                                mRidesTable.pull(mPullDriverQuery).get();
+
+                                refreshRides();
+                            } catch (Exception ex) {
+                                Log.e(LOG_TAG, ex.getCause().toString());
+                            }
+
+                            return null;
+                        }
+                    }.execute();
+                } else if( position == 1 ) { // Passenger tab
+                    new AsyncTask<Void, Void, Void>() {
+
+                        @Override
+                        protected void onPostExecute(Void result) {
+                            progress.dismiss();
+                        }
+
+                        @Override
+                        protected Void doInBackground(Void... voids) {
+                            try {
+                                mJoinsTable.purge(mPullPassengerQuery);
+                                mJoinsTable.pull(mPullPassengerQuery).get();
+
+                                refreshJoins();
+                            } catch (Exception ex) {
+                                Log.e(LOG_TAG, ex.getCause().toString());
+                            }
+
+                            return null;
+                        }
+                    }.execute();
+
+                }
 
             }
             break;
@@ -333,14 +376,14 @@ public class MyRidesActivity extends ActionBarActivity {
             }
 
             ListView myRidesListView = (ListView)view.findViewById(R.id.listViewMyDriver);
-            mDriverRidesAdapter = new MyridesDriverAdapter(MyRidesActivity.this,
+            mDriverRidesAdapter = new MyRidesDriverAdapter(MyRidesActivity.this,
                     R.layout.my_rides_driver_row );
             myRidesListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
                 @Override
                 public void onItemClick(AdapterView<?> parent, final View view,
                                         int position, long id) {
-                    final Ride ride = (Ride) parent.getItemAtPosition(position);
+                    Ride ride = (Ride) parent.getItemAtPosition(position);
 
                     Intent intent = new Intent(MyRidesActivity.this,
                                                 SingleRideActivity.class);
@@ -352,6 +395,8 @@ public class MyRidesActivity extends ActionBarActivity {
             });
 
             myRidesListView.setAdapter(mDriverRidesAdapter);
+
+            refreshRides();
 
             return view;
         }
@@ -395,10 +440,27 @@ public class MyRidesActivity extends ActionBarActivity {
                 Log.e(LOG_TAG, e.getCause().toString());
             }
 
-            ListView myRideslistView = (ListView)view.findViewById(R.id.listViewMyPassenger);
-            mPassengerRidesAdapter = new MyridesPassengerAdapter(MyRidesActivity.this,
+            ListView myJoinsListView = (ListView)view.findViewById(R.id.listViewMyPassenger);
+            mPassengerRidesAdapter = new MyRidesPassengerAdapter(MyRidesActivity.this,
                         R.layout.my_rides_passesnger_row);
-            myRideslistView.setAdapter(mPassengerRidesAdapter);
+            myJoinsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view,
+                                        int position, long id) {
+                    JoinedRide ride = (JoinedRide) parent.getItemAtPosition(position);
+
+                    Intent intent = new Intent(MyRidesActivity.this,
+                            SingleRideActivity.class);
+                    Bundle b = new Bundle();
+                    b.putString("rideId", ride.rideId);
+                    intent.putExtras(b);
+                    startActivity(intent);
+                }
+            });
+            myJoinsListView.setAdapter(mPassengerRidesAdapter);
+
+            refreshJoins();
 
             return view;
         }
