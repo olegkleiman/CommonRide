@@ -131,10 +131,10 @@ public class SettingsTabsActivity extends ActionBarActivity {
     @SuppressLint("ValidFragment")
     public static class FragmentTabProfile extends android.support.v4.app.Fragment{
 
-        Context context;
+        Context mContext;
 
         public FragmentTabProfile(Context context){
-            this.context = context;
+            this.mContext = context;
         }
 
         @Override
@@ -142,14 +142,14 @@ public class SettingsTabsActivity extends ActionBarActivity {
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_user, container, false);
 
-            User myUser = User.load(this.context);
+            final User user = User.load(this.mContext);
 
             final ImageView imgUserPic = (ImageView)rootView.findViewById(R.id.imgViewUserSettings);
             try{
 
-                Drawable drawable = (Globals.drawMan.userDrawable(context,
-                        myUser.getRegistrationId(),
-                        myUser.getPictureURL()))
+                Drawable drawable = (Globals.drawMan.userDrawable(mContext,
+                        user.getRegistrationId(),
+                        user.getPictureURL()))
                         .get();
                 if( drawable != null ) {
                     drawable = RoundedDrawable.fromDrawable(drawable);
@@ -163,6 +163,91 @@ public class SettingsTabsActivity extends ActionBarActivity {
             } catch (Exception e) {
                 Log.e(LOG_TAG, e.getCause().toString());
             }
+
+            EditText txtViewMail = (EditText)rootView.findViewById(R.id.txtUserEMailSettings);
+            txtViewMail.setText(user.getEmail());
+
+            final EditText txtViewPhone = (EditText)rootView.findViewById(R.id.txtUserPhoneSettings);
+            txtViewPhone.setText(user.getPhone());
+
+            final Switch switchView = (Switch)rootView.findViewById(R.id.switchUsePhoneSettings);
+            switchView.setChecked(user.getUsePhone());
+
+            ImageButton saveBtn = (ImageButton)rootView.findViewById(R.id.btnSaveSettings);
+            saveBtn.setOnClickListener( new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    if( txtViewPhone.getText().toString().isEmpty() ) {
+                        txtViewPhone.setError(getResources().getString(R.string.no_phone_number));
+                        return;
+                    }
+
+                    user.setPhone(txtViewPhone.getText().toString());
+                    user.setUsePhone(switchView.isChecked());
+
+                    user.save(mContext);
+
+                    try {
+                        final ProgressDialog progress =
+                                ProgressDialog.show(mContext, "Saving...", "User's profile");
+
+                        // 'users' table is defined with 'Anybody with the Application Key' permissions
+                        // for read and update operations,
+                        // so no login is required for this instance of MobileServiceClient
+                        MobileServiceClient wamsClient = new MobileServiceClient(
+                                Globals.WAMS_URL,
+                                Globals.WAMS_API_KEY,
+                                mContext);
+                        // We are going to update Azure table,
+                        // so no need for Sync table in this case
+                        final MobileServiceTable<User> usersTable =
+                                wamsClient.getTable("users", User.class);
+
+                        new AsyncTask<Void, Void, Void>() {
+
+                            @Override
+                            protected Void doInBackground(Void... voids) {
+                                try {
+
+                                    // In order to update we need a user ID
+                                    // as known in 'users' table
+                                    MobileServiceList<User> _users =
+                                            usersTable
+                                                    .where()
+                                                    .field("registration_id")
+                                                    .eq(user.getRegistrationId())
+                                                    .execute().get();
+                                    if( _users.getTotalCount() > 0 ) {
+                                        // Assign obtained ID to changed user object
+                                        user.Id = _users.get(0).Id;
+
+                                        // Perform actual update
+                                        usersTable.update(user).get();
+                                        //Toast.makeText(mContext, "Saved", Toast.LENGTH_LONG).show();
+                                    }
+
+                                } catch(Exception ex) {
+                                    Log.e(LOG_TAG, ex.getMessage());
+                                    Toast.makeText(mContext, "Exception: " + ex.getMessage(),
+                                            Toast.LENGTH_LONG).show();
+                                }finally {
+                                    progress.dismiss();
+                                }
+
+                                return null;
+                            }
+                        }.execute();
+
+                    } catch(Exception ex) {
+                        Toast.makeText(mContext, "Exception: " + ex.getMessage(),
+                                Toast.LENGTH_LONG).show();
+                    }
+
+
+                }
+            });
+
             return rootView;
         }
 
@@ -180,8 +265,16 @@ public class SettingsTabsActivity extends ActionBarActivity {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-            View view = inflater.inflate(R.layout.fragment_prefs, container, false);
-            return view;
+            View rootView = inflater.inflate(R.layout.fragment_prefs, container, false);
+            ImageButton btnSave = (ImageButton)rootView.findViewById(R.id.btnSettingsPrefsSave);
+            btnSave.setOnClickListener( new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                }
+            });
+
+            return rootView;
         }
     }
 
