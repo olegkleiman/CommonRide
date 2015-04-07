@@ -20,7 +20,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="#ff00a1f1"
+                android:textColor="@color/azure"
                 android:id="@+id/txtMyRidesPassengerTitle1"
                 android:layout_gravity="center_vertical"
                 android:textStyle="bold" />
@@ -28,7 +28,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="#ff00a1f1"
+                android:textColor="@color/azure"
                 android:id="@+id/txtMyRidesPassengerTitle2"
                 android:layout_gravity="center_vertical"
                 android:textStyle="bold" />
@@ -51,7 +51,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="From:"
+                    android:text="@string/fromText"
                     android:textColor="@android:color/black"
                     android:id="@+id/textView4"
                     android:textStyle="bold"/>
@@ -76,7 +76,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@android:color/black"
-                    android:text="To:"
+                    android:text="@string/toText"
                     android:id="@+id/textView16"
                     android:textStyle="bold"/>
 

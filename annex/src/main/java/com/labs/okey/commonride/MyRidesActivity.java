@@ -13,43 +13,31 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.content.Context;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.support.v4.widget.DrawerLayout;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.facebook.UiLifecycleHelper;
 import com.labs.okey.commonride.adapters.MyRidesDriverAdapter;
 import com.labs.okey.commonride.adapters.MyRidesPassengerAdapter;
-import com.labs.okey.commonride.model.Join;
-import com.labs.okey.commonride.model.JoinAnnotated;
 import com.labs.okey.commonride.model.JoinedRide;
 import com.labs.okey.commonride.model.Ride;
-import com.labs.okey.commonride.model.RideAnnotated;
 import com.labs.okey.commonride.model.User;
 import com.labs.okey.commonride.utils.ConflictResolvingSyncHandler;
 import com.labs.okey.commonride.utils.Globals;
 import com.labs.okey.commonride.utils.RoundedDrawable;
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 import com.microsoft.windowsazure.mobileservices.MobileServiceList;
-import com.microsoft.windowsazure.mobileservices.table.MobileServiceTable;
 import com.microsoft.windowsazure.mobileservices.authentication.MobileServiceUser;
-import com.microsoft.windowsazure.mobileservices.http.ServiceFilterResponse;
-import com.microsoft.windowsazure.mobileservices.table.TableQueryCallback;
 import com.microsoft.windowsazure.mobileservices.table.query.Query;
 import com.microsoft.windowsazure.mobileservices.table.sync.MobileServiceSyncContext;
 import com.microsoft.windowsazure.mobileservices.table.sync.MobileServiceSyncTable;
@@ -59,9 +47,7 @@ import com.microsoft.windowsazure.mobileservices.table.sync.synchandler.MobileSe
 
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
 
 public class MyRidesActivity extends ActionBarActivity {
@@ -193,6 +179,9 @@ public class MyRidesActivity extends ActionBarActivity {
     }
 
     private void refreshJoins() {
+
+        final Activity activity = this;
+
         new AsyncTask<Void, Void, Void>(){
 
             @Override
@@ -217,8 +206,17 @@ public class MyRidesActivity extends ActionBarActivity {
                             }
                         }
                     });
-                } catch(Exception ex) {
+                } catch(final Exception ex) {
                     Log.e(LOG_TAG, ex.getCause().toString());
+
+                    runOnUiThread(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            Toast.makeText(MyRidesActivity.this,
+                                    ex.getCause().toString(), Toast.LENGTH_LONG).show();
+                        }
+                    });
                 }
 
                 return null;
@@ -251,8 +249,16 @@ public class MyRidesActivity extends ActionBarActivity {
                         }
                     });
 
-                } catch(Exception ex) {
+                } catch(final Exception ex) {
                     Log.e(LOG_TAG, ex.getCause().toString());
+                    runOnUiThread(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            Toast.makeText(MyRidesActivity.this,
+                                    ex.getCause().toString(), Toast.LENGTH_LONG).show();
+                        }
+                    });
                 }
 
                 return null;
@@ -279,15 +285,17 @@ public class MyRidesActivity extends ActionBarActivity {
                 ActionBar.Tab selectedTab = actionBar.getSelectedTab();
                 int position = selectedTab.getPosition();
 
-                final ProgressDialog progress =
-                        ProgressDialog.show(this, "My rides", "Synchronizing...");
+//                final ProgressDialog progress =
+//                        ProgressDialog.show(this, "My rides", "Synchronizing...");
+                item.setActionView(R.layout.action_progress);
 
                 if( position == 0) {
                     new AsyncTask<Void, Void, Void>() {
 
                         @Override
                         protected void onPostExecute(Void result) {
-                            progress.dismiss();
+                            // Ensure ProgressBar becomes original 'Refresh' menu item
+                            invalidateOptionsMenu();
                         }
 
                         @Override
@@ -309,7 +317,8 @@ public class MyRidesActivity extends ActionBarActivity {
 
                         @Override
                         protected void onPostExecute(Void result) {
-                            progress.dismiss();
+                            // Ensure ProgressBar becomes original 'Refresh' menu item
+                            invalidateOptionsMenu();
                         }
 
                         @Override
@@ -442,7 +451,7 @@ public class MyRidesActivity extends ActionBarActivity {
 
             ListView myJoinsListView = (ListView)view.findViewById(R.id.listViewMyPassenger);
             mPassengerRidesAdapter = new MyRidesPassengerAdapter(MyRidesActivity.this,
-                        R.layout.my_rides_passesnger_row);
+                        R.layout.my_rides_passenger_row);
             myJoinsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
                 @Override

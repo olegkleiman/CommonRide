@@ -18,7 +18,7 @@ import com.microsoft.windowsazure.mobileservices.notifications.Registration;
 import com.microsoft.windowsazure.mobileservices.notifications.RegistrationCallback;
 
 /**
- * Created by Oleg on 25-Jan-15.
+ * Created by Oleg Kleiman on 25-Jan-15.
  */
 public class GCMHandler extends  com.microsoft.windowsazure.notifications.NotificationsHandler{
 
@@ -45,7 +45,7 @@ public class GCMHandler extends  com.microsoft.windowsazure.notifications.Notifi
             protected Void doInBackground(Void... params) {
                 try {
 
-                    // Better use WAMS SDL v2 like:
+                    // Better use WAMS SDK v2 like:
                     //MainActivity.wamsClient.getPush().register(gcmRegistrationId, null);
 
                     MobileServicePush push = MainActivity.wamsClient.getPush();

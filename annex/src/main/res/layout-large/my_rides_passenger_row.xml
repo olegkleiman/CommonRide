@@ -19,17 +19,17 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="#ff00a1f1"
-                android:id="@+id/txtMyRidesDriverTitle1"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textColor="@color/azure"
+                android:id="@+id/txtMyRidesPassengerTitle1"
                 android:layout_gravity="center_vertical"
                 android:textStyle="bold" />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="#ff00a1f1"
-                android:id="@+id/txtMyRidesDriverTitle2"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textColor="@color/azure"
+                android:id="@+id/txtMyRidesPassengerTitle2"
                 android:layout_gravity="center_vertical"
                 android:textStyle="bold" />
 
@@ -52,6 +52,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/fromText"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textColor="@android:color/black"
                     android:id="@+id/textView4"
                     android:textStyle="bold"/>
@@ -60,8 +61,9 @@
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:textColor="@android:color/black"
-                    android:text="Medium Text"
-                    android:id="@+id/txtMyRidesDriverFrom"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="Large Text"
+                    android:id="@+id/txtMyRidesPassengerFrom"
                     android:ellipsize="end"
                     android:singleLine="true" />
             </LinearLayout>
@@ -76,6 +78,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@android:color/black"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
                     android:text="@string/toText"
                     android:id="@+id/textView16"
                     android:textStyle="bold"/>
@@ -84,14 +87,16 @@
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:textColor="@android:color/black"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
                     android:text="Medium Text"
-                    android:id="@+id/txtMyRidesDriverTo"
+                    android:id="@+id/txtMyRidesPassengerTo"
                     android:ellipsize="end"
                     android:singleLine="true" />
 
             </LinearLayout>
 
-        </LinearLayout>
-    </LinearLayout>
+         </LinearLayout>
+
+     </LinearLayout>
 
 </LinearLayout>
