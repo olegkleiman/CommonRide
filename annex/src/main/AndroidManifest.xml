@@ -50,6 +50,7 @@
             android:icon="@drawable/launcher_48"
             android:label="@string/app_label"
             android:screenOrientation="portrait"
+            android:launchMode="singleTop"
             android:theme="@style/Theme.AppCompat.Light" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

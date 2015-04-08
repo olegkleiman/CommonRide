@@ -151,10 +151,6 @@ public class MainActivity extends BaseActivity{
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeButtonEnabled(true);
 
-//        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-//        actionBar.newTab().setText("Offers");
-//        actionBar.newTab().setText("Requests");
-
         // ActionBarDrawerToggle ties together the the proper interactions
         // between the sliding drawer and the action bar app icon
         mDrawerToggle = new ActionBarDrawerToggle(
@@ -206,19 +202,29 @@ public class MainActivity extends BaseActivity{
         } else {
 
             String accessToken = sharedPrefs.getString(TOKENPREF, "");
-            Intent intent = getIntent();
             wamsInit(accessToken);
             NotificationsManager.handleNotifications(this, SENDER_ID, GCMHandler.class);
 
-            if( Intent.ACTION_SEARCH.equals(intent.getAction())) {
-                 String query = intent.getStringExtra(SearchManager.QUERY);
-                 wams_GetSearch(query);
-            } else {
-                refreshRides();
-            }
-
+            refreshRides();
         }
+    }
 
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+
+        // Since this activity is created in 'singleTop' launchMode,
+        // It's not re-created every time the instance of this activity is needed.
+        // Drawer shown remain opened when this activity was at background.
+        // Just close it.
+        DrawerLayout drawerLayout =
+                (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawerLayout.closeDrawers();
+
+        if( Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            String query = intent.getStringExtra(SearchManager.QUERY);
+            wams_GetSearch(query);
+        }
     }
 
     @Override
@@ -530,6 +536,13 @@ public class MainActivity extends BaseActivity{
         if( searchView != null ) {
             searchView.setSearchableInfo(
                     searchManager.getSearchableInfo(getComponentName()));
+            searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+                @Override
+                public boolean onClose() {
+                    refreshRides();
+                    return false;
+                }
+            });
             searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                 @Override
                 public boolean onQueryTextSubmit(String s) {

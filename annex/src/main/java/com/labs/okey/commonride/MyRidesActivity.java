@@ -81,28 +81,15 @@ public class MyRidesActivity extends ActionBarActivity {
         actionBar.setHomeButtonEnabled(true);
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
-        //String caption = getResources().getString(R.string.driverTabCaption);
-        //tab1 = actionBar.newTab().setText(caption);
-        //caption = getResources().getString(R.string.passengerTabCaption);
-        //tab2 = actionBar.newTab().setText(caption);
-
-//        fragmentTab1 = new FragmentTabOffers(this);
-//        fragmentTab2 = new FragmentTabParticipation(this);
-
-        //tab1.setTabListener(new MyTabListener(fragmentTab1));
-        //tab2.setTabListener(new MyTabListener(fragmentTab2));
-
-        //actionBar.addTab(tab1);
         actionBar.addTab(actionBar.newTab()
                         .setText(getResources().getString(R.string.driverTabCaption))
                         .setTabListener(new MyTabListener(new FragmentTabOffers(this))));
-//        actionBar.addTab(tab2);
+
         actionBar.addTab(actionBar.newTab()
                 .setText(getResources().getString(R.string.passengerTabCaption))
                 .setTabListener(new MyTabListener(new FragmentTabParticipation(this))));
 
     }
-
 
     private void wamsInit() {
         try {
