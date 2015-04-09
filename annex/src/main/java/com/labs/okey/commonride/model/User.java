@@ -95,6 +95,6 @@ public class User {
         editor.putBoolean(Globals.USE_PHONE_PFER, this.getUsePhone());
         editor.putString(Globals.REG_CODE_PREF, this.getGroup());
 
-        editor.commit();
+        editor.apply();
     }
 }

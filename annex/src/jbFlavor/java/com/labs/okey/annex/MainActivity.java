@@ -1,4 +1,4 @@
-package com.labs.okey.commonride;
+package com.labs.okey.annex;
 
 import android.app.Fragment;
 import android.app.SearchManager;
@@ -9,13 +9,14 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.os.AsyncTask;
-import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
+import android.os.Bundle;
 import android.support.v7.widget.SearchView;
 import android.util.Base64;
 import android.util.Log;
@@ -34,6 +35,7 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.gson.JsonObject;
+import com.labs.okey.commonride.*;
 import com.labs.okey.commonride.adapters.RidesAdapter;
 import com.labs.okey.commonride.model.RideAnnotated;
 import com.labs.okey.commonride.utils.ConflictResolvingSyncHandler;
@@ -66,7 +68,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
-public class MainActivity extends BaseActivity{
+
+public class MainActivity extends com.labs.okey.annex.BaseActivity {
 
     private static final String LOG_TAG = "Annex.Main";
     static final int REGISTER_USER_REQUEST = 1;
@@ -96,7 +99,7 @@ public class MainActivity extends BaseActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-         try {
+        try {
             PackageInfo packageInfo = getPackageManager().getPackageInfo(getPackageName(),
                     PackageManager.GET_SIGNATURES);
 
@@ -173,7 +176,7 @@ public class MainActivity extends BaseActivity{
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
         mRidesAdapter = new RidesAdapter(MainActivity.this,
-                                         R.layout.ride_item_row);
+                R.layout.ride_item_row);
         final ListView listview = (ListView) findViewById(R.id.listview);
         listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
@@ -240,7 +243,7 @@ public class MainActivity extends BaseActivity{
 
     @Override
     protected void onStop() {
-         super.onStop();
+        super.onStop();
     }
 
     private void wams_GetSearch(final String query)  {
@@ -276,8 +279,8 @@ public class MainActivity extends BaseActivity{
 
                 if( mEx != null ) {
                     Toast.makeText(MainActivity.this,
-                                    mEx.getCause().toString(),
-                                    Toast.LENGTH_LONG)
+                            mEx.getCause().toString(),
+                            Toast.LENGTH_LONG)
                             .show();
                 }
             }
@@ -358,39 +361,39 @@ public class MainActivity extends BaseActivity{
                     Globals.WAMS_URL,
                     Globals.WAMS_API_KEY,
                     this);
-                    //.withFilter(new RefreshTokenCacheFilter());
+            //.withFilter(new RefreshTokenCacheFilter());
 
             mPullQuery = wamsClient.getTable(RideAnnotated.class).orderBy("when_started", QueryOrder.Ascending);
 
             mLocalStore = new SQLiteLocalStore(wamsClient.getContext(),
-                                               "user", null, 1);
+                    "user", null, 1);
             MobileServiceSyncHandler handler = new ConflictResolvingSyncHandler();
             MobileServiceSyncContext syncContext = wamsClient.getSyncContext();
             if (!syncContext.isInitialized()) {
-                    Map<String, ColumnDataType> tableDefinition = new HashMap<>();
-                    tableDefinition.put("id", ColumnDataType.String);
-                    tableDefinition.put("ride_from", ColumnDataType.String);
-                    tableDefinition.put("ride_to", ColumnDataType.String);
-                    tableDefinition.put("when_published", ColumnDataType.Date);
-                    tableDefinition.put("user_driver", ColumnDataType.String);
-                    tableDefinition.put("free_places", ColumnDataType.Number);
-                    tableDefinition.put("when_starts", ColumnDataType.Date);
-                    tableDefinition.put("isanonymous", ColumnDataType.Boolean);
-                    tableDefinition.put("from_lat", ColumnDataType.String);
-                    tableDefinition.put("from_lon", ColumnDataType.String);
-                    tableDefinition.put("to_lat", ColumnDataType.String);
-                    tableDefinition.put("to_lon", ColumnDataType.String);
-                    tableDefinition.put("notes", ColumnDataType.String);
-                    tableDefinition.put("first_name", ColumnDataType.String);
-                    tableDefinition.put("last_name", ColumnDataType.String);
-                    tableDefinition.put("picture_url", ColumnDataType.String);
-                    tableDefinition.put("email", ColumnDataType.String);
-                    tableDefinition.put("driver_id", ColumnDataType.String);
-                    tableDefinition.put("__deleted", ColumnDataType.Boolean);
-                    tableDefinition.put("__version", ColumnDataType.String);
+                Map<String, ColumnDataType> tableDefinition = new HashMap<>();
+                tableDefinition.put("id", ColumnDataType.String);
+                tableDefinition.put("ride_from", ColumnDataType.String);
+                tableDefinition.put("ride_to", ColumnDataType.String);
+                tableDefinition.put("when_published", ColumnDataType.Date);
+                tableDefinition.put("user_driver", ColumnDataType.String);
+                tableDefinition.put("free_places", ColumnDataType.Number);
+                tableDefinition.put("when_starts", ColumnDataType.Date);
+                tableDefinition.put("isanonymous", ColumnDataType.Boolean);
+                tableDefinition.put("from_lat", ColumnDataType.String);
+                tableDefinition.put("from_lon", ColumnDataType.String);
+                tableDefinition.put("to_lat", ColumnDataType.String);
+                tableDefinition.put("to_lon", ColumnDataType.String);
+                tableDefinition.put("notes", ColumnDataType.String);
+                tableDefinition.put("first_name", ColumnDataType.String);
+                tableDefinition.put("last_name", ColumnDataType.String);
+                tableDefinition.put("picture_url", ColumnDataType.String);
+                tableDefinition.put("email", ColumnDataType.String);
+                tableDefinition.put("driver_id", ColumnDataType.String);
+                tableDefinition.put("__deleted", ColumnDataType.Boolean);
+                tableDefinition.put("__version", ColumnDataType.String);
 
-                    mLocalStore.defineTable("rides_annotated", tableDefinition);
-                    syncContext.initialize(mLocalStore, handler).get();
+                mLocalStore.defineTable("rides_annotated", tableDefinition);
+                syncContext.initialize(mLocalStore, handler).get();
             }
 
             final JsonObject body = new JsonObject();
@@ -415,11 +418,11 @@ public class MainActivity extends BaseActivity{
             }.execute();
 
             mRidesTable = wamsClient.getSyncTable("rides_annotated",
-                        RideAnnotated.class);
+                    RideAnnotated.class);
 
-            } catch(MalformedURLException | MobileServiceLocalStoreException | ExecutionException | InterruptedException ex ) {
-                Log.e(LOG_TAG, ex.getMessage() + " Cause: " + ex.getCause());
-            }
+        } catch(MalformedURLException | MobileServiceLocalStoreException | ExecutionException | InterruptedException ex ) {
+            Log.e(LOG_TAG, ex.getMessage() + " Cause: " + ex.getCause());
+        }
     }
 
     private void saveUser(MobileServiceUser mobileServiceUser) {
@@ -579,7 +582,7 @@ public class MainActivity extends BaseActivity{
         // The action bar home/up action should open or close the drawer.
         // ActionBarDrawerToggle will take care of this.
         if( mDrawerToggle != null
-            && mDrawerToggle.onOptionsItemSelected(item)) {
+                && mDrawerToggle.onOptionsItemSelected(item)) {
             return true;
         }
 
@@ -854,7 +857,7 @@ public class MainActivity extends BaseActivity{
             // "Use AdRequest.Builder.addTestDevice("ABCDEF012345") to get test ads on this device."
             AdRequest adRequest = new AdRequest.Builder()
                     .addTestDevice("4F039640448C4A8959EA044F68179499")
-                    //.addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                            //.addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
                     .build();
 
             // Start loading the ad in the background.
@@ -895,5 +898,4 @@ public class MainActivity extends BaseActivity{
         }
 
     }
-
 }

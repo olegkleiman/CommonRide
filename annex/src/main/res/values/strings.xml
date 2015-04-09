@@ -85,5 +85,6 @@ limitations under the License.</string>
 
     <string name="title_activity_rate">RateActivity</string>
     <string name="hello_world">Hello world!</string>
+    <string name="title_activity_w">WActivity</string>
 
 </resources>

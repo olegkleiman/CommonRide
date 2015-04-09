@@ -45,24 +45,24 @@
             </intent-filter>
         </receiver>
 
-        <activity
-            android:name=".MainActivity"
-            android:icon="@drawable/launcher_48"
-            android:label="@string/app_label"
-            android:screenOrientation="portrait"
-            android:launchMode="singleTop"
-            android:theme="@style/Theme.AppCompat.Light" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <action android:name="android.intent.action.SEARCH" />
+        <!--<activity-->
+            <!--android:name=".MainActivity"-->
+            <!--android:icon="@drawable/launcher_48"-->
+            <!--android:label="@string/app_label"-->
+            <!--android:launchMode="singleTop"-->
+            <!--android:screenOrientation="portrait"-->
+            <!--android:theme="@style/Theme.AppCompat.Light" >-->
+            <!--<intent-filter>-->
+                <!--<action android:name="android.intent.action.MAIN" />-->
+                <!--<action android:name="android.intent.action.SEARCH" />-->
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+                <!--<category android:name="android.intent.category.LAUNCHER" />-->
+            <!--</intent-filter>-->
 
-            <meta-data
-                android:name="android.app.searchable"
-                android:resource="@xml/searchable" />
-        </activity>
+            <!--<meta-data-->
+                <!--android:name="android.app.searchable"-->
+                <!--android:resource="@xml/searchable" />-->
+        <!--</activity>-->
         <activity
             android:name=".SingleRideActivity"
             android:label="@string/title_activity_single_ride"
@@ -89,34 +89,34 @@
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
         <activity
             android:name=".RegisterActivity"
-            android:screenOrientation="portrait"
-            android:label="@string/title_activity_register" >
+            android:label="@string/title_activity_register"
+            android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name=".RideMapActivity"
-            android:theme="@style/Theme.AppCompat.Light"
             android:label="@string/title_activity_ride_map"
-            android:screenOrientation="portrait" >
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light" >
         </activity>
         <activity
             android:name=".MyRidesActivity"
             android:label="@string/title_activity_my_rides"
-            android:screenOrientation="portrait"
             android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light" >
         </activity>
         <activity
             android:name=".AboutActivity"
             android:label="@string/title_activity_about"
-            android:screenOrientation="portrait"
             android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light" >
         </activity>
         <activity
             android:name=".RateActivity"
             android:label="@string/title_activity_rate"
-            android:screenOrientation="portrait"
             android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light" >
         </activity>
 
@@ -135,6 +135,7 @@
             android:name="com.google.android.gms.ads.AdActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
             android:theme="@android:style/Theme.Translucent" />
+
     </application>
 
 </manifest>

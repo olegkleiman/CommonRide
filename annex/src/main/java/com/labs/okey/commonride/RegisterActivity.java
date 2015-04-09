@@ -234,7 +234,7 @@ public class RegisterActivity extends FragmentActivity {
         editor.putString("lastUsername", fbUser.getLastName());
         editor.putString(TOKENPREF, mAccessToken);
 
-        editor.commit();
+        editor.apply();
     }
 
     @Override

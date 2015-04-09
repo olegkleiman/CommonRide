@@ -1,4 +1,4 @@
-package com.labs.okey.commonride;
+package com.labs.okey.annex;
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -79,35 +79,35 @@ public class GCMHandler extends  com.microsoft.windowsazure.notifications.Notifi
         String nhMessage = bundle.getString("message");
         String rideId =  bundle.getString("extras");
 
-        String title = context.getResources().getString(R.string.app_label);
-
-        sendNotification(nhMessage, rideId, title);
+//        String title = context.getResources().getString(R.string.app_label);
+//
+//        sendNotification(nhMessage, rideId, title);
     }
 
     private void sendNotification(String msg, String rideId, String title) {
         NotificationManager mNotificationManager = (NotificationManager)
                 ctx.getSystemService(Context.NOTIFICATION_SERVICE);
 
-        Intent launchIntent = new Intent(ctx, SingleRideActivity.class);
-        Bundle b = new Bundle();
-        b.putString("rideId", rideId);
-        launchIntent.putExtras(b);
-
-        PendingIntent contentIntent =
-                PendingIntent.getActivity(ctx, 0,
-                                          launchIntent, PendingIntent.FLAG_CANCEL_CURRENT);
-
-        NotificationCompat.Builder mBuilder =
-                new NotificationCompat.Builder(ctx)
-                        .setSmallIcon(R.drawable.launcher_48)
-                        .setVibrate(new long[]{500, 500})
-                        .setContentTitle(title)
-                        .setAutoCancel(true)
-                        .setStyle(new NotificationCompat.BigTextStyle()
-                                .bigText(msg))
-                        .setContentText(msg);
-
-        mBuilder.setContentIntent(contentIntent);
-        mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+//        Intent launchIntent = new Intent(ctx, SingleRideActivity.class);
+//        Bundle b = new Bundle();
+//        b.putString("rideId", rideId);
+//        launchIntent.putExtras(b);
+//
+//        PendingIntent contentIntent =
+//                PendingIntent.getActivity(ctx, 0,
+//                                          launchIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+//
+//        NotificationCompat.Builder mBuilder =
+//                new NotificationCompat.Builder(ctx)
+//                        .setSmallIcon(R.drawable.launcher_48)
+//                        .setVibrate(new long[]{500, 500})
+//                        .setContentTitle(title)
+//                        .setAutoCancel(true)
+//                        .setStyle(new NotificationCompat.BigTextStyle()
+//                                .bigText(msg))
+//                        .setContentText(msg);
+//
+//        mBuilder.setContentIntent(contentIntent);
+//        mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
     }
 }
