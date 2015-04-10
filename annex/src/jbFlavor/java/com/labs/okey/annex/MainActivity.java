@@ -595,8 +595,6 @@ public class MainActivity extends com.labs.okey.annex.BaseActivity {
 
             case R.id.action_refresh: {
 
-                //item.setActionView(R.layout.action_progress);
-
                 SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                 String accessToken = sharedPrefs.getString(TOKENPREF, "");
 

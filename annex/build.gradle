@@ -17,15 +17,15 @@ android {
         }
     }
     productFlavors {
-        kkFlavor {
-            minSdkVersion 21
-            versionName '1.0-kitkat'
-            applicationId 'com.labs.okey.annex.kkFlavor'
-        }
         jbFlavor {
             minSdkVersion 16
             versionName '1.0-jellyBean'
             applicationId 'com.labs.okey.annex.jbFlavor'
+        }
+        lpFlavor {
+            versionName '1.0-lollipop'
+            minSdkVersion 21
+            applicationId 'com.labs.okey.annex.lpFlavor'
         }
     }
 }

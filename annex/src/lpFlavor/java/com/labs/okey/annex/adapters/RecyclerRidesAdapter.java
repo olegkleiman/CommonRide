@@ -97,13 +97,15 @@ public class RecyclerRidesAdapter extends RecyclerView.Adapter<RecyclerRidesAdap
         return rides.get(position);
     }
 
-    public void add(RideAnnotated item, int position){
+    public void add(RideAnnotated item){
         rides.add(item);
-        notifyItemInserted(position);
+        notifyItemInserted(getItemCount() - 1);
     }
 
     public void clear(){
+        final int size = getItemCount();
         rides.clear();
+        notifyItemRangeRemoved(0, size);
     }
 
     // Provide a reference to the views for each data item
