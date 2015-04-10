@@ -2,6 +2,7 @@ package com.labs.okey.annex;
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -11,6 +12,8 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import com.labs.okey.commonride.R;
+import com.labs.okey.commonride.SingleRideActivity;
 import com.microsoft.windowsazure.mobileservices.notifications.MobileServicePush;
 import com.microsoft.windowsazure.mobileservices.notifications.Registration;
 import com.microsoft.windowsazure.mobileservices.notifications.RegistrationCallback;
@@ -79,35 +82,44 @@ public class GCMHandler extends  com.microsoft.windowsazure.notifications.Notifi
         String nhMessage = bundle.getString("message");
         String rideId =  bundle.getString("extras");
 
-//        String title = context.getResources().getString(R.string.app_label);
-//
-//        sendNotification(nhMessage, rideId, title);
+        String title = context.getResources().getString(R.string.app_label);
+
+        sendNotification(nhMessage, rideId, title);
     }
 
     private void sendNotification(String msg, String rideId, String title) {
         NotificationManager mNotificationManager = (NotificationManager)
                 ctx.getSystemService(Context.NOTIFICATION_SERVICE);
 
-//        Intent launchIntent = new Intent(ctx, SingleRideActivity.class);
-//        Bundle b = new Bundle();
-//        b.putString("rideId", rideId);
-//        launchIntent.putExtras(b);
-//
-//        PendingIntent contentIntent =
-//                PendingIntent.getActivity(ctx, 0,
-//                                          launchIntent, PendingIntent.FLAG_CANCEL_CURRENT);
-//
-//        NotificationCompat.Builder mBuilder =
-//                new NotificationCompat.Builder(ctx)
-//                        .setSmallIcon(R.drawable.launcher_48)
-//                        .setVibrate(new long[]{500, 500})
-//                        .setContentTitle(title)
-//                        .setAutoCancel(true)
-//                        .setStyle(new NotificationCompat.BigTextStyle()
-//                                .bigText(msg))
-//                        .setContentText(msg);
-//
-//        mBuilder.setContentIntent(contentIntent);
-//        mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+        Intent launchIntent = new Intent(ctx, SingleRideActivity.class);
+        Bundle b = new Bundle();
+        b.putString("rideId", rideId);
+        launchIntent.putExtras(b);
+
+        PendingIntent contentIntent =
+                PendingIntent.getActivity(ctx, 0,
+                                          launchIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+
+        // Use TaskStackBuilder to build the back stack and get the PendingIntent
+//        PendingIntent pendingIntent =
+//                TaskStackBuilder.create(ctx)
+//                        // add all of DetailsActivity's parents to the stack,
+//                        // followed by DetailsActivity itself
+//                        .addNextIntentWithParentStack(launchIntent)
+//                        .getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        NotificationCompat.Builder mBuilder =
+                new NotificationCompat.Builder(ctx)
+                        .setSmallIcon(R.drawable.launcher_48)
+                        .setVibrate(new long[]{500, 500})
+                        .setContentTitle(title)
+                        .setAutoCancel(true)
+                        .setStyle(new NotificationCompat.BigTextStyle()
+                                .bigText(msg))
+                        .setContentText(msg);
+
+        mBuilder.setContentIntent(contentIntent);
+        //mBuilder.setContentIntent(pendingIntent);
+        mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
     }
 }
