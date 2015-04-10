@@ -265,16 +265,13 @@ public class MainActivity extends com.labs.okey.annex.BaseActivity {
 
     private void pullRides() {
 
-//        final ProgressDialog progress =
-//                ProgressDialog.show(this, "Rides to share", "Synchronizing...");
-
         new AsyncTask<Void, Void, Void>() {
 
             Exception mEx = null;
 
             @Override
             protected void onPostExecute(Void result) {
-                //progress.dismiss();
+
                 invalidateOptionsMenu();
 
                 if( mEx != null ) {

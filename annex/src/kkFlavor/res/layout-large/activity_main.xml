@@ -6,7 +6,7 @@
     android:layout_height="match_parent">
 
     <!-- The main content view -->
-    <LinearLayout
+    <RelativeLayout
         android:orientation="vertical"
         android:paddingLeft="@dimen/activity_horizontal_margin"
         android:paddingRight="@dimen/frame_horizontal_margin"
@@ -23,14 +23,30 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
 
-        <fragment
-            android:id="@+id/adFragment"
-            android:name="com.labs.okey.annex.MainActivity$AdFragment"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_gravity="bottom" />
-    </LinearLayout>
+        <ImageButton
+            android:id="@+id/add_button"
+            android:layout_width="@dimen/diameter"
+            android:layout_height="@dimen/diameter"
+            android:background="@drawable/oval_ripple"
+            android:tint="@android:color/white"
+            android:stateListAnimator="@anim/button_elevation"
+            android:elevation="@dimen/elevation_high"
+            android:src="@android:drawable/ic_input_add"
+            android:layout_gravity="end|bottom"
+            android:onClick="onButtonAdd"
+            android:layout_alignBottom="@+id/my_recycler_view"
+            android:layout_alignEnd="@+id/my_recycler_view"
+            android:layout_marginRight="16dp"
+            android:layout_marginBottom="16dp" />
+
+        <!--<fragment-->
+            <!--android:id="@+id/adFragment"-->
+            <!--android:name="com.labs.okey.annex.MainActivity$AdFragment"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_alignParentBottom="true"-->
+            <!--android:layout_gravity="bottom" />-->
+    </RelativeLayout>
 
     <!-- The navigation drawer -->
     <ListView android:id="@+id/left_drawer"

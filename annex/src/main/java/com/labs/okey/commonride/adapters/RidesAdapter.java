@@ -122,7 +122,7 @@ public class RidesAdapter extends ArrayAdapter<RideAnnotated> {
             holder = (RidesHolder)row.getTag();
         }
 
-        String desc = String.format("%s to %s %s",
+        String desc = String.format("%s %s %s",
                         ride.first_name, ride.last_name, mDesc);
         holder.txtView.setText(desc);
         holder.txtRideFrom.setText(ride.ride_from);
