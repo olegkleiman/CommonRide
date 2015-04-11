@@ -8,7 +8,7 @@ import android.preference.PreferenceManager;
 import com.labs.okey.commonride.utils.Globals;
 
 /**
- * Created by c1306948 on 27/01/2015.
+ * Created by Oleg Kleiman on 27/01/2015.
  */
 public class User {
 

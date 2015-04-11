@@ -14,6 +14,7 @@ import android.util.Log;
 
 import com.labs.okey.commonride.R;
 import com.labs.okey.commonride.SingleRideActivity;
+import com.labs.okey.commonride.model.User;
 import com.labs.okey.commonride.utils.Globals;
 import com.microsoft.windowsazure.mobileservices.notifications.MobileServicePush;
 import com.microsoft.windowsazure.mobileservices.notifications.Registration;
@@ -34,7 +35,7 @@ public class GCMHandler extends  com.microsoft.windowsazure.notifications.Notifi
     }
 
     @Override
-    public void onRegistered(Context context,  final String gcmRegistrationId) {
+    public void onRegistered(final Context context,  final String gcmRegistrationId) {
         super.onRegistered(context, gcmRegistrationId);
 
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
@@ -50,8 +51,9 @@ public class GCMHandler extends  com.microsoft.windowsazure.notifications.Notifi
 
                     MobileServicePush push = MainActivity.wamsClient.getPush();
                     if( push != null ) {
-                        // TODO: remove hard-coded 'test_ride'
-                        String[] tags = {"test_ride", userID};
+
+                        User user = User.load(context);
+                        String[] tags = {user.getGroup(), userID};
 
                         push.register(gcmRegistrationId, tags,
                                 new RegistrationCallback(){
