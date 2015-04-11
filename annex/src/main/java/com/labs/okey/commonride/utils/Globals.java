@@ -36,6 +36,13 @@ public class Globals {
     public static float PICTURE_BORDER_WIDTH = 4;
     public static String MY_PICTURE_FILE_NAME = "me.png";
 
+    public static final String USERIDPREF = "userid";
+
+    // 'Project number' of project 'FastRide"
+    // See Google Developer Console -> Billing & settings
+    // https://console.developers.google.com/project/micro-shoreline-836/settings
+    public static final String SENDER_ID = "574878603809";
+
     public static final String WAMS_URL = "https://commonride.azure-mobile.net/";
     public static final String WAMS_API_KEY = "RuDCJTbpVcpeCQPvrcYeHzpnLyikPo70";
 }

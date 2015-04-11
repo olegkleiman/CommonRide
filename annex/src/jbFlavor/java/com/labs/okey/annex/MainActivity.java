@@ -77,14 +77,11 @@ public class MainActivity extends com.labs.okey.annex.BaseActivity {
     final boolean DEVELOPER_MODE = true;
     private static final String TOKENPREF = "accessToken";
     private static final String WAMSTOKENPREF = "wamsToken";
-    private static final String USERIDPREF = "userid";
 
     static MobileServiceClient wamsClient;
     private MobileServiceSyncTable<RideAnnotated> mRidesTable;
     private Query mPullQuery;
     SQLiteLocalStore mLocalStore;
-
-    public static final String SENDER_ID = "574878603809";
 
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
@@ -197,7 +194,7 @@ public class MainActivity extends com.labs.okey.annex.BaseActivity {
         listview.setAdapter(mRidesAdapter);
 
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        if( sharedPrefs.getString(USERIDPREF, "").isEmpty() ) {
+        if( sharedPrefs.getString(Globals.USERIDPREF, "").isEmpty() ) {
 
             Intent intent = new Intent(MainActivity.this, RegisterActivity.class);
             startActivityForResult(intent, REGISTER_USER_REQUEST);
@@ -206,7 +203,7 @@ public class MainActivity extends com.labs.okey.annex.BaseActivity {
 
             String accessToken = sharedPrefs.getString(TOKENPREF, "");
             wamsInit(accessToken);
-            NotificationsManager.handleNotifications(this, SENDER_ID, GCMHandler.class);
+            NotificationsManager.handleNotifications(this, Globals.SENDER_ID, GCMHandler.class);
 
             refreshRides();
         }
@@ -427,7 +424,7 @@ public class MainActivity extends com.labs.okey.annex.BaseActivity {
 
         SharedPreferences.Editor editor = sharedPrefs.edit();
         editor.putString(WAMSTOKENPREF, mobileServiceUser.getAuthenticationToken());
-        editor.putString(USERIDPREF, mobileServiceUser.getUserId());
+        editor.putString(Globals.USERIDPREF, mobileServiceUser.getUserId());
         editor.apply();
     }
 
@@ -444,7 +441,7 @@ public class MainActivity extends com.labs.okey.annex.BaseActivity {
                     String accessToken = bundle.getString("accessToken");
 
                     wamsInit(accessToken);
-                    NotificationsManager.handleNotifications(this, SENDER_ID, GCMHandler.class);
+                    NotificationsManager.handleNotifications(this, Globals.SENDER_ID, GCMHandler.class);
                     pullRides();
                 }
             }
@@ -780,7 +777,7 @@ public class MainActivity extends com.labs.okey.annex.BaseActivity {
         }
     }
 
-    /* The click listner for ListView in the navigation drawer */
+    /* The click listener for ListView in the navigation drawer */
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> parent,

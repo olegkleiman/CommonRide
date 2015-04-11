@@ -66,21 +66,21 @@
         <activity
             android:name=".SingleRideActivity"
             android:label="@string/title_activity_single_ride"
-            android:parentActivityName=".MainActivity"
+            android:parentActivityName="com.labs.okey.annex.MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light" >
         </activity>
         <activity
             android:name=".SettingsTabsActivity"
             android:label="@string/title_activity_tabs"
-            android:parentActivityName=".MainActivity"
+            android:parentActivityName="com.labs.okey.annex.MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.DarkActionBar" >
         </activity>
         <activity
             android:name=".AddRideActivity"
             android:label="@string/title_activity_add_ride"
-            android:parentActivityName=".MainActivity"
+            android:parentActivityName="com.labs.okey.annex.MainActivity"
             android:theme="@style/Theme.AppCompat.Light" >
         </activity>
         <activity
@@ -101,21 +101,21 @@
         <activity
             android:name=".MyRidesActivity"
             android:label="@string/title_activity_my_rides"
-            android:parentActivityName=".MainActivity"
+            android:parentActivityName="com.labs.okey.annex.MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light" >
         </activity>
         <activity
             android:name=".AboutActivity"
             android:label="@string/title_activity_about"
-            android:parentActivityName=".MainActivity"
+            android:parentActivityName="com.labs.okey.annex.MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light" >
         </activity>
         <activity
             android:name=".RateActivity"
             android:label="@string/title_activity_rate"
-            android:parentActivityName=".MainActivity"
+            android:parentActivityName="com.labs.okey.annex.MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light" >
         </activity>
