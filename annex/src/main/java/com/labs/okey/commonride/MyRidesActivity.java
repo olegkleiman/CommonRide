@@ -48,7 +48,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public class MyRidesActivity extends ActionBarActivity {
+public class MyRidesActivity extends BaseActivity {
 
     private static MobileServiceClient mClient;
     private MobileServiceSyncTable<Ride> mRidesTable;
@@ -270,7 +270,7 @@ public class MyRidesActivity extends ActionBarActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
 
         switch ( item.getItemId() ) {
-            case R.id.myrides_action_refresh: {
+            case R.id.action_refresh: {
 
                 ActionBar actionBar = getSupportActionBar();
                 ActionBar.Tab selectedTab = actionBar.getSelectedTab();

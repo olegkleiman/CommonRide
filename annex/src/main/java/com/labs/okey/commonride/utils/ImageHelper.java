@@ -9,7 +9,7 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 
 /**
- * Created by Oleg on 07-Feb-15.
+ * Created by Oleg Kleiman on 07-Feb-15.
  */
 public class ImageHelper {
     public static Bitmap getRoundedCornerBitmap(Bitmap bitmap, int pixels) {

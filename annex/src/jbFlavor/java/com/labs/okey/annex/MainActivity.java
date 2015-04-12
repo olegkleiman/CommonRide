@@ -75,8 +75,6 @@ public class MainActivity extends com.labs.okey.annex.BaseActivity {
     static final int REGISTER_USER_REQUEST = 1;
 
     final boolean DEVELOPER_MODE = true;
-    private static final String TOKENPREF = "accessToken";
-    private static final String WAMSTOKENPREF = "wamsToken";
 
     static MobileServiceClient wamsClient;
     private MobileServiceSyncTable<RideAnnotated> mRidesTable;
@@ -107,11 +105,8 @@ public class MainActivity extends com.labs.okey.annex.BaseActivity {
                 Log.d("KeyHash:", hash);
             }
         }
-        catch (PackageManager.NameNotFoundException e1) {
-            Log.e("Name not found", e1.toString());
-        }
-        catch (NoSuchAlgorithmException e) {
-            Log.e("No such an algorithm", e.toString());
+        catch (PackageManager.NameNotFoundException | NoSuchAlgorithmException ex) {
+            Log.e(LOG_TAG, ex.toString());
         }
 
 //        if (DEVELOPER_MODE) {
@@ -201,7 +196,7 @@ public class MainActivity extends com.labs.okey.annex.BaseActivity {
 
         } else {
 
-            String accessToken = sharedPrefs.getString(TOKENPREF, "");
+            String accessToken = sharedPrefs.getString(Globals.TOKENPREF, "");
             wamsInit(accessToken);
             NotificationsManager.handleNotifications(this, Globals.SENDER_ID, GCMHandler.class);
 
@@ -423,7 +418,7 @@ public class MainActivity extends com.labs.okey.annex.BaseActivity {
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
         SharedPreferences.Editor editor = sharedPrefs.edit();
-        editor.putString(WAMSTOKENPREF, mobileServiceUser.getAuthenticationToken());
+        editor.putString(Globals.WAMSTOKENPREF, mobileServiceUser.getAuthenticationToken());
         editor.putString(Globals.USERIDPREF, mobileServiceUser.getUserId());
         editor.apply();
     }
@@ -438,7 +433,7 @@ public class MainActivity extends com.labs.okey.annex.BaseActivity {
                 if (resultCode == RESULT_OK) {
 
                     Bundle bundle = data.getExtras();
-                    String accessToken = bundle.getString("accessToken");
+                    String accessToken = bundle.getString(Globals.TOKENPREF);
 
                     wamsInit(accessToken);
                     NotificationsManager.handleNotifications(this, Globals.SENDER_ID, GCMHandler.class);
@@ -593,7 +588,7 @@ public class MainActivity extends com.labs.okey.annex.BaseActivity {
             case R.id.action_refresh: {
 
                 SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-                String accessToken = sharedPrefs.getString(TOKENPREF, "");
+                String accessToken = sharedPrefs.getString(Globals.TOKENPREF, "");
 
                 item.setActionView(R.layout.action_progress);
 

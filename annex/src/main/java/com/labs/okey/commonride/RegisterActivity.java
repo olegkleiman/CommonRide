@@ -1,13 +1,13 @@
 package com.labs.okey.commonride;
 
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
-import android.support.v7.app.ActionBarActivity;
-import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,14 +26,16 @@ import com.facebook.SessionState;
 import com.facebook.UiLifecycleHelper;
 import com.facebook.model.GraphUser;
 import com.facebook.widget.LoginButton;
-import com.labs.okey.commonride.model.Ride;
 import com.labs.okey.commonride.model.User;
 import com.labs.okey.commonride.utils.Globals;
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
-import com.microsoft.windowsazure.mobileservices.table.MobileServiceTable;
-import com.microsoft.windowsazure.mobileservices.authentication.MobileServiceUser;
+import com.microsoft.windowsazure.mobileservices.MobileServiceList;
 import com.microsoft.windowsazure.mobileservices.http.ServiceFilterResponse;
+import com.microsoft.windowsazure.mobileservices.table.MobileServiceTable;
 import com.microsoft.windowsazure.mobileservices.table.TableOperationCallback;
+
+import java.net.MalformedURLException;
+import java.util.concurrent.ExecutionException;
 
 
 public class RegisterActivity extends FragmentActivity {
@@ -42,7 +44,6 @@ public class RegisterActivity extends FragmentActivity {
     private final String fbProvider = "fb";
     private final String PENDING_ACTION_BUNDLE_KEY = "com.labs.okey.commomride:PendingAction";
 
-    private static final String TOKENPREF = "accessToken";
     private static final String REG_CODE_PREF = "regcode";
     String mAccessToken;
 
@@ -57,6 +58,11 @@ public class RegisterActivity extends FragmentActivity {
             onSessionStateChange(session, state, exception);
         }
     };
+
+    // 'Users' table is defined with 'Anybody with the Application Key'
+    // permissions for READ and INSERT operations, so no authentication is
+    // required for adding new user to it
+    MobileServiceTable<User> usersTable;
 
     private enum PendingAction {
         NONE,
@@ -85,13 +91,44 @@ public class RegisterActivity extends FragmentActivity {
 
         loginButton.setUserInfoChangedCallback(new LoginButton.UserInfoChangedCallback() {
             @Override
-            public void onUserInfoFetched(GraphUser user) {
+            public void onUserInfoFetched(final GraphUser user) {
                 if (user != null) {
                     RegisterActivity.this.fbUser = user;
 
-                    saveFBUser(user);
+                    new AsyncTask<Void, Void, Void>() {
 
-                    showRegistrationForm();
+                        Exception mEx;
+
+                        @Override
+                        protected void onPostExecute(Void result){
+                            if( mEx == null )
+                                showRegistrationForm();
+                        }
+
+                        @Override
+                        protected Void doInBackground(Void... params) {
+
+                            String regID = Globals.FB_PROVIDER_FOR_STORE + user.getId();
+
+                            try {
+                                MobileServiceList<User> _users =
+                                    usersTable.where().field("registration_id").eq(regID)
+                                            .select("registration_id")
+                                            .execute().get();
+
+                                if( _users.getTotalCount() > 0 ) {
+                                    String id = _users.get(0).Id;
+                                }
+
+                                saveFBUser(user);
+                            } catch (InterruptedException | ExecutionException ex) {
+                                mEx = ex;
+                                Log.e(LOG_TAG, ex.getMessage());
+                            }
+                            return null;
+                        }
+                    }.execute();
+
                 }
             }
         });
@@ -105,6 +142,15 @@ public class RegisterActivity extends FragmentActivity {
 
             }
         });
+
+        try{
+            usersTable = Globals.WAMSClassFactory
+                    .getClient(this)
+                    .getTable("users", User.class);
+
+        } catch(MalformedURLException ex ) {
+            Log.e(LOG_TAG, ex.getMessage() + " Cause: " + ex.getCause());
+        }
     }
 
     private void showRegistrationForm() {
@@ -133,32 +179,24 @@ public class RegisterActivity extends FragmentActivity {
         final ProgressDialog progress = ProgressDialog.show(this, "Adding", "New user");
 
         try {
-            Switch switchView = (Switch)findViewById(R.id.switchUsePhone);
 
-            MobileServiceClient wamsClient =
-                    new MobileServiceClient(
-                            Globals.WAMS_URL,
-                            Globals.WAMS_API_KEY,
-                            this);
-
-            // 'Users' table is defined with 'Anybody with the Application Key'
-            // permissions for READ and INSERT operations, so no authentication is
-            // required for adding new user to it
-            MobileServiceTable<User> usersTable =
-                    wamsClient.getTable("users", User.class);
             User newUser = new User();
-            newUser.setRegistrationId("Facebook:" + fbUser.getId());
+            newUser.setRegistrationId(Globals.FB_PROVIDER_FOR_STORE + fbUser.getId());
             newUser.setFirstName( fbUser.getFirstName() );
             newUser.setLastName( fbUser.getLastName() );
             String pictureURL = "http://graph.facebook.com/" + fbUser.getId() + "/picture?type=large";
             newUser.setPictureURL(pictureURL);
             newUser.setEmail((String)fbUser.getProperty("email"));
             newUser.setPhone(txtUser.getText().toString());
+            Switch switchView = (Switch)findViewById(R.id.switchUsePhone);
             newUser.setUsePhone(switchView.isChecked());
             newUser.setGroup(regCode);
 
             newUser.save(this);
 
+            // 'Users' table is defined with 'Anybody with the Application Key'
+            // permissions for READ and INSERT operations, so no authentication is
+            // required for adding new user to it
             usersTable.insert(newUser, new TableOperationCallback<User>(){
 
                 @Override
@@ -173,7 +211,7 @@ public class RegisterActivity extends FragmentActivity {
                     } else {
 
                         Intent returnIntent = new Intent();
-                        returnIntent.putExtra(TOKENPREF, mAccessToken);
+                        returnIntent.putExtra(Globals.TOKENPREF, mAccessToken);
                         returnIntent.putExtra(REG_CODE_PREF, regCode);
                         setResult(RESULT_OK, returnIntent);
                         finish();
@@ -229,10 +267,10 @@ public class RegisterActivity extends FragmentActivity {
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
         SharedPreferences.Editor editor = sharedPrefs.edit();
-        editor.putString("username", fbUser.getFirstName());
-        editor.putString("registrationProvider", fbProvider);
-        editor.putString("lastUsername", fbUser.getLastName());
-        editor.putString(TOKENPREF, mAccessToken);
+        editor.putString(Globals.FB_USERNAME_PREF, fbUser.getFirstName());
+        editor.putString(Globals.REG_PROVIDER_PREF, fbProvider);
+        editor.putString(Globals.FB_LASTNAME__PREF, fbUser.getLastName());
+        editor.putString(Globals.TOKENPREF, mAccessToken);
 
         editor.apply();
     }

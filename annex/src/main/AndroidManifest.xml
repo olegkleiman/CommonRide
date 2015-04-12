@@ -89,8 +89,7 @@
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
         <activity
             android:name=".RegisterActivity"
-            android:label="@string/title_activity_register"
-            android:screenOrientation="portrait" >
+            android:label="@string/title_activity_register">
         </activity>
         <activity
             android:name=".RideMapActivity"
