@@ -17,28 +17,13 @@ public class Globals {
 
         static DrawMan getDrawMan(){
             if( drawMan == null )
-                return new DrawMan();
+                return drawMan = new DrawMan();
             else
                 return drawMan;
         }
     }
     public static final DrawMan drawMan = DManClassFactory.getDrawMan();
 
-    public static class WAMSClassFactory{
-
-        static MobileServiceClient wamsClient;
-
-        public static MobileServiceClient getClient (Context context) throws MalformedURLException {
-            if( wamsClient == null ) {
-                wamsClient = new MobileServiceClient(
-                        Globals.WAMS_URL,
-                        Globals.WAMS_API_KEY,
-                        context);
-            }
-
-            return wamsClient;
-        }
-    }
     public static final String FIRST_NAME_PREF = "firstname";
     public static final String LAST_NAME_PREF = "lastname";
     public static final String FB_USERNAME_PREF = "username";

@@ -50,7 +50,7 @@ import java.util.Map;
 
 public class MyRidesActivity extends BaseActivity {
 
-    private static MobileServiceClient mClient;
+    private static MobileServiceClient wamsClient;
     private MobileServiceSyncTable<Ride> mRidesTable;
     private MobileServiceSyncTable<JoinedRide> mJoinsTable;
     private Query mPullDriverQuery;
@@ -93,7 +93,7 @@ public class MyRidesActivity extends BaseActivity {
 
     private void wamsInit() {
         try {
-            mClient = new MobileServiceClient(
+            wamsClient = new MobileServiceClient(
                     Globals.WAMS_URL,
                     Globals.WAMS_API_KEY,
                     this);
@@ -107,17 +107,17 @@ public class MyRidesActivity extends BaseActivity {
             // this should be JWT token, so use WAMS_TOKEM
             wamsUser.setAuthenticationToken(token);
 
-            mClient.setCurrentUser(wamsUser);
+            wamsClient.setCurrentUser(wamsUser);
 
             User myUser = User.load(this);
 
-            mPullDriverQuery = mClient.getTable("commonrides", Ride.class)
+            mPullDriverQuery = wamsClient.getTable("commonrides", Ride.class)
                     .where()
                     .field("user_driver")
                     .eq(myUser.getRegistrationId())
                     .and().field("when_starts").le(new Date());
 
-            mPullPassengerQuery = mClient.getTable("joined_rides", JoinedRide.class)
+            mPullPassengerQuery = wamsClient.getTable("joined_rides", JoinedRide.class)
                     .where();
 //                    .field("passenger_id")
 //                    .eq(myUser.getRegistrationId())
@@ -125,10 +125,10 @@ public class MyRidesActivity extends BaseActivity {
             mPullPassengerQuery.parameter("passenger_id", myUser.getRegistrationId());
 
             SQLiteLocalStore mLocalStore =
-                    new SQLiteLocalStore(mClient.getContext(),
+                    new SQLiteLocalStore(wamsClient.getContext(),
                                         "myrides", null, 1);
             MobileServiceSyncHandler handler = new ConflictResolvingSyncHandler();
-            MobileServiceSyncContext syncContext = mClient.getSyncContext();
+            MobileServiceSyncContext syncContext = wamsClient.getSyncContext();
             if (!syncContext.isInitialized()) {
                 Map<String, ColumnDataType> tableDefinition = new HashMap<>();
                 tableDefinition.put("id", ColumnDataType.String);
@@ -162,8 +162,8 @@ public class MyRidesActivity extends BaseActivity {
                 syncContext.initialize(mLocalStore, handler).get();
             }
 
-            mRidesTable = mClient.getSyncTable("commonrides", Ride.class);
-            mJoinsTable = mClient.getSyncTable("joined_rides", JoinedRide.class);
+            mRidesTable = wamsClient.getSyncTable("commonrides", Ride.class);
+            mJoinsTable = wamsClient.getSyncTable("joined_rides", JoinedRide.class);
 
         } catch(Exception e) {
             Log.i(LOG_TAG, e.getMessage());
