@@ -4,6 +4,9 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_marginTop="6dp"
+    android:layout_marginLeft="16dp"
+    android:layout_marginRight="16dp"
     android:background="?android:attr/selectableItemBackground">
 
     <LinearLayout
@@ -11,7 +14,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:elevation="5dp"
-        android:background="@android:color/white"
         android:layout_marginTop="4dp"
         android:layout_marginBottom="4dp">
 
@@ -60,7 +62,7 @@
             android:id="@+id/txtFreePlaces"
             android:layout_gravity="center|right"
             android:layout_marginRight="10dp"
-            android:textColor="?android:colorAccent"/>
+            android:textColor="@color/ColorPrimaryDark"/>
 
     </LinearLayout>
 

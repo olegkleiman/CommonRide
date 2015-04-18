@@ -45,7 +45,8 @@ public abstract class BaseActivity extends ActionBarActivity {
             }
 
             menuItem = selectMenuItem(menu,
-                        R.id.action_add, R.id.action_join_ride);
+                        // TODO: return R.id.action_add,
+                        R.id.action_join_ride);
             if( menuItem != null ) {
                 menuItem.setEnabled(false);
                 menuItem.setVisible(false);

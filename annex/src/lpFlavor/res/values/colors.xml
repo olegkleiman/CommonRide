@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="user_profile_background">#1976D2</color>
+    <!--<color name="azure">#ff00a1f1</color>-->
+    <color name="ColorPrimary">#2196F3</color>
+    <color name="ColorPrimaryDark">#2196F3</color>
+    <color name="ColorAccent">#E65100</color>
+    <color name="ColorBackground">#FFF</color>
+</resources>

@@ -95,19 +95,27 @@ public class MainActivity extends com.labs.okey.annex.BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
         try {
+            // Needed to detect HashCode for FB registration
             PackageInfo packageInfo = getPackageManager().getPackageInfo(getPackageName(),
                     PackageManager.GET_SIGNATURES);
-
-            for (android.content.pm.Signature signature : packageInfo.signatures) {
-                MessageDigest md = MessageDigest.getInstance("SHA");
-                md.update(signature.toByteArray());
-                String hash = Base64.encodeToString(md.digest(), Base64.DEFAULT);
-                Log.d("KeyHash:", hash);
-            }
         }
-        catch (PackageManager.NameNotFoundException | NoSuchAlgorithmException ex) {
+        catch (PackageManager.NameNotFoundException ex) {
             Log.e(LOG_TAG, ex.toString());
         }
+
+
+//        try {
+
+//            for (android.content.pm.Signature signature : packageInfo.signatures) {
+//                MessageDigest md = MessageDigest.getInstance("SHA");
+//                md.update(signature.toByteArray());
+//                String hash = Base64.encodeToString(md.digest(), Base64.DEFAULT);
+//                Log.d("KeyHash:", hash);
+//            }
+//        }
+//        catch (PackageManager.NameNotFoundException | NoSuchAlgorithmException ex) {
+//            Log.e(LOG_TAG, ex.toString());
+//        }
 
 //        if (DEVELOPER_MODE) {
 //            StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()

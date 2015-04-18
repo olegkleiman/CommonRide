@@ -4,41 +4,45 @@
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
     tools:context="com.labs.okey.MainActivity">
 
     <!-- The main content view -->
-    <RelativeLayout
+    <LinearLayout
         android:orientation="vertical"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/frame_horizontal_margin"
-        android:paddingTop="@dimen/activity_vertical_margin"
-        android:paddingBottom="@dimen/frame_vertical_margin"
         android:id="@+id/content_frame"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent">
 
-        <!-- A RecyclerView with some commonly used attributes -->
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/my_recycler_view"
-            android:scrollbars="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+        <include
+            layout="@layout/tool_bar" />
 
-        <ImageButton
-            android:id="@+id/add_button"
-            android:layout_width="@dimen/diameter"
-            android:layout_height="@dimen/diameter"
-            android:background="@drawable/oval_ripple"
-            android:tint="@android:color/white"
-            android:stateListAnimator="@anim/button_elevation"
-            android:elevation="@dimen/elevation_high"
-            android:src="@android:drawable/ic_input_add"
-            android:layout_gravity="end|bottom"
-            android:onClick="onButtonAdd"
-            android:layout_alignBottom="@+id/my_recycler_view"
-            android:layout_alignEnd="@+id/my_recycler_view"
-            android:layout_marginRight="16dp"
-            android:layout_marginBottom="16dp" />
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:background="@color/ColorBackground">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/my_recycler_view"
+                android:scrollbars="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <ImageButton
+                android:id="@+id/add_button"
+                android:layout_width="@dimen/diameter"
+                android:layout_height="@dimen/diameter"
+                android:background="@drawable/oval_ripple"
+                android:tint="@android:color/white"
+                android:stateListAnimator="@anim/button_elevation"
+                android:elevation="@dimen/elevation_high"
+                android:src="@android:drawable/ic_input_add"
+                android:layout_gravity="end|bottom"
+                android:onClick="onButtonAdd"
+                android:layout_alignBottom="@+id/my_recycler_view"
+                android:layout_alignEnd="@+id/my_recycler_view"
+                android:layout_marginRight="16dp"
+                android:layout_marginBottom="16dp" />
 
         <!--<fragment-->
             <!--android:id="@+id/adFragment"-->
@@ -47,7 +51,10 @@
             <!--android:layout_height="wrap_content"-->
             <!--android:layout_alignParentBottom="true"-->
             <!--android:layout_gravity="bottom" />-->
-    </RelativeLayout>
+
+        </RelativeLayout>
+
+    </LinearLayout>
 
     <!-- The navigation drawer -->
     <!--<ListView android:id="@+id/left_drawer"-->
@@ -67,11 +74,23 @@
          android:layout_gravity="left" instead. -->
     <!-- The drawer is given a fixed width in dp and extends the full height of
          the container. -->
-    <fragment android:id="@+id/navigation_drawer"
-        android:layout_width="@dimen/navigation_drawer_width"
+    <!-- The navigation drawer -->
+    <!--<LinearLayout-->
+        <!--android:layout_width="304dp"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:layout_gravity="left|start"-->
+        <!--android:fitsSystemWindows="true">-->
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/left_drawer"
+        android:layout_width="320dp"
         android:layout_height="match_parent"
-        android:layout_gravity="start"
-        android:name="com.labs.okey.annex.NavigationDrawerFragment"
-        tools:layout="@layout/fragment_navigation_drawer" />
+        android:layout_gravity="left"
+        android:background="#ffffff"
+        android:scrollbars="vertical">
+
+    </android.support.v7.widget.RecyclerView>
+
+    <!--</LinearLayout>-->
 
 </android.support.v4.widget.DrawerLayout>

@@ -44,13 +44,14 @@ public class RecyclerRidesAdapter extends RecyclerView.Adapter<RecyclerRidesAdap
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        // create a new view
-        View v = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.ride_item_row, parent, false);
-        // set the view's size, margins, paddings and layout parameters
 
-        ViewHolder vh = new ViewHolder(v);
-        return vh;
+            View v = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.ride_item_row, parent, false);
+            // set the view's size, margins, padding and layout parameters
+
+            ViewHolder vh = new ViewHolder(v);
+
+            return vh;
     }
 
     @Override

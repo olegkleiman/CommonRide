@@ -60,9 +60,6 @@ public class MyRidesActivity extends BaseActivity {
 
     private static final String LOG_TAG = "Annex.MyRides";
 
-    private static final String WAMSTOKENPREF = "wamsToken";
-    private static final String USERIDPREF = "userid";
-
     //Fragment fragmentTab1, fragmentTab2;
     MyRidesDriverAdapter mDriverRidesAdapter;
     MyRidesPassengerAdapter mPassengerRidesAdapter;
@@ -83,11 +80,11 @@ public class MyRidesActivity extends BaseActivity {
 
         actionBar.addTab(actionBar.newTab()
                         .setText(getResources().getString(R.string.driverTabCaption))
-                        .setTabListener(new MyTabListener(new FragmentTabOffers(this))));
+                        .setTabListener(new MyRidesTabListener(new FragmentTabDriver(this))));
 
         actionBar.addTab(actionBar.newTab()
                 .setText(getResources().getString(R.string.passengerTabCaption))
-                .setTabListener(new MyTabListener(new FragmentTabParticipation(this))));
+                .setTabListener(new MyRidesTabListener(new FragmentTabPassenger(this))));
 
     }
 
@@ -99,12 +96,12 @@ public class MyRidesActivity extends BaseActivity {
                     this);
 
             SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-            String userID = sharedPrefs.getString(USERIDPREF, "");
+            String userID = sharedPrefs.getString(Globals.USERIDPREF, "");
             MobileServiceUser wamsUser = new MobileServiceUser(userID);
 
-            String token = sharedPrefs.getString(WAMSTOKENPREF, "");
+            String token = sharedPrefs.getString(Globals.WAMSTOKENPREF, "");
             // According to this article (http://www.thejoyofcode.com/Setting_the_auth_token_in_the_Mobile_Services_client_and_caching_the_user_rsquo_s_identity_Day_10_.aspx)
-            // this should be JWT token, so use WAMS_TOKEM
+            // this should be JWT token, so use WAMS_TOKEN
             wamsUser.setAuthenticationToken(token);
 
             wamsClient.setCurrentUser(wamsUser);
@@ -337,11 +334,11 @@ public class MyRidesActivity extends BaseActivity {
     }
 
     @SuppressLint("ValidFragment")
-    public class FragmentTabOffers extends android.support.v4.app.Fragment{
+    public class FragmentTabDriver extends android.support.v4.app.Fragment{
 
         Context context;
 
-        public FragmentTabOffers(Context context){
+        public FragmentTabDriver(Context context){
             this.context = context;
         }
 
@@ -393,7 +390,6 @@ public class MyRidesActivity extends BaseActivity {
                     startActivity(intent);
                 }
             });
-
             myRidesListView.setAdapter(mDriverRidesAdapter);
 
             refreshRides();
@@ -403,18 +399,18 @@ public class MyRidesActivity extends BaseActivity {
     }
 
     @SuppressLint("ValidFragment")
-    public class FragmentTabParticipation extends android.support.v4.app.Fragment{
+    public class FragmentTabPassenger extends android.support.v4.app.Fragment{
 
         Context context;
 
-        public FragmentTabParticipation(Context context){
+        public FragmentTabPassenger(Context context){
             this.context = context;
         }
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState)
-        {
+                                 Bundle savedInstanceState) {
+
             View view = inflater.inflate(R.layout.my_rides_passenger, container, false);
             User myUser = User.load(MyRidesActivity.this);
             TextView txtView = (TextView)view.findViewById(R.id.txtMyDriver);
@@ -467,11 +463,11 @@ public class MyRidesActivity extends BaseActivity {
 
     }
 
-    public class MyTabListener implements ActionBar.TabListener {
+    public class MyRidesTabListener implements ActionBar.TabListener {
 
         Fragment fragment;
 
-        public MyTabListener(Fragment fragment) {
+        public MyRidesTabListener(Fragment fragment) {
             this.fragment = fragment;
         }
 

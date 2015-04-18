@@ -9,7 +9,7 @@ import com.microsoft.windowsazure.mobileservices.table.sync.synchandler.MobileSe
 import com.microsoft.windowsazure.mobileservices.table.sync.synchandler.MobileServiceSyncHandlerException;
 
 /**
- * Created by Oleg on 04-Feb-15.
+ * Created by Oleg Kleiman on 04-Feb-15.
  */
 public class ConflictResolvingSyncHandler implements MobileServiceSyncHandler {
 

@@ -24,7 +24,7 @@
 
         <fragment
             android:id="@+id/adFragment"
-            android:name="com.labs.okey.commonride.MainActivity$AdFragment"
+            android:name="com.labs.okey.annex.MainActivity$AdFragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
