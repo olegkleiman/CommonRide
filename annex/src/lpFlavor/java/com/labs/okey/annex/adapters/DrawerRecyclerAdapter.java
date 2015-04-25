@@ -1,6 +1,7 @@
 package com.labs.okey.annex.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
@@ -11,7 +12,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.labs.okey.commonride.AboutActivity;
+import com.labs.okey.commonride.MyRidesActivity;
 import com.labs.okey.commonride.R;
+import com.labs.okey.commonride.RateActivity;
+import com.labs.okey.commonride.SettingsTabsActivity;
 import com.labs.okey.commonride.utils.Globals;
 import com.labs.okey.commonride.utils.RoundedDrawable;
 
@@ -35,6 +40,49 @@ public class DrawerRecyclerAdapter extends RecyclerView.Adapter<DrawerRecyclerAd
     private String mEmail;
     private String mPictureURL;
 
+    View.OnClickListener[] mListeners = new View.OnClickListener[] {
+            new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(mContext, SettingsTabsActivity.class);
+                    mContext.startActivity(intent);
+                }
+            },
+            new View.OnClickListener(){
+
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(mContext, MyRidesActivity.class);
+                    mContext.startActivity(intent);
+                }
+            },
+            new View.OnClickListener(){
+
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(mContext, RateActivity.class);
+                    mContext.startActivity(intent);
+                }
+            },
+            new View.OnClickListener(){
+
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(mContext, AboutActivity.class);
+                    //Intent intent = new Intent(mContext, LogoutActivity.class);
+                    mContext.startActivity(intent);
+                }
+            },
+            new View.OnClickListener(){
+
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(mContext, AboutActivity.class);
+                    mContext.startActivity(intent);
+                }
+            }
+    };
+
     public DrawerRecyclerAdapter(Context context,
                                  String[] titles,
                                  int[] icons,
@@ -55,20 +103,19 @@ public class DrawerRecyclerAdapter extends RecyclerView.Adapter<DrawerRecyclerAd
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
-        if (viewType == TYPE_ITEM) {
-            // Inflate row layout
-            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.drawer_item_raw,parent,false);
-            ViewHolder vhItem = new ViewHolder(v,viewType);
-            return vhItem;
+        View v;
 
-        } else if (viewType == TYPE_HEADER) {
+        if (viewType == TYPE_HEADER) {
             // Inflate header layout
-            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.drawer_header,parent,false);
-            ViewHolder vhHeader = new ViewHolder(v,viewType);
-            return vhHeader;
+            v = LayoutInflater.from(parent.getContext()).inflate(R.layout.drawer_header,parent,false);
+        } else {
+            // Inflate row layout
+            v = LayoutInflater.from(parent.getContext()).inflate(R.layout.drawer_item_raw,parent,false);
         }
 
-        return null;
+        View.OnClickListener listener = mListeners[viewType];
+        ViewHolder vhHeader = new ViewHolder(v, viewType, listener);
+        return vhHeader;
     }
 
     // Next we override a method which is called when the item in a row is needed to be displayed, here the int position
@@ -76,10 +123,8 @@ public class DrawerRecyclerAdapter extends RecyclerView.Adapter<DrawerRecyclerAd
     // which view type is being created 1 for item row
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        if (holder.holderId == 1) {
-            holder.rowTextView.setText(mNavTitles[position - 1]);
-            holder.rowImageView.setImageResource(mIcons[position -1]);//
-        } else{
+
+        if (holder.holderId == TYPE_HEADER) {
 
             Drawable drawable = null;
             try {
@@ -101,6 +146,11 @@ public class DrawerRecyclerAdapter extends RecyclerView.Adapter<DrawerRecyclerAd
             holder.txtName.setText(mName);
             holder.txtEmail.setText(mEmail);
 
+        } else{
+
+            holder.rowTextView.setText(mNavTitles[position - 1]);
+            holder.rowImageView.setImageResource(mIcons[position -1]);
+
         }
     }
 
@@ -115,7 +165,7 @@ public class DrawerRecyclerAdapter extends RecyclerView.Adapter<DrawerRecyclerAd
         if (isPositionHeader(position))
             return TYPE_HEADER;
 
-        return TYPE_ITEM;
+        return position;
     }
 
     private boolean isPositionHeader(int position) {
@@ -136,22 +186,32 @@ public class DrawerRecyclerAdapter extends RecyclerView.Adapter<DrawerRecyclerAd
         ImageView rowImageView;
         TextView rowTextView;
 
-        public ViewHolder(View itemView, int ViewType) {
-            super(itemView);
+        public ViewHolder(View itemLayoutView, int viewType, View.OnClickListener listener) {
+            super(itemLayoutView);
 
-            if(ViewType == TYPE_ITEM) {
-
-                rowTextView = (TextView) itemView.findViewById(R.id.rowText);
-                rowImageView = (ImageView) itemView.findViewById(R.id.rowIcon);
-
-                holderId = 1;
-            } else {
-
+            if(viewType == TYPE_HEADER) {
                 txtName = (TextView) itemView.findViewById(R.id.name);
                 txtEmail = (TextView) itemView.findViewById(R.id.email);
                 imageProfile = (ImageView) itemView.findViewById(R.id.circleView);
 
-                holderId = 0;
+                if( listener != null ) {
+                    txtName.setOnClickListener(listener);
+                    imageProfile.setOnClickListener(listener);
+                    txtEmail.setOnClickListener(listener);
+                    itemLayoutView.setOnClickListener(listener);
+                }
+
+                holderId = TYPE_HEADER;
+            } else {
+                rowTextView = (TextView) itemView.findViewById(R.id.rowText);
+                rowImageView = (ImageView) itemView.findViewById(R.id.rowIcon);
+
+                if( listener != null ) {
+                    rowTextView.setOnClickListener(listener);
+                    rowImageView.setOnClickListener(listener);
+                }
+
+                holderId = viewType;
             }
         }
     }
