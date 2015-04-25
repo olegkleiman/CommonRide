@@ -117,8 +117,7 @@ public class RidesAdapter extends ArrayAdapter<RideAnnotated> {
             holder.txtRideTo = (TextView)row.findViewById(R.id.txtRideTo);
 
             row.setTag(holder);
-        }
-        else {
+        } else {
             holder = (RidesHolder)row.getTag();
         }
 

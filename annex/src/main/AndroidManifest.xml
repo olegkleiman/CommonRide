@@ -109,7 +109,7 @@
             android:label="@string/title_activity_about"
             android:parentActivityName="com.labs.okey.annex.MainActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.Light" >
+            android:theme="@style/AppTheme">
         </activity>
         <activity
             android:name=".RateActivity"
