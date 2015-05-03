@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+
     <!-- The main content view -->
     <LinearLayout
         android:orientation="vertical"
@@ -15,6 +16,18 @@
         android:id="@+id/content_frame"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent">
+
+        <ProgressBar
+            android:id="@+id/loadProgressBar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:progressDrawable="@drawable/loadprogress"
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:indeterminate="false"
+            android:max="10"
+            android:visibility="gone">
+        </ProgressBar>
+
 
         <ListView xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/listview"

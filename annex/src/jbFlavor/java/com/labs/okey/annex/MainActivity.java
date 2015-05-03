@@ -9,6 +9,8 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.os.AsyncTask;
+import android.os.Handler;
+import android.os.Message;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
@@ -28,6 +30,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.facebook.AppEventsLogger;
@@ -69,7 +72,8 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 
-public class MainActivity extends com.labs.okey.annex.BaseActivity {
+public class MainActivity extends com.labs.okey.annex.BaseActivity
+        implements Handler.Callback{
 
     private static final String LOG_TAG = "Annex.Main";
     static final int REGISTER_USER_REQUEST = 1;
@@ -90,6 +94,20 @@ public class MainActivity extends com.labs.okey.annex.BaseActivity {
 
     private CharSequence mDrawerTitle;
     private CharSequence mTitle;
+
+    ProgressBar mLoadProgressBar;
+    public static final int UPDATE_LOAD_PROGRESS = 0x400 + 1;
+    Handler handler;
+
+    @Override
+    public boolean handleMessage(Message msg){
+
+        if( msg.what == UPDATE_LOAD_PROGRESS) {
+            mLoadProgressBar.setProgress(msg.arg1);
+        }
+
+        return true;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -174,6 +192,9 @@ public class MainActivity extends com.labs.okey.annex.BaseActivity {
             }
         };
         mDrawerLayout.setDrawerListener(mDrawerToggle);
+
+        handler = new Handler(this); //getWindow().getDecorView().getHandler();
+        mLoadProgressBar = (ProgressBar)findViewById(R.id.loadProgressBar);
 
         mRidesAdapter = new RidesAdapter(MainActivity.this,
                 R.layout.ride_item_row);
@@ -270,9 +291,16 @@ public class MainActivity extends com.labs.okey.annex.BaseActivity {
             Exception mEx = null;
 
             @Override
+            protected void onPreExecute(){
+                mLoadProgressBar.setVisibility(View.VISIBLE);
+                updateProgress(2);
+            }
+
+            @Override
             protected void onPostExecute(Void result) {
 
                 invalidateOptionsMenu();
+                mLoadProgressBar.setVisibility(View.GONE);
 
                 if( mEx != null ) {
                     Toast.makeText(MainActivity.this,
@@ -288,6 +316,7 @@ public class MainActivity extends com.labs.okey.annex.BaseActivity {
                 try{
                     // PUSH is executed on SyncContext, i.e. works on the server tables.
                     wamsClient.getSyncContext().push().get();
+                    updateProgress(4);
 
                     // WAMS SDK automatically queries for deleted records and
                     // removes them from the local database. Even 'soft delete' is
@@ -296,9 +325,12 @@ public class MainActivity extends com.labs.okey.annex.BaseActivity {
                     // is replaced to perform SQL JOIN between 'rides' and 'users' tables.
                     // In resume, PURGE is required for this scenario!
                     mRidesTable.purge(mPullQuery);
+                    updateProgress(6);
                     mRidesTable.pull(mPullQuery).get();
+                    updateProgress(8);
 
                     refreshRides();
+                    updateProgress(10);
 
                 } catch(ExecutionException | InterruptedException ex) {
                     mEx = ex;
@@ -308,6 +340,15 @@ public class MainActivity extends com.labs.okey.annex.BaseActivity {
 
                 return null;
             }
+
+            private void updateProgress(int value){
+
+                Message progressMessage = new Message();
+                progressMessage.what = UPDATE_LOAD_PROGRESS;
+                progressMessage.arg1 = value; // progress current position
+                handler.sendMessage(progressMessage);
+            }
+
         }.execute();
 
     }
