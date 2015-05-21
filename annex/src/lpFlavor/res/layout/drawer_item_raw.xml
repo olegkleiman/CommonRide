@@ -22,7 +22,8 @@
         android:text="Medium Text"
         android:id="@+id/rowText"
         android:layout_gravity="center_vertical"
-        android:layout_marginLeft="6dp" />
+        android:layout_marginLeft="6dp"
+        android:textColor="@color/ColorPrimary" />
 
 
 </LinearLayout>

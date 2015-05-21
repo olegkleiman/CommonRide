@@ -63,13 +63,14 @@
                 <!--android:name="android.app.searchable"-->
                 <!--android:resource="@xml/searchable" />-->
         <!--</activity>-->
-        <activity
-            android:name=".SingleRideActivity"
-            android:label="@string/title_activity_single_ride"
-            android:parentActivityName="com.labs.okey.annex.MainActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.Light" >
-        </activity>
+
+        <!--<activity-->
+            <!--android:name="com.labs.okey.commonride.SingleRideActivity"-->
+            <!--android:label="@string/title_activity_single_ride"-->
+            <!--android:screenOrientation="portrait"-->
+            <!--android:theme="@style/Theme.AppCompat.Light.DarkActionBar">-->
+        <!--</activity>-->
+
         <activity
             android:name=".SettingsTabsActivity"
             android:label="@string/title_activity_tabs"
@@ -104,13 +105,13 @@
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light" >
         </activity>
-        <activity
-            android:name=".AboutActivity"
-            android:label="@string/title_activity_about"
-            android:parentActivityName="com.labs.okey.annex.MainActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme">
-        </activity>
+        <!--<activity-->
+            <!--android:name=".AboutActivity"-->
+            <!--android:label="@string/title_activity_about"-->
+            <!--android:parentActivityName="com.labs.okey.annex.MainActivity"-->
+            <!--android:screenOrientation="portrait"-->
+            <!--android:theme="@style/AppTheme">-->
+        <!--</activity>-->
         <activity
             android:name=".RateActivity"
             android:label="@string/title_activity_rate"

@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -14,6 +15,7 @@ import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.Switch;
 import android.widget.Toast;
 
@@ -25,6 +27,7 @@ import com.facebook.Session;
 import com.facebook.SessionState;
 import com.facebook.UiLifecycleHelper;
 import com.facebook.model.GraphUser;
+import com.facebook.widget.FacebookDialog;
 import com.facebook.widget.LoginButton;
 import com.labs.okey.commonride.model.User;
 import com.labs.okey.commonride.utils.Globals;
@@ -72,6 +75,8 @@ public class RegisterActivity extends FragmentActivity {
 
     private PendingAction pendingAction = PendingAction.NONE;
 
+    private ProgressBar mProgress;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -98,11 +103,22 @@ public class RegisterActivity extends FragmentActivity {
                     new AsyncTask<Void, Void, Void>() {
 
                         Exception mEx;
+                        ProgressDialog progress;
+
+                        @Override
+                        protected void onPreExecute(){
+
+                            progress = ProgressDialog.show(RegisterActivity.this,
+                                    "Almost there", "Making things ready");
+                        }
 
                         @Override
                         protected void onPostExecute(Void result){
-                            if( mEx == null )
+                            if( mEx == null ) {
+                                progress.dismiss();
                                 showRegistrationForm();
+
+                            }
                         }
 
                         @Override
@@ -137,9 +153,15 @@ public class RegisterActivity extends FragmentActivity {
 
             @Override
             public void onError(FacebookException error) {
-                String msg = error.getMessage();
-                msg.trim();
 
+                String msg = getResources().getString(R.string.fb_error_msg)
+                        + error.getMessage().trim();
+
+                new AlertDialog.Builder(RegisterActivity.this)
+                        .setTitle(getResources().getString(R.string.fb_error))
+                        .setMessage(msg)
+                        .setPositiveButton("OK", null)
+                        .show();
             }
         });
 

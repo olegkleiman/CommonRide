@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -69,6 +70,8 @@ public class SingleRideActivity extends BaseActivity {
     String mDriverPhone;
     String mDriverEMail;
 
+    Toolbar mToolbar;
+
     private GoogleMap gMap;
 
     @Override
@@ -76,87 +79,28 @@ public class SingleRideActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_single_ride);
 
-        // Floating button in Activity Context
-        //ImageView icon = new ImageView(this); // Create an icon
-        //icon.setImageDrawable(getResources().getDrawable(R.drawable.alarm2_48));
-//        FloatingActionButton actionButton = new FloatingActionButton.Builder(this)
-//                .setContentView(icon)
-//                .build();
-        Button actionButton = (Button)findViewById(R.id.btnCommunicatePassengers);
-
-        SubActionButton.Builder itemBuilder = new SubActionButton.Builder(this);
-
-        ImageView itemIconFacebook = new ImageView(this);
-        itemIconFacebook.setImageDrawable(getResources().getDrawable(R.drawable.facebook32));
-        // Check if the Facebook app is installed and we can present the share dialog
-        final FacebookDialog.MessageDialogBuilder builder
-                = new FacebookDialog.MessageDialogBuilder(this)
-                .setLink("https://developers.facebook.com/docs/android/share/")
-                .setName("Message Dialog Tutorial")
-                .setCaption("Build great social apps that engage your friends.")
-                .setPicture("http://i.imgur.com/g3Qc1HN.png")
-                .setDescription("Allow your users to message links from your app using the Android SDK.");
-                //.setFragment(this);
-
-//        FacebookDialog.OpenGraphMessageDialogBuilder builder2 =
-//                new FacebookDialog.OpenGraphMessageDialogBuilder(getActivity(), action, previewPropertyName);
-
-
-        if ( !builder.canPresent()) {
-            // TODO: Disable button within circle menu for FB
-        }
-
-        SubActionButton button1 = itemBuilder.setContentView(itemIconFacebook).build();
-        button1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                try {
-                    FacebookDialog dialog = builder.build();
-                    dialog.present();
-                } catch(Exception ex) {
-                    Log.e(LOG_TAG, ex.getCause().toString());
-                }
-            }
-        });
-
-        ImageView itemIconWhatsup = new ImageView(this);
-        itemIconWhatsup.setImageDrawable(getResources().getDrawable(R.drawable.whatsapp32));
-        SubActionButton button2 = itemBuilder.setContentView(itemIconWhatsup).build();
-
-        ImageView itemIconEmail = new ImageView(this);
-        itemIconEmail.setImageDrawable(getResources().getDrawable(R.drawable.email32));
-        SubActionButton button3 = itemBuilder.setContentView(itemIconEmail).build();
-
-        ImageView itemIconShare = new ImageView(this);
-        itemIconShare.setImageDrawable(getResources().getDrawable(R.drawable.sharethis32));
-        SubActionButton button4 = itemBuilder.setContentView(itemIconShare).build();
-        button4.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(SingleRideActivity.this, "Make a phone call", Toast.LENGTH_LONG).show();
-            }
-        });
-
-        FloatingActionMenu actionMenu = new FloatingActionMenu.Builder(this)
-                .setStartAngle(0)
-                .setEndAngle(90)
-                .setRadius(getResources().getDimensionPixelSize(R.dimen.radius_medium))
-                .addSubActionView(button1)
-                .addSubActionView(button2)
-                .addSubActionView(button3)
-                .addSubActionView(button4)
-                        // ...
-                .attachTo(actionButton)
-                .build();
-
-        // End Floating button
-
         mRideId = getIntent().getStringExtra("rideId");
 
-//        // enable ActionBar app icon to behave as action to toggle nav drawer
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);
+        // enable ActionBar app icon to behave as action to toggle nav drawer
+        try {
+            mToolbar = (Toolbar) findViewById(R.id.annex_toolbar);
+            setSupportActionBar(mToolbar);
+
+            mToolbar.setTitle(R.string.title_activity_single_ride);
+            mToolbar.setNavigationIcon(R.mipmap.icon_toolbal_arrow_white);
+            mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onBackPressed();
+                }
+            });
+
+
+        }catch(Exception ex) {
+            Log.e(LOG_TAG, ex.getMessage());
+        }
+
+        setupFloatingActionMenu();
 
         try {
             mClient = new MobileServiceClient(
@@ -321,6 +265,80 @@ public class SingleRideActivity extends BaseActivity {
         } catch(Exception e) {
             Log.i(LOG_TAG, e.getMessage());
         }
+
+    }
+
+    private void setupFloatingActionMenu(){
+        // Floating button in Activity Context
+        Button actionButton = (Button)findViewById(R.id.btnCommunicatePassengers);
+
+        SubActionButton.Builder itemBuilder = new SubActionButton.Builder(this);
+
+        ImageView itemIconFacebook = new ImageView(this);
+        itemIconFacebook.setImageDrawable(getResources().getDrawable(R.drawable.facebook32));
+        // Check if the Facebook app is installed and we can present the share dialog
+        final FacebookDialog.MessageDialogBuilder builder
+                = new FacebookDialog.MessageDialogBuilder(this)
+                .setLink("https://developers.facebook.com/docs/android/share/")
+                .setName("Message Dialog Tutorial")
+                .setCaption("Build great social apps that engage your friends.")
+                .setPicture("http://i.imgur.com/g3Qc1HN.png")
+                .setDescription("Allow your users to message links from your app using the Android SDK.");
+        //.setFragment(this);
+
+//        FacebookDialog.OpenGraphMessageDialogBuilder builder2 =
+//                new FacebookDialog.OpenGraphMessageDialogBuilder(getActivity(), action, previewPropertyName);
+
+
+        if ( !builder.canPresent()) {
+            // TODO: Disable button within circle menu for FB
+        }
+
+        SubActionButton button1 = itemBuilder.setContentView(itemIconFacebook).build();
+        button1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                try {
+                    FacebookDialog dialog = builder.build();
+                    dialog.present();
+                } catch(Exception ex) {
+                    Log.e(LOG_TAG, ex.getCause().toString());
+                }
+            }
+        });
+
+        ImageView itemIconWhatsup = new ImageView(this);
+        itemIconWhatsup.setImageDrawable(getResources().getDrawable(R.drawable.whatsapp32));
+        SubActionButton button2 = itemBuilder.setContentView(itemIconWhatsup).build();
+
+        ImageView itemIconEmail = new ImageView(this);
+        itemIconEmail.setImageDrawable(getResources().getDrawable(R.drawable.email32));
+        SubActionButton button3 = itemBuilder.setContentView(itemIconEmail).build();
+
+        ImageView itemIconShare = new ImageView(this);
+        itemIconShare.setImageDrawable(getResources().getDrawable(R.drawable.sharethis32));
+        SubActionButton button4 = itemBuilder.setContentView(itemIconShare).build();
+        button4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(SingleRideActivity.this, "Make a phone call", Toast.LENGTH_LONG).show();
+            }
+        });
+
+        FloatingActionMenu actionMenu = new FloatingActionMenu.Builder(this)
+                .setStartAngle(0)
+                .setEndAngle(90)
+                .setRadius(getResources().getDimensionPixelSize(R.dimen.radius_medium))
+                .addSubActionView(button1)
+                .addSubActionView(button2)
+                .addSubActionView(button3)
+                .addSubActionView(button4)
+                        // ...
+                .attachTo(actionButton)
+                .build();
+
+        // End Floating button
 
     }
 
@@ -619,6 +637,11 @@ public class SingleRideActivity extends BaseActivity {
         }
 
         return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
     }
 
     @Override

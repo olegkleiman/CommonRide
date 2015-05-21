@@ -66,6 +66,8 @@
     <string name="driverTabCaption">Driver</string>
     <string name="passengerTabCaption">Passenger</string>
     <string name="publish_anonym">Publish anonymously</string>
+    <string name="fb_error">No network access</string>
+    <string name="fb_error_msg">The error was: </string>
     <string name="title_activity_about">Annex ver. Alpha 0.9</string>
     <string name="license">Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

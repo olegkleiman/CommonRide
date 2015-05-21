@@ -17,10 +17,8 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.widget.SearchView;
-import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -39,6 +37,7 @@ import com.google.android.gms.ads.AdView;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.gson.JsonObject;
 import com.labs.okey.commonride.*;
+import com.labs.okey.commonride.BaseActivity;
 import com.labs.okey.commonride.adapters.RidesAdapter;
 import com.labs.okey.commonride.model.RideAnnotated;
 import com.labs.okey.commonride.utils.ConflictResolvingSyncHandler;
@@ -65,14 +64,12 @@ import com.microsoft.windowsazure.notifications.NotificationsManager;
 import org.apache.http.StatusLine;
 
 import java.net.MalformedURLException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 
-public class MainActivity extends com.labs.okey.annex.BaseActivity
+public class MainActivity extends BaseActivity
         implements Handler.Callback{
 
     private static final String LOG_TAG = "Annex.Main";
