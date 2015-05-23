@@ -5,13 +5,20 @@
     android:id="@+id/annex_toolbar"
     android:layout_height="wrap_content"
     android:layout_width="match_parent"
+    android:elevation="4dp"
     android:theme="@style/ThemeOverlay.AppCompat.Dark"
     android:minHeight="?attr/actionBarSize"
     android:background="?attr/colorPrimary"
     >
-    <!--<ImageView-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:src="@drawable/toolbar_bk2"-->
-    <!--android:scaleType="fitXY" />-->
+    <TextView
+        android:id="@+id/toolbar_title"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
+        android:gravity="left"
+        android:text="Annex"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark"
+        android:textSize="20sp"/>
 </android.support.v7.widget.Toolbar>

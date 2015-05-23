@@ -21,6 +21,8 @@ the following attributes for ImageButton
         android:layout_height="fill_parent">
 
         <include
+            android:layout_height="200dp"
+            android:layout_width="match_parent"
             layout="@layout/tool_bar" />
 
         <ProgressBar

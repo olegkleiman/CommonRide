@@ -114,11 +114,10 @@ public class RegisterActivity extends FragmentActivity {
 
                         @Override
                         protected void onPostExecute(Void result){
-                            if( mEx == null ) {
-                                progress.dismiss();
-                                showRegistrationForm();
+                            progress.dismiss();
 
-                            }
+                            if( mEx == null )
+                                showRegistrationForm();
                         }
 
                         @Override
